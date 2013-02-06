@@ -1,0 +1,88 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF" >
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:text="HIGH SCORES"
+        android:textColor="#000000"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        
+        android:layout_below="@+id/textView1"
+        android:layout_marginLeft="38dp"
+        android:layout_marginTop="40dp" 
+        android:layout_marginRight="0dp">
+
+        <TableRow
+            android:id="@+id/tableRow1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+            <LinearLayout 
+                android:layout_width="wrap_content"
+            	android:layout_height="wrap_content"
+            	android:orientation="horizontal">
+                <TextView 
+                    android:id="@+id/textView2"
+        			android:layout_width="wrap_content"
+        			android:layout_height="wrap_content"
+        			android:paddingLeft="10dp"
+        			android:textColor="#000000"
+        			android:text="Names"/>
+                <TextView 
+                    android:id="@+id/textView3"
+        			android:layout_width="wrap_content"
+        			android:layout_height="wrap_content"
+        			android:paddingLeft="120dp"
+        			android:textColor="#000000"
+        			android:text="Scores"/>
+            </LinearLayout>
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+            <LinearLayout 
+                android:layout_width="wrap_content"
+            	android:layout_height="wrap_content"
+            	android:orientation="horizontal">
+                <TextView 
+                    android:id="@+id/textview4"
+        			android:layout_width="wrap_content"
+        			android:layout_height="wrap_content"
+        			android:paddingLeft="10dp"
+        			android:text=""/>
+                <TextView 
+                    android:id="@+id/textview5"
+        			android:layout_width="wrap_content"
+        			android:layout_height="wrap_content"
+        			android:paddingLeft="120dp"
+        			android:text=""/>
+            </LinearLayout>
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <ListView
+                android:id="@+id/ScoreList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+            </ListView>
+        </TableRow>
+    </TableLayout>
+
+</RelativeLayout>

@@ -1,0 +1,56 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000" >
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:text="HELP"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#FFFFFF" />
+    
+    <LinearLayout 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@+id/textView1"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="10dp">
+        
+        <TextView
+            android:id="@+id/textView2" 
+            android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+        	android:textColor="#FFFFFF"
+        	android:text="1:  Guide the knight through puzzling levels"/>
+        
+        <TextView
+            android:id="@+id/textView3" 
+            android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+        	android:textColor="#FFFFFF"
+        	android:text="2:  The goal in each level is collect all of the coins and reach the hourglass"/>
+        
+        <TextView
+            android:id="@+id/textView4" 
+            android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+        	android:textColor="#FFFFFF"
+        	android:text="3:  To do so, you will have to push blocks out of your way and slide on ice"/>
+        
+        <TextView
+            android:id="@+id/textView5" 
+            android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+        	android:textColor="#FFFFFF"
+        	android:text="4:  If you hit with tree or obstical your life decreases by one point"/>
+        
+    </LinearLayout>
+
+</RelativeLayout>

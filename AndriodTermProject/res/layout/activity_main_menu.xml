@@ -1,0 +1,47 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <ImageView
+        android:id="@+id/main_menu_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="80dp"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/Play"
+            android:layout_width="103dp"
+            android:layout_height="wrap_content"
+            android:text="PLAY" />
+
+        <Button
+            android:id="@+id/HighScore"
+            android:layout_width="103dp"
+            android:layout_height="wrap_content"
+            android:text="HIGH SCORE" />
+
+        <Button
+            android:id="@+id/Help"
+            android:layout_width="103dp"
+            android:layout_height="wrap_content"
+            android:text="HELP" />
+
+        <Button
+            android:id="@+id/Quit"
+            android:layout_width="103dp"
+            android:layout_height="wrap_content"
+            android:text="QUIT" />
+    </LinearLayout>
+
+</RelativeLayout>
