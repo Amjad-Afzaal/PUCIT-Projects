@@ -33,11 +33,11 @@ public class GameMainThread extends Thread {
 	public boolean isRunning;
 	private ArrayList <Sprites> gameObjects;
 	public static DominosKnight dominosKnight;
-	private Sprites grass;
+	private Sprites up, down, left, right, grass;
 	private int [] [] map;
 	private int numOfCoins;
 	private int level, life;
-	private Bitmap up, down, left, right, upDomino, rightDomino, leftDomino, downDomino;
+	private Bitmap upDomino, rightDomino, leftDomino, downDomino;
 
 	public GameMainThread(SurfaceHolder surfaceHolder, Context context, Handler handler)
 	{
@@ -50,10 +50,10 @@ public class GameMainThread extends Thread {
 		this.gameObjects = new ArrayList<Sprites>();
 		this.grass = new Sprites(BitmapFactory.decodeResource(context.getResources(), R.drawable.grass), GameElements.GRASS);
 		dominosKnight = new DominosKnight(BitmapFactory.decodeResource(context.getResources(), R.drawable.dominos));
-		this.up = BitmapFactory.decodeResource(context.getResources(), R.drawable.up);
-		this.down = BitmapFactory.decodeResource(context.getResources(), R.drawable.down);
-		this.right = BitmapFactory.decodeResource(context.getResources(), R.drawable.right);
-		this.left = BitmapFactory.decodeResource(context.getResources(), R.drawable.left);
+		this.up = new Sprites(BitmapFactory.decodeResource(context.getResources(), R.drawable.up), GameElements.UP);
+		this.down = new Sprites(BitmapFactory.decodeResource(context.getResources(), R.drawable.down), GameElements.DOWN);
+		this.right = new Sprites(BitmapFactory.decodeResource(context.getResources(), R.drawable.right), GameElements.RIGHT);
+		this.left = new Sprites(BitmapFactory.decodeResource(context.getResources(), R.drawable.left), GameElements.LEFT);
 		this.upDomino = BitmapFactory.decodeResource(context.getResources(), R.drawable.updominos);
 		this.downDomino = BitmapFactory.decodeResource(context.getResources(), R.drawable.downdominos);
 		this.rightDomino = BitmapFactory.decodeResource(context.getResources(), R.drawable.rightdominos);
@@ -80,6 +80,14 @@ public class GameMainThread extends Thread {
 					height = canvas.getHeight();
 					dominosKnight.setX(width - 100);
 					dominosKnight.setY(height - 50);
+					this.up.setX(10 + this.up.getWidth());
+					this.up.setY(this.height - 2 * this.up.getHeight());
+					this.down.setX(10 + this.up.getWidth());
+					this.down.setY(this.height - this.down.getHeight());
+					this.right.setX(this.up.getX() + this.down.getWidth());
+					this.right.setY(this.height - this.down.getHeight());
+					this.left.setX(10);
+					this.left.setY(this.height - this.down.getHeight());
 					loadMap();
 					draw(canvas);
 				}
@@ -269,10 +277,10 @@ public class GameMainThread extends Thread {
 		
 			// Drawing Dominos Knight
 			dominosKnight.draw(canvas);
-			canvas.drawBitmap(this.up, 40, this.height - 60, null);
-			canvas.drawBitmap(this.down, 40, this.height - 30, null);
-			canvas.drawBitmap(this.right, 70, this.height - 30, null);
-			canvas.drawBitmap(this.left, 10, this.height - 30, null);
+			this.up.draw(canvas);
+			this.down.draw(canvas);
+			this.right.draw(canvas);
+			this.left.draw(canvas);
 			Paint paint = new Paint();
 			paint.setColor(Color.CYAN);
 			paint.setAntiAlias(true);
@@ -323,32 +331,58 @@ public class GameMainThread extends Thread {
 		{
 			// Disappearing Coin and show Grass there
 			Sprites tmp = gameObjects.get(i);
-			synchronized (tmp) 
-			{
-				if(tmp.getName() == GameElements.COIN && (dominosKnight.getX() >= tmp.getX() && dominosKnight.getY() >= tmp.getY()
-						&& dominosKnight.getX() <= tmp.getWidth() + tmp.getX()
-						&& dominosKnight.getY() <= tmp.getHeight() + tmp.getY()))
+				if(tmp.getName() == GameElements.COIN)
 				{
-					this.grass.setX(tmp.getX());
-					this.grass.setY(tmp.getY());
-					this.grass.draw(canvas);
-					tmp.setName(GameElements.GRASS);
-					gameObjects.remove(tmp);
-					this.numOfCoins--;
-					// Adding Score
-					GameStartingView.Score += 10;
-				}
-				else if((tmp.getName() == GameElements.OBSTICAL || tmp.getName() == GameElements.TREE) 
-						&& (dominosKnight.getX() >= tmp.getX() && dominosKnight.getY() >= tmp.getY()
+						// First condition of Dominos intersection
+						if((dominosKnight.getX() >= tmp.getX()
+						&& dominosKnight.getY() >= tmp.getY()
 						&& dominosKnight.getX() <= tmp.getWidth() + tmp.getX()
-						&& dominosKnight.getY() <= tmp.getHeight() + tmp.getY()))
-				{
-					this.life --;
-					dominosKnight.setX(this.life % 2 == 0 ? tmp.getX() + tmp.getWidth() + 6 : tmp.getX() - 6);
-					dominosKnight.setY(this.life % 2 == 0 ? tmp.getY() + tmp.getHeight() + 6 : tmp.getY() - 6);
-					dominosKnight.draw(canvas);
-				}
-			}
+						&& dominosKnight.getY() <= tmp.getHeight() + tmp.getY())
+						// Second condition of Dominos intersection
+						||(dominosKnight.getX() + dominosKnight.getWidth() >= tmp.getX()
+						&& dominosKnight.getY() >= tmp.getY()
+						&& dominosKnight.getX() + dominosKnight.getWidth() <= tmp.getX() + tmp.getWidth()
+						&& dominosKnight.getY() <= tmp.getY() + tmp.getHeight())
+						// Third condition of Dominos intersection
+						||(dominosKnight.getX() >= tmp.getX()
+						&& dominosKnight.getY() + dominosKnight.getHeight() >= tmp.getY()
+						&& dominosKnight.getX() <= tmp.getX() + tmp.getWidth()
+						&& dominosKnight.getY() + dominosKnight.getHeight() <= tmp.getY() + tmp.getHeight())
+						// Fourth condition of Dominos intersection
+						||(dominosKnight.getX() + dominosKnight.getWidth() >= tmp.getX()
+						&& dominosKnight.getY() + dominosKnight.getHeight() >= tmp.getY()
+						&& dominosKnight.getX() + dominosKnight.getWidth() <= tmp.getX() + tmp.getWidth()
+						&& dominosKnight.getY() + dominosKnight.getHeight() <= tmp.getY() + tmp.getHeight())
+						// First condition of Coin intersection
+						&& (tmp.getX() >= dominosKnight.getX()
+						&& tmp.getY() >= dominosKnight.getY()
+						&& tmp.getX() <= dominosKnight.getX() + dominosKnight.getWidth()
+						&& tmp.getY() <= dominosKnight.getY() + dominosKnight.getHeight())
+						// Second condition of Coin intersection
+						||(tmp.getX() + tmp.getWidth() >= dominosKnight.getX()
+						&& tmp.getY() >= dominosKnight.getY()
+						&& tmp.getX() + tmp.getWidth() <= dominosKnight.getX() + dominosKnight.getWidth()
+						&& tmp.getY() <= dominosKnight.getY() + dominosKnight.getHeight())
+						// Third condition of Coin intersection
+						||(tmp.getX() >= dominosKnight.getX()
+						&& tmp.getY() + tmp.getHeight() >= dominosKnight.getY()
+						&& tmp.getX() <= dominosKnight.getX() + dominosKnight.getWidth()
+						&& tmp.getY() + tmp.getHeight() <= dominosKnight.getY() + dominosKnight.getHeight())
+						// Fourth condition of Coin intersection
+						||(tmp.getX() + tmp.getWidth() >= dominosKnight.getX()
+						&& tmp.getY() + tmp.getHeight() >= dominosKnight.getY()
+						&& tmp.getX() + tmp.getWidth() <= dominosKnight.getX() + dominosKnight.getWidth()
+						&& tmp.getY() + tmp.getHeight() <= dominosKnight.getY() + dominosKnight.getHeight())
+						)
+						{
+							this.grass.setX(tmp.getX());
+							this.grass.setY(tmp.getY());
+							this.grass.draw(canvas);
+							gameObjects.remove(tmp);
+							this.numOfCoins--;
+							GameStartingView.Score += 10;
+						}
+				}				
 		}
 	}
 	
@@ -358,40 +392,127 @@ public class GameMainThread extends Thread {
 	{
 		//Log.i("Touch co-ordinates are ", " (" + event.getX() + ", " + event.getY() + ")");
 		// Up arrow key pressed
-		if(event.getX() >= 40 && event.getY() >= this.height - 60 && event.getX() <= this.up.getWidth() + 40 && event.getY() <= this.up.getHeight() + this.height - 60)
+		if(event.getX() >= this.up.getX() && event.getY() >= this.up.getY() && event.getX() <= this.up.getWidth() + this.up.getX()
+				&& event.getY() <= this.up.getHeight() + this.up.getY())
 		{
 			Log.i("Up arrow key pressed!","Up arrow key pressed!");
-			if(dominosKnight.getY() - dominosKnight.getSpeedY() >= 0) dominosKnight.setY(dominosKnight.getY() - dominosKnight.getSpeedY());
-			dominosKnight.setTexture(upDomino);
+			if(dominosKnight.getY() - dominosKnight.getSpeedY() >= 0)
+			{
+				dominosKnight.setY(dominosKnight.getY() - dominosKnight.getSpeedY());
+				if(isCollidedWithObstical()){
+					dominosKnight.setY(dominosKnight.getY() + dominosKnight.getSpeedY());
+					return;
+				}
+				dominosKnight.setTexture(upDomino);
+			}
 		}
 		// Down arrow key pressed
-		if(event.getX() >= 40 && event.getY() >= this.height - 30 && event.getX() <= this.down.getWidth() + 40 && event.getY() <= this.down.getHeight() + this.height - 30)
+		if(event.getX() >= this.down.getX() && event.getY() >= this.down.getY() && event.getX() <= this.down.getWidth() + this.down.getX()
+				&& event.getY() <= this.down.getHeight() + this.down.getY())
 		{
 			Log.i("Down arrow key pressed!","Down arrow key pressed!");
-			if(dominosKnight.getY() + dominosKnight.getSpeedY() <= this.getHeight()) dominosKnight.setY(dominosKnight.getY() + dominosKnight.getSpeedY());
-			dominosKnight.setTexture(downDomino);
+			if(dominosKnight.getY() + dominosKnight.getSpeedY() <= this.getHeight()){
+				dominosKnight.setY(dominosKnight.getY() + dominosKnight.getSpeedY());
+				if(isCollidedWithObstical())
+				{
+					dominosKnight.setY(dominosKnight.getY() - dominosKnight.getSpeedY());
+					return;
+				}
+				dominosKnight.setTexture(downDomino);
+			}
+			
 		}
 		// Right arrow key pressed
-		if(event.getX() >= 70 && event.getY() >= this.height - 30 && event.getX() <= this.right.getWidth() + 70 && event.getY() <= this.right.getHeight() + this.height - 30)
+		if(event.getX() >= this.right.getX() && event.getY() >= this.right.getY() && event.getX() <= this.right.getWidth() + this.right.getX()
+				&& event.getY() <= this.right.getHeight() + this.right.getY())
 		{
 			Log.i("Right arrow key pressed!","Right arrow key pressed!");
-			if(dominosKnight.getX() + dominosKnight.getSpeedX() <= this.getWidth()) dominosKnight.setX(dominosKnight.getX() + dominosKnight.getSpeedX());
-			dominosKnight.setTexture(rightDomino);
+			if(dominosKnight.getX() + dominosKnight.getSpeedX() <= this.getWidth()){
+				dominosKnight.setX(dominosKnight.getX() + dominosKnight.getSpeedX());
+				if(isCollidedWithObstical())
+				{
+					dominosKnight.setX(dominosKnight.getX() - dominosKnight.getSpeedX());
+					return;
+				}
+				dominosKnight.setTexture(rightDomino);
+			}
 		}
 		// Left arrow key pressed
-		if(event.getX() >= 10 && event.getY() >= this.height - 30 && event.getX() <= this.left.getWidth() + 10 && event.getY() <= this.left.getHeight() + this.height - 30)
+		if(event.getX() >= this.left.getX() && event.getY() >= this.left.getY() && event.getX() <= this.left.getWidth() + this.left.getX()
+				&& event.getY() <= this.left.getHeight() + this.left.getY())
 		{
 			Log.i("Left arrow key pressed!","Left arrow key pressed!");
-			if(dominosKnight.getX() - dominosKnight.getSpeedX() >= 0) dominosKnight.setX(dominosKnight.getX() - dominosKnight.getSpeedX());
-			dominosKnight.setTexture(leftDomino);
+			if(dominosKnight.getX() - dominosKnight.getSpeedX() >= 0){
+				dominosKnight.setX(dominosKnight.getX() - dominosKnight.getSpeedX());
+				if(isCollidedWithObstical())
+				{
+					dominosKnight.setX(dominosKnight.getX() + dominosKnight.getSpeedX());
+					return;
+				}
+				dominosKnight.setTexture(leftDomino);
+			}
+			
 		}
 	}
 	
-	/*@Override
-	public boolean onKeyUp(int keyCode, KeyEvent event) {
-		// TODO Auto-generated method stub
+	private boolean isCollidedWithObstical() {
+		for(int i=0; i<gameObjects.size(); i++)
+		{
+			Sprites tmp = gameObjects.get(i);
+			if(tmp.getName() == GameElements.OBSTICAL || tmp.getName() == GameElements.TREE)   
+			{
+					// First condition of Dominos intersection
+					if ((dominosKnight.getX() >= tmp.getX()
+					&& dominosKnight.getY() >= tmp.getY()
+					&& dominosKnight.getX() <= tmp.getWidth() + tmp.getX()
+					&& dominosKnight.getY() <= tmp.getHeight() + tmp.getY())
+					// Second condition of Dominos intersection
+					||(dominosKnight.getX() + dominosKnight.getWidth() >= tmp.getX()
+					&& dominosKnight.getY() >= tmp.getY()
+					&& dominosKnight.getX() + dominosKnight.getWidth() <= tmp.getX() + tmp.getWidth()
+					&& dominosKnight.getY() <= tmp.getY() + tmp.getHeight())
+					// Third condition of Dominos intersection
+					||(dominosKnight.getX() >= tmp.getX()
+					&& dominosKnight.getY() + dominosKnight.getHeight() >= tmp.getY()
+					&& dominosKnight.getX() <= tmp.getX() + tmp.getWidth()
+					&& dominosKnight.getY() + dominosKnight.getHeight() <= tmp.getY() + tmp.getHeight())
+					// Fourth condition of Dominos intersection
+					||(dominosKnight.getX() + dominosKnight.getWidth() >= tmp.getX()
+					&& dominosKnight.getY() + dominosKnight.getHeight() >= tmp.getY()
+					&& dominosKnight.getX() + dominosKnight.getWidth() <= tmp.getX() + tmp.getWidth()
+					&& dominosKnight.getY() + dominosKnight.getHeight() <= tmp.getY() + tmp.getHeight())
+					// First condition of Tmp intersection
+					&& (tmp.getX() >= dominosKnight.getX()
+					&& tmp.getY() >= dominosKnight.getY()
+					&& tmp.getX() <= dominosKnight.getX() + dominosKnight.getWidth()
+					&& tmp.getY() <= dominosKnight.getY() + dominosKnight.getHeight())
+					// Second condition of Tmp intersection
+					||(tmp.getX() + tmp.getWidth() >= dominosKnight.getX()
+					&& tmp.getY() >= dominosKnight.getY()
+					&& tmp.getX() + tmp.getWidth() <= dominosKnight.getX() + dominosKnight.getWidth()
+					&& tmp.getY() <= dominosKnight.getY() + dominosKnight.getHeight())
+					// Third condition of Tmp intersection
+					||(tmp.getX() >= dominosKnight.getX()
+					&& tmp.getY() + tmp.getHeight() >= dominosKnight.getY()
+					&& tmp.getX() <= dominosKnight.getX() + dominosKnight.getWidth()
+					&& tmp.getY() + tmp.getHeight() <= dominosKnight.getY() + dominosKnight.getHeight())
+					// Fourth condition of Tmp intersection
+					||(tmp.getX() + tmp.getWidth() >= dominosKnight.getX()
+					&& tmp.getY() + tmp.getHeight() >= dominosKnight.getY()
+					&& tmp.getX() + tmp.getWidth() <= dominosKnight.getX() + dominosKnight.getWidth()
+					&& tmp.getY() + tmp.getHeight() <= dominosKnight.getY() + dominosKnight.getHeight())
+					)
+					{
+						this.life --;
+						Log.i("Returning ------",tmp.getName() + "-----------> True");
+						return true;
+					}
+			}
+			
+		}
 		return false;
-	}*/
+	}
+
 	
 	/**
 	 * @return the surfaceHolder
@@ -495,63 +616,7 @@ public class GameMainThread extends Thread {
 	public void setLevel(int level) {
 		this.level = level;
 	}
-
-	/**
-	 * @return the down
-	 */
-	public Bitmap getDown() {
-		return down;
-	}
-
-	/**
-	 * @param down the down to set
-	 */
-	public void setDown(Bitmap down) {
-		this.down = down;
-	}
-
-	/**
-	 * @return the up
-	 */
-	public Bitmap getUp() {
-		return up;
-	}
-
-	/**
-	 * @param up the up to set
-	 */
-	public void setUp(Bitmap up) {
-		this.up = up;
-	}
-
-	/**
-	 * @return the right
-	 */
-	public Bitmap getRight() {
-		return right;
-	}
-
-	/**
-	 * @param right the right to set
-	 */
-	public void setRight(Bitmap right) {
-		this.right = right;
-	}
-
-	/**
-	 * @return the left
-	 */
-	public Bitmap getLeft() {
-		return left;
-	}
-
-	/**
-	 * @param left the left to set
-	 */
-	public void setLeft(Bitmap left) {
-		this.left = left;
-	}
-
+	
 	/**
 	 * @return the life
 	 */

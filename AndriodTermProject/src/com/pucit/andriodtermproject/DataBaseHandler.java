@@ -24,12 +24,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 	 * @param factory
 	 * @param version
 	 */
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 2;
 	private static final String DATABASE_NAME = "SCORE_DATABASE";
 	private static final String TABLE_NAME = "SCORES_TABLE";
-	private static final String ID_COLUMN = "TASKS_ID";
-	private static final String NAME_COLUMN = "DATE";
-	private static final String SCORE_COLUMN = "TIME";
+	private static final String ID_COLUMN = "ID";
+	private static final String NAME_COLUMN = "NAME";
+	private static final String SCORE_COLUMN = "SCORE";
 	
 	public DataBaseHandler(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -44,7 +44,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 		// TODO Auto-generated method stub
 		Log.i("DataBaseHandler---->","----->Insert Successfully");
 		String CREATE_SCORES_TABLE = "CREATE TABLE " + TABLE_NAME + "(" + ID_COLUMN + " INTEGER PRIMARY KEY, " + NAME_COLUMN + " TEXT, "
-				+ SCORE_COLUMN + " TEXT)";
+				+ SCORE_COLUMN + " INTEGER)";
 		db.execSQL(CREATE_SCORES_TABLE);
 	}
 
@@ -73,7 +73,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 	{
 		ArrayList<String> scores = new ArrayList<String>();
 		SQLiteDatabase db = this.getReadableDatabase();
-		Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
+		Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME + " ORDER BY " + SCORE_COLUMN + " DESC", null);
 		if(cursor.moveToFirst())
 		{
 			do
