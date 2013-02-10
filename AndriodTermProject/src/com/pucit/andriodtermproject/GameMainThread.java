@@ -16,6 +16,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Typeface;
+import android.media.MediaPlayer;
 import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -33,11 +34,12 @@ public class GameMainThread extends Thread {
 	public boolean isRunning;
 	private ArrayList <Sprites> gameObjects;
 	public static DominosKnight dominosKnight;
-	private Sprites up, down, left, right, grass;
+	private Sprites up, down, left, right, grass, music;
 	private int [] [] map;
 	private int numOfCoins;
 	private int level, life;
-	private Bitmap upDomino, rightDomino, leftDomino, downDomino;
+	private Bitmap upDomino, rightDomino, leftDomino, downDomino, musicOn, musicOff;
+	private boolean isMusicOn;
 
 	public GameMainThread(SurfaceHolder surfaceHolder, Context context, Handler handler)
 	{
@@ -54,10 +56,17 @@ public class GameMainThread extends Thread {
 		this.down = new Sprites(BitmapFactory.decodeResource(context.getResources(), R.drawable.down), GameElements.DOWN);
 		this.right = new Sprites(BitmapFactory.decodeResource(context.getResources(), R.drawable.right), GameElements.RIGHT);
 		this.left = new Sprites(BitmapFactory.decodeResource(context.getResources(), R.drawable.left), GameElements.LEFT);
+		this.music = new Sprites(BitmapFactory.decodeResource(context.getResources(), R.drawable.musicon), GameElements.MUSIC);
 		this.upDomino = BitmapFactory.decodeResource(context.getResources(), R.drawable.updominos);
 		this.downDomino = BitmapFactory.decodeResource(context.getResources(), R.drawable.downdominos);
 		this.rightDomino = BitmapFactory.decodeResource(context.getResources(), R.drawable.rightdominos);
 		this.leftDomino = BitmapFactory.decodeResource(context.getResources(), R.drawable.leftdominos);
+		this.musicOn = BitmapFactory.decodeResource(context.getResources(), R.drawable.musicon);
+		this.musicOff = BitmapFactory.decodeResource(context.getResources(), R.drawable.musicoff);
+		MainMenuActivity.mediaPlayer = MediaPlayer.create(context, R.raw.in_game_audio);
+		MainMenuActivity.mediaPlayer.setLooping(true);
+		MainMenuActivity.mediaPlayer.start();
+		this.isMusicOn = true;
 	}
 	
 	public void StartGame()
@@ -79,7 +88,7 @@ public class GameMainThread extends Thread {
 					width = canvas.getWidth();
 					height = canvas.getHeight();
 					dominosKnight.setX(width - 100);
-					dominosKnight.setY(height - 50);
+					dominosKnight.setY(height - 70);
 					this.up.setX(10 + this.up.getWidth());
 					this.up.setY(this.height - 2 * this.up.getHeight());
 					this.down.setX(10 + this.up.getWidth());
@@ -88,6 +97,8 @@ public class GameMainThread extends Thread {
 					this.right.setY(this.height - this.down.getHeight());
 					this.left.setX(10);
 					this.left.setY(this.height - this.down.getHeight());
+					this.music.setX(this.width - this.music.getWidth());
+					this.music.setY(this.height - this.music.getHeight());
 					loadMap();
 					draw(canvas);
 				}
@@ -238,6 +249,22 @@ public class GameMainThread extends Thread {
 								}
 							}
 							break;
+						case '4' :
+							// FIRE
+						{
+							Sprites object = new Sprites(BitmapFactory.decodeResource(context.getResources(), R.drawable.fire), GameElements.OBSTICAL);
+							if(column * object.getWidth() >= this.width) column = 0;
+							if(row * object.getHeight() >= this.height) row = 0;
+							if(row < this.height && column < this.width)
+							{
+								object.setY(row * object.getHeight());
+								object.setX(column * object.getWidth());
+								total += object.getWidth() * object.getHeight();
+								if(total >= (this.width * this.height))
+									shouldRunning = false;
+								this.gameObjects.add(object);
+							}
+						}
 					}
 					Log.i("Total = ", "Total = " + total);
 					if(shouldRunning == false)	break;
@@ -281,6 +308,16 @@ public class GameMainThread extends Thread {
 			this.down.draw(canvas);
 			this.right.draw(canvas);
 			this.left.draw(canvas);
+			if(this.isMusicOn)
+			{
+				this.music.setTexture(this.musicOn);
+				this.music.draw(canvas);
+			}
+			else
+			{
+				this.music.setTexture(this.musicOff);
+				this.music.draw(canvas);
+			}
 			Paint paint = new Paint();
 			paint.setColor(Color.CYAN);
 			paint.setAntiAlias(true);
@@ -453,6 +490,28 @@ public class GameMainThread extends Thread {
 			}
 			
 		}
+		// Music Button Press
+		if(event.getX() >= this.music.getX() && event.getY() >= this.music.getY() && event.getX() <= this.music.getX() + this.music.getWidth()
+				&& event.getY() <= this.music.getY() + this.music.getHeight())
+		{
+			Log.i("Music Button pressed!","Music Button pressed!");
+			this.isMusicOn = ! this.isMusicOn;
+			Log.i("this.isMusicOn ------>","------------->" + this.isMusicOn);
+			if(this.isMusicOn)
+			{
+				MainMenuActivity.mediaPlayer = MediaPlayer.create(context, R.raw.in_game_audio);
+				MainMenuActivity.mediaPlayer.setLooping(true);
+				MainMenuActivity.mediaPlayer.start();
+				return;
+			}
+			else
+			{
+				MainMenuActivity.mediaPlayer.stop();
+				MainMenuActivity.mediaPlayer.release();
+				MainMenuActivity.mediaPlayer = null;
+				return;
+			}
+		}
 	}
 	
 	private boolean isCollidedWithObstical() {
@@ -501,10 +560,55 @@ public class GameMainThread extends Thread {
 					&& tmp.getY() + tmp.getHeight() >= dominosKnight.getY()
 					&& tmp.getX() + tmp.getWidth() <= dominosKnight.getX() + dominosKnight.getWidth()
 					&& tmp.getY() + tmp.getHeight() <= dominosKnight.getY() + dominosKnight.getHeight())
-					)
+					)	return true;
+						
+			}
+			if(tmp.getName() == GameElements.FIRE)   
+			{
+					// First condition of Dominos intersection
+					if ((dominosKnight.getX() >= tmp.getX()
+					&& dominosKnight.getY() >= tmp.getY()
+					&& dominosKnight.getX() <= tmp.getWidth() + tmp.getX()
+					&& dominosKnight.getY() <= tmp.getHeight() + tmp.getY())
+					// Second condition of Dominos intersection
+					||(dominosKnight.getX() + dominosKnight.getWidth() >= tmp.getX()
+					&& dominosKnight.getY() >= tmp.getY()
+					&& dominosKnight.getX() + dominosKnight.getWidth() <= tmp.getX() + tmp.getWidth()
+					&& dominosKnight.getY() <= tmp.getY() + tmp.getHeight())
+					// Third condition of Dominos intersection
+					||(dominosKnight.getX() >= tmp.getX()
+					&& dominosKnight.getY() + dominosKnight.getHeight() >= tmp.getY()
+					&& dominosKnight.getX() <= tmp.getX() + tmp.getWidth()
+					&& dominosKnight.getY() + dominosKnight.getHeight() <= tmp.getY() + tmp.getHeight())
+					// Fourth condition of Dominos intersection
+					||(dominosKnight.getX() + dominosKnight.getWidth() >= tmp.getX()
+					&& dominosKnight.getY() + dominosKnight.getHeight() >= tmp.getY()
+					&& dominosKnight.getX() + dominosKnight.getWidth() <= tmp.getX() + tmp.getWidth()
+					&& dominosKnight.getY() + dominosKnight.getHeight() <= tmp.getY() + tmp.getHeight())
+					// First condition of Tmp intersection
+					&& (tmp.getX() >= dominosKnight.getX()
+					&& tmp.getY() >= dominosKnight.getY()
+					&& tmp.getX() <= dominosKnight.getX() + dominosKnight.getWidth()
+					&& tmp.getY() <= dominosKnight.getY() + dominosKnight.getHeight())
+					// Second condition of Tmp intersection
+					||(tmp.getX() + tmp.getWidth() >= dominosKnight.getX()
+					&& tmp.getY() >= dominosKnight.getY()
+					&& tmp.getX() + tmp.getWidth() <= dominosKnight.getX() + dominosKnight.getWidth()
+					&& tmp.getY() <= dominosKnight.getY() + dominosKnight.getHeight())
+					// Third condition of Tmp intersection
+					||(tmp.getX() >= dominosKnight.getX()
+					&& tmp.getY() + tmp.getHeight() >= dominosKnight.getY()
+					&& tmp.getX() <= dominosKnight.getX() + dominosKnight.getWidth()
+					&& tmp.getY() + tmp.getHeight() <= dominosKnight.getY() + dominosKnight.getHeight())
+					// Fourth condition of Tmp intersection
+					||(tmp.getX() + tmp.getWidth() >= dominosKnight.getX()
+					&& tmp.getY() + tmp.getHeight() >= dominosKnight.getY()
+					&& tmp.getX() + tmp.getWidth() <= dominosKnight.getX() + dominosKnight.getWidth()
+					&& tmp.getY() + tmp.getHeight() <= dominosKnight.getY() + dominosKnight.getHeight())
+					)	
 					{
 						this.life --;
-						Log.i("Returning ------",tmp.getName() + "-----------> True");
+						Log.i("Collided with ----->", "-------> FIRE");
 						return true;
 					}
 			}
@@ -686,4 +790,61 @@ public class GameMainThread extends Thread {
 	public void setDownDomino(Bitmap downDomino) {
 		this.downDomino = downDomino;
 	}
+
+	/**
+	 * @return the isMusicOn
+	 */
+	public boolean isMusicOn() {
+		return isMusicOn;
+	}
+
+	/**
+	 * @param isMusicOn the isMusicOn to set
+	 */
+	public void setMusicOn(boolean isMusicOn) {
+		this.isMusicOn = isMusicOn;
+	}
+
+	/**
+	 * @return the music
+	 */
+	public Sprites getMusic() {
+		return music;
+	}
+
+	/**
+	 * @param music the music to set
+	 */
+	public void setMusic(Sprites music) {
+		this.music = music;
+	}
+
+	/**
+	 * @return the musicOff
+	 */
+	public Bitmap getMusicOff() {
+		return musicOff;
+	}
+
+	/**
+	 * @param musicOff the musicOff to set
+	 */
+	public void setMusicOff(Bitmap musicOff) {
+		this.musicOff = musicOff;
+	}
+
+	/**
+	 * @return the musicOn
+	 */
+	public Bitmap getMusicOn() {
+		return musicOn;
+	}
+
+	/**
+	 * @param musicOn the musicOn to set
+	 */
+	public void setMusicOn(Bitmap musicOn) {
+		this.musicOn = musicOn;
+	}
+
 }

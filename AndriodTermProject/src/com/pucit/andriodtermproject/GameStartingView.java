@@ -5,6 +5,7 @@ package com.pucit.andriodtermproject;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -56,6 +57,18 @@ public class GameStartingView extends SurfaceView implements Callback{
 		Log.d(this.getClass().toString(), "in SurfaceDestroyed()");
 	    boolean retry = true;
 	    dominoKnight.isRunning = false;
+	    if(dominoKnight.isMusicOn())
+	    {
+	    	MainMenuActivity.mediaPlayer.stop();
+	    	MainMenuActivity.mediaPlayer.release();
+	    	MainMenuActivity.mediaPlayer = null;
+	    }
+		if(MainMenuActivity.isMusicOn)
+		{
+			MainMenuActivity.mediaPlayer = MediaPlayer.create(context, R.raw.main_audio);
+			MainMenuActivity.mediaPlayer.setLooping(true);
+			MainMenuActivity.mediaPlayer.start();
+		}
 	    SharedPreferences pref = context.getSharedPreferences("GamePreference", Context.MODE_PRIVATE);
 	    SharedPreferences.Editor editor = pref.edit();
 	    editor.putLong("Score", Score);

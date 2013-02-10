@@ -9,5 +9,5 @@ package com.pucit.andriodtermproject;
  */
 public enum GameElements 
 {
-	 GRASS, COIN, TREE, OBSTICAL, UP, DOWN, LEFT, RIGHT;	
+	 GRASS, COIN, TREE, OBSTICAL, UP, DOWN, LEFT, RIGHT, FIRE, MUSIC;	
 }
