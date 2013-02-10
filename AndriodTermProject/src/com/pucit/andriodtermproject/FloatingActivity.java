@@ -3,6 +3,7 @@ package com.pucit.andriodtermproject;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -46,9 +47,13 @@ public class FloatingActivity extends Activity{
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
+				if(MainMenuActivity.isMusicOn)
+				{
+					MainMenuActivity.mediaPlayer = MediaPlayer.create(FloatingActivity.this, R.raw.main_audio);
+					MainMenuActivity.mediaPlayer.setLooping(true);
+					MainMenuActivity.mediaPlayer.start();
+				}
 				finish();
-				Intent intent = new Intent (FloatingActivity.this, MainMenuActivity.class);
-				startActivity(intent);
 			}
 		});     
     }
