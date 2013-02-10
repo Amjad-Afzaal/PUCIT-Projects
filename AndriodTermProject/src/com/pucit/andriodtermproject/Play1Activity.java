@@ -2,7 +2,6 @@ package com.pucit.andriodtermproject;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.Window;
@@ -26,9 +25,8 @@ public class Play1Activity extends Activity {
     @Override
     public boolean onTouchEvent(MotionEvent event)
     {
-    	Log.i("Play 1 Activity ---->","------> One time");
     	game.dominoKnight.onTouch(event);
-		return false;
+		return true;
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -18,10 +18,10 @@ public class Sprites {
 	
 	public Sprites(Bitmap texture, GameElements name)
 	{
-		this.setTexture(texture);
+		this.texture = texture;
 		this.name = name;
-		this.height = this.getTexture().getHeight();
-		this.width = this.getTexture().getWidth();
+		this.height = this.texture.getHeight();
+		this.width = this.texture.getWidth();
 	}
 	
 	public int getWidth()
@@ -36,7 +36,7 @@ public class Sprites {
 	
 	public void draw(Canvas canvas) 
 	{
-	    canvas.drawBitmap(getTexture(), x, y, null);
+	    canvas.drawBitmap(texture, x, y, null);
 	}
 
 	
@@ -81,20 +81,6 @@ public class Sprites {
 	 */
 	public void setName(GameElements name) {
 		this.name = name;
-	}
-
-	/**
-	 * @return the texture
-	 */
-	public Bitmap getTexture() {
-		return texture;
-	}
-
-	/**
-	 * @param texture the texture to set
-	 */
-	public void setTexture(Bitmap texture) {
-		this.texture = texture;
 	}
 
 }

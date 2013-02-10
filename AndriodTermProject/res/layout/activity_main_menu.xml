@@ -37,14 +37,6 @@
             android:layout_height="wrap_content"
             android:text="HELP" />
 
-        <ToggleButton
-        android:id="@+id/toggleButton"
-        android:layout_height="wrap_content"
-        android:layout_width="103dp"
-        android:text="ToggleButton"
-        android:textOff="Music Off"
-        android:textOn="Music On" />
-        
         <Button
             android:id="@+id/Quit"
             android:layout_width="103dp"

@@ -20,16 +20,6 @@
         android:layout_marginTop="15dp"
         android:text="Amjad Afzaal"
         android:textSize="15dp" />
-
-    <ToggleButton
-        android:id="@+id/toggleButton1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/play2Name"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="51dp"
-        android:text="ToggleButton"
-        android:textOff="Music Off"
-        android:textOn="Music On" />
+    
 
 </RelativeLayout>
