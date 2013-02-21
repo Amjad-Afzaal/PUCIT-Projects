@@ -1,0 +1,89 @@
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/68/trunk/src/takatuka/classreader/dataObjs/constantPool
+END
+FloatInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/!svn/ver/66/trunk/src/takatuka/classreader/dataObjs/constantPool/FloatInfo.java
+END
+ClassInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/!svn/ver/68/trunk/src/takatuka/classreader/dataObjs/constantPool/ClassInfo.java
+END
+NameAndTypeInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/!svn/ver/66/trunk/src/takatuka/classreader/dataObjs/constantPool/NameAndTypeInfo.java
+END
+StringInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/!svn/ver/66/trunk/src/takatuka/classreader/dataObjs/constantPool/StringInfo.java
+END
+UTF8Info.java
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/!svn/ver/66/trunk/src/takatuka/classreader/dataObjs/constantPool/UTF8Info.java
+END
+ConstantPool.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/!svn/ver/43/trunk/src/takatuka/classreader/dataObjs/constantPool/ConstantPool.java
+END
+DoubleInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/!svn/ver/66/trunk/src/takatuka/classreader/dataObjs/constantPool/DoubleInfo.java
+END
+IntegerInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/!svn/ver/66/trunk/src/takatuka/classreader/dataObjs/constantPool/IntegerInfo.java
+END
+MethodRefInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/!svn/ver/66/trunk/src/takatuka/classreader/dataObjs/constantPool/MethodRefInfo.java
+END
+InterfaceMethodRefInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svn/!svn/ver/66/trunk/src/takatuka/classreader/dataObjs/constantPool/InterfaceMethodRefInfo.java
+END
+EmptyInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/!svn/ver/66/trunk/src/takatuka/classreader/dataObjs/constantPool/EmptyInfo.java
+END
+ReferenceInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/!svn/ver/43/trunk/src/takatuka/classreader/dataObjs/constantPool/ReferenceInfo.java
+END
+LongInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/!svn/ver/66/trunk/src/takatuka/classreader/dataObjs/constantPool/LongInfo.java
+END
+FieldRefInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/!svn/ver/66/trunk/src/takatuka/classreader/dataObjs/constantPool/FieldRefInfo.java
+END

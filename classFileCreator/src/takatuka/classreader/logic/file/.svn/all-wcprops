@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/!svn/ver/66/trunk/src/takatuka/classreader/logic/file
+END
+ParseClassFile.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/43/trunk/src/takatuka/classreader/logic/file/ParseClassFile.java
+END
+ClassFileWriter.java
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/!svn/ver/66/trunk/src/takatuka/classreader/logic/file/ClassFileWriter.java
+END
+MemClass.java
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/43/trunk/src/takatuka/classreader/logic/file/MemClass.java
+END
+PropertyReader.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/43/trunk/src/takatuka/classreader/logic/file/PropertyReader.java
+END
+ClassFileReader.java
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/!svn/ver/43/trunk/src/takatuka/classreader/logic/file/ClassFileReader.java
+END
+ConfigPropertyReader.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/!svn/ver/43/trunk/src/takatuka/classreader/logic/file/ConfigPropertyReader.java
+END
+ParseConstantPool.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/!svn/ver/66/trunk/src/takatuka/classreader/logic/file/ParseConstantPool.java
+END

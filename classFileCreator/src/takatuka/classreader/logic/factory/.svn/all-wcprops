@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/79/trunk/src/takatuka/classreader/logic/factory
+END
+UnFactory.java
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/!svn/ver/43/trunk/src/takatuka/classreader/logic/factory/UnFactory.java
+END
+FactoryPlaceholder.java
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/!svn/ver/43/trunk/src/takatuka/classreader/logic/factory/FactoryPlaceholder.java
+END
+ConstantPoolFactory.java
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/!svn/ver/43/trunk/src/takatuka/classreader/logic/factory/ConstantPoolFactory.java
+END
+FactoryFacade.java
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/!svn/ver/79/trunk/src/takatuka/classreader/logic/factory/FactoryFacade.java
+END
+ControllerFactory.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/!svn/ver/43/trunk/src/takatuka/classreader/logic/factory/ControllerFactory.java
+END
+ClassFileFactory.java
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/!svn/ver/43/trunk/src/takatuka/classreader/logic/factory/ClassFileFactory.java
+END
+AttributesFactory.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/!svn/ver/43/trunk/src/takatuka/classreader/logic/factory/AttributesFactory.java
+END

@@ -1,0 +1,90 @@
+
+ ---------------------- 
+ Magic Number = cafebabe
+ Minor Version=0000
+ Major version=0032
+ ----- Constant Pool ---- 
+size=0026
+
+(1)	MethodRefInfo=0a, Index=000a, nameAndTypeIndex=0014
+(2)	FieldRefInfo=09, Index=0015, nameAndTypeIndex=0016
+(3)	StringInfo=08, Index=0017
+(4)	MethodRefInfo=0a, Index=0018, nameAndTypeIndex=0019
+(5)	ClassInfo=07, Index=001a
+(6)	MethodRefInfo=0a, Index=0005, nameAndTypeIndex=0014
+(7)	StringInfo=08, Index=001b
+(8)	MethodRefInfo=0a, Index=0005, nameAndTypeIndex=001c
+(9)	ClassInfo=07, Index=001d
+(a)	ClassInfo=07, Index=001e
+(b)	UTF8Info=01, length =0006, bytes=3c696e69743e 	//<init>
+(c)	UTF8Info=01, length =0003, bytes=282956 	//()V
+(d)	UTF8Info=01, length =0004, bytes=436f6465 	//Code
+(e)	UTF8Info=01, length =000f, bytes=4c696e654e756d6265725461626c65 	//LineNumberTable
+(f)	UTF8Info=01, length =0004, bytes=6d61696e 	//main
+(10)	UTF8Info=01, length =0016, bytes=285b4c6a6176612f6c616e672f537472696e673b2956 	//([Ljava/lang/String;)V
+(11)	UTF8Info=01, length =000d, bytes=537461636b4d61705461626c65 	//StackMapTable
+(12)	UTF8Info=01, length =000a, bytes=536f7572636546696c65 	//SourceFile
+(13)	UTF8Info=01, length =0009, bytes=4d61696e2e6a617661 	//Main.java
+(14)	NameAndTypeInfo=0c, Index=000b, descriptor_index=000c
+(15)	ClassInfo=07, Index=001f
+(16)	NameAndTypeInfo=0c, Index=0020, descriptor_index=0021
+(17)	UTF8Info=01, length =000d, bytes=497420697320776f726b696e67 	//It is working
+(18)	ClassInfo=07, Index=0022
+(19)	NameAndTypeInfo=0c, Index=0023, descriptor_index=0024
+(1a)	UTF8Info=01, length =000e, bytes=746573742f74657374342f536f6e 	//test/test4/Son
+(1b)	UTF8Info=01, length =000f, bytes=497420697320776f726b696e672032 	//It is working 2
+(1c)	NameAndTypeInfo=0c, Index=0025, descriptor_index=000c
+(1d)	UTF8Info=01, length =000f, bytes=746573742f74657374342f4d61696e 	//test/test4/Main
+(1e)	UTF8Info=01, length =0010, bytes=6a6176612f6c616e672f4f626a656374 	//java/lang/Object
+(1f)	UTF8Info=01, length =0010, bytes=6a6176612f6c616e672f53797374656d 	//java/lang/System
+(20)	UTF8Info=01, length =0003, bytes=6f7574 	//out
+(21)	UTF8Info=01, length =0015, bytes=4c6a6176612f696f2f5072696e7453747265616d3b 	//Ljava/io/PrintStream;
+(22)	UTF8Info=01, length =0013, bytes=6a6176612f696f2f5072696e7453747265616d 	//java/io/PrintStream
+(23)	UTF8Info=01, length =0007, bytes=7072696e746c6e 	//println
+(24)	UTF8Info=01, length =0015, bytes=284c6a6176612f6c616e672f537472696e673b2956 	//(Ljava/lang/String;)V
+(25)	UTF8Info=01, length =0003, bytes=666f6f 	//foo
+ ---------------------- 
+
+ Access flags=0021
+ this class=0009
+ super class=000a
+ Interfaces Info=size=0000
+
+size=0000
+
+--------
+size=0002
+
+	MethodInfo=[name=<init>()V, 	 access_flag=0001, name_index= 000b, descriptor_index=000c, attributes=size=0001{ CodeAtt=attribute_name_index =000d, attribute_length =0000001d, max_stack =0001, max_locals =0001, code_length =00000005, code={
+		0x0:19   ALOAD_0 
+ 		0x1:20   INVOKESPECIAL 0x0001
+ 		0x4:21   RETURN }, exception_table_length =0000, exception_table={} , Attributes ={size=0001{ LineNumberAttribute=attribute_name_index =000e, attribute_length =00000006, line_number_table_length =0001{start_pc =0000, line_number =001f}}}
+
+
+	MethodInfo=[name=main([Ljava/lang/String;)V, 	 access_flag=0009, name_index= 000f, descriptor_index=0010, attributes=size=0001{ CodeAtt=attribute_name_index =000d, attribute_length =0000006e, max_stack =0002, max_locals =0004, code_length =00000029, code={
+		0x0:22   ICONST_1 
+ 		0x1:23   ISTORE_1 
+ 		0x2:24   ICONST_5 
+ 		0x3:25   ISTORE_2 
+ 		0x4:26   ILOAD_1 
+ 		0x5:27   ILOAD_2 
+ 		0x6:28   IADD 
+ 		0x7:29   ISTORE_1 
+ 		0x8:30   GETSTATIC 0x0002
+ 		0xb:31   LDC 0x03
+ 		0xd:32   INVOKEVIRTUAL 0x0004
+ 		0x10:33   ILOAD_1 
+ 		0x11:34   IFEQ 0x0017
+ 		0x14:35   NEW 0x0005
+ 		0x17:36   DUP 
+ 		0x18:37   INVOKESPECIAL 0x0006
+ 		0x1b:38   ASTORE_3 
+ 		0x1c:39   GETSTATIC 0x0002
+ 		0x1f:40   LDC 0x07
+ 		0x21:41   INVOKEVIRTUAL 0x0004
+ 		0x24:42   ALOAD_3 
+ 		0x25:43   INVOKEVIRTUAL 0x0008
+ 		0x28:44   RETURN }, exception_table_length =0000, exception_table={} , Attributes ={size=0002{ LineNumberAttribute=attribute_name_index =000e, attribute_length =00000026, line_number_table_length =0009{start_pc =0000, line_number =0022}{start_pc =0002, line_number =0023}{start_pc =0004, line_number =0024}{start_pc =0008, line_number =0025}{start_pc =0010, line_number =0026}{start_pc =0014, line_number =0027}{start_pc =001c, line_number =0028}{start_pc =0024, line_number =0029}{start_pc =0028, line_number =002b}{attribute_name_index =0011, attribute_length =00000007, 0001fd00280101}}}
+
+
+size=0001{	SourceFileAtt=attribute_name_index =0012, attribute_length =00000002, sourcefile_index= 0013}

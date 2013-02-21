@@ -1,0 +1,94 @@
+
+ ---------------------- 
+ Magic Number = cafebabe
+ Minor Version=0000
+ Major version=0031
+ ----- Constant Pool ---- 
+size=0035
+
+(1)	MethodRefInfo=0a, Index=000c, nameAndTypeIndex=0022
+(2)	FieldRefInfo=09, Index=0023, nameAndTypeIndex=0024
+(3)	StringInfo=08, Index=0025
+(4)	MethodRefInfo=0a, Index=0026, nameAndTypeIndex=0027
+(5)	ClassInfo=07, Index=0028
+(6)	MethodRefInfo=0a, Index=0005, nameAndTypeIndex=0022
+(7)	StringInfo=08, Index=0029
+(8)	MethodRefInfo=0a, Index=0005, nameAndTypeIndex=002a
+(9)	StringInfo=08, Index=002b
+(a)	StringInfo=08, Index=002c
+(b)	ClassInfo=07, Index=002d
+(c)	ClassInfo=07, Index=002e
+(d)	UTF8Info=01, length =0006, bytes=3c696e69743e 	//<init>
+(e)	UTF8Info=01, length =0003, bytes=282956 	//()V
+(f)	UTF8Info=01, length =0004, bytes=436f6465 	//Code
+(10)	UTF8Info=01, length =000f, bytes=4c696e654e756d6265725461626c65 	//LineNumberTable
+(11)	UTF8Info=01, length =0012, bytes=4c6f63616c5661726961626c655461626c65 	//LocalVariableTable
+(12)	UTF8Info=01, length =0004, bytes=74686973 	//this
+(13)	UTF8Info=01, length =0011, bytes=4c746573742f74657374332f4d61696e3b 	//Ltest/test3/Main;
+(14)	UTF8Info=01, length =0004, bytes=6d61696e 	//main
+(15)	UTF8Info=01, length =0016, bytes=285b4c6a6176612f6c616e672f537472696e673b2956 	//([Ljava/lang/String;)V
+(16)	UTF8Info=01, length =0008, bytes=636c61737354776f 	//classTwo
+(17)	UTF8Info=01, length =0015, bytes=4c746573742f74657374332f436c61737354776f3b 	//Ltest/test3/ClassTwo;
+(18)	UTF8Info=01, length =0004, bytes=61726773 	//args
+(19)	UTF8Info=01, length =0013, bytes=5b4c6a6176612f6c616e672f537472696e673b 	//[Ljava/lang/String;
+(1a)	UTF8Info=01, length =0001, bytes=69 	//i
+(1b)	UTF8Info=01, length =0001, bytes=49 	//I
+(1c)	UTF8Info=01, length =0001, bytes=6b 	//k
+(1d)	UTF8Info=01, length =0006, bytes=666f6f626172 	//foobar
+(1e)	UTF8Info=01, length =0001, bytes=6a 	//j
+(1f)	UTF8Info=01, length =0003, bytes=666f6f 	//foo
+(20)	UTF8Info=01, length =000a, bytes=536f7572636546696c65 	//SourceFile
+(21)	UTF8Info=01, length =0009, bytes=4d61696e2e6a617661 	//Main.java
+(22)	NameAndTypeInfo=0c, Index=000d, descriptor_index=000e
+(23)	ClassInfo=07, Index=002f
+(24)	NameAndTypeInfo=0c, Index=0030, descriptor_index=0031
+(25)	UTF8Info=01, length =000d, bytes=497420697320776f726b696e67 	//It is working
+(26)	ClassInfo=07, Index=0032
+(27)	NameAndTypeInfo=0c, Index=0033, descriptor_index=0034
+(28)	UTF8Info=01, length =0013, bytes=746573742f74657374332f436c61737354776f 	//test/test3/ClassTwo
+(29)	UTF8Info=01, length =000f, bytes=497420697320776f726b696e672032 	//It is working 2
+(2a)	NameAndTypeInfo=0c, Index=001f, descriptor_index=000e
+(2b)	UTF8Info=01, length =0013, bytes=492073686f756c642062652064656c65746564 	//I should be deleted
+(2c)	UTF8Info=01, length =0017, bytes=492073686f756c642062652064656c6574656420746f6f 	//I should be deleted too
+(2d)	UTF8Info=01, length =000f, bytes=746573742f74657374332f4d61696e 	//test/test3/Main
+(2e)	UTF8Info=01, length =0010, bytes=6a6176612f6c616e672f4f626a656374 	//java/lang/Object
+(2f)	UTF8Info=01, length =0010, bytes=6a6176612f6c616e672f53797374656d 	//java/lang/System
+(30)	UTF8Info=01, length =0003, bytes=6f7574 	//out
+(31)	UTF8Info=01, length =0015, bytes=4c6a6176612f696f2f5072696e7453747265616d3b 	//Ljava/io/PrintStream;
+(32)	UTF8Info=01, length =0013, bytes=6a6176612f696f2f5072696e7453747265616d 	//java/io/PrintStream
+(33)	UTF8Info=01, length =0007, bytes=7072696e746c6e 	//println
+(34)	UTF8Info=01, length =0015, bytes=284c6a6176612f6c616e672f537472696e673b2956 	//(Ljava/lang/String;)V
+ ---------------------- 
+
+ Access flags=0021
+ this class=000b
+ super class=000c
+ Interfaces Info=size=0000
+
+size=0000
+
+--------
+size=0002
+
+	MethodInfo=[name=<init>()V, 	 access_flag=0001, name_index= 000d, descriptor_index=000e, attributes=size=0001{ CodeAtt=attribute_name_index =000f, attribute_length =0000000c, max_stack =0001, max_locals =0001, code_length =00000000, code={
+}, exception_table_length =0000, exception_table={} , Attributes ={size=0000}}
+
+
+	MethodInfo=[name=main([Ljava/lang/String;)V, 	 access_flag=0009, name_index= 0014, descriptor_index=0015, attributes=size=0001{ CodeAtt=attribute_name_index =000f, attribute_length =00000021, max_stack =0002, max_locals =0004, code_length =00000015, code={
+		0x0:48   ICONST_1 
+ 		0x1:49   ISTORE_1 
+ 		0x2:50   ICONST_5 
+ 		0x3:51   ISTORE_2 
+ 		0x4:52   ILOAD_1 
+ 		0x5:53   ILOAD_2 
+ 		0x6:54   IADD 
+ 		0x7:55   ISTORE_1 
+ 		0x8:56   GETSTATIC 0x0002
+ 		0xb:57   LDC 0x03
+ 		0xd:58   INVOKEVIRTUAL 0x0004
+ 		0x10:59   ILOAD_1 
+ 		0x11:60   IFNE 0x0003
+ 		0x14:70   RETURN }, exception_table_length =0000, exception_table={} , Attributes ={size=0000}}
+
+
+size=0001{	SourceFileAtt=attribute_name_index =0020, attribute_length =00000002, sourcefile_index= 0021}

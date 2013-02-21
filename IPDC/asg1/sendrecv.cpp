@@ -1,0 +1,73 @@
+#include <iostream>
+#include <mpi.h>
+
+using namespace std;
+
+int rank, size;
+
+enum MPI_MY_CONST
+{
+	MPI_BL,	// For Blocking Communication
+	MPI_NBL // For Non Blocking Communication
+};
+
+int MPI_Mysendrecv(MPI_MY_CONST type, MPICH2_CONST void *sendbuf, int sendcount, MPI_Datatype sendtype,
+                       int dest, int sendtag,
+                       void *recvbuf, int recvcount, MPI_Datatype recvtype,
+                       int source, int recvtag,
+                       MPI_Comm comm, MPI_Status *status)
+{
+	if(dest >= size || source >= size || sendbuf == recvbuf)
+	{
+		cout << "Invalid dest or source or send, recv buffer rank!\n";
+		return 1;
+	}
+	if(type == MPI_BL)
+	{
+		MPI_Send(sendbuf, sendcount, sendtype, dest, sendtag, comm);
+		MPI_Recv(recvbuf, recvcount, recvtype, source, recvtag, comm, status);
+	}
+	else if(type == MPI_NBL)
+	{
+		MPI_Request request;
+		MPI_Isend(sendbuf, sendcount, sendtype, dest, sendtag, comm, &request);
+		MPI_Irecv(recvbuf, recvcount, recvtype, source, recvtag, comm, &request);
+	}
+	else
+	{
+		cout << "Bad Communication Type!\n";
+		return 1;
+	}
+	return 0;
+} 
+
+int main (int argc, char * argv[])
+{
+	MPI_Init(&argc, &argv);
+	MPI_Comm_size(MPI_COMM_WORLD, &size);
+	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+	int buf = 1, rbuf;
+	MPI_Status status;
+	if(size < 2)
+	{
+		cout << "You cannot test MPI_Mysendrecv with less than 2 process!\n";
+		MPI_Finalize();
+		return 1;
+	}
+	if(rank == 1)
+	{
+		MPI_Mysendrecv(MPI_BL, &buf, 1, MPI_INT, 0, 0, &rbuf, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &status);
+		MPI_Mysendrecv(MPI_NBL, &buf, 1, MPI_INT, 0, 0, &rbuf, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &status);
+	}
+	if(rank == 0)
+	{
+		MPI_Mysendrecv(MPI_BL, &buf, 1, MPI_INT, 1, 0, &rbuf, 1, MPI_INT, 1, 0, MPI_COMM_WORLD, &status);
+		MPI_Mysendrecv(MPI_NBL, &buf, 1, MPI_INT, 1, 0, &rbuf, 1, MPI_INT, 1, 0, MPI_COMM_WORLD, &status);
+	}
+	if(rank == 1 || rank == 0)
+	cout << "I with rank " << rank << " receives data " << rbuf << " from 1 and send data " << buf << " to 0\n";
+	else
+		cout << "\nI am not involved!\n";
+	MPI_Finalize();
+	return 0;
+}

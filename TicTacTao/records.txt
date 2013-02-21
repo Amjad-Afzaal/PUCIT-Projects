@@ -1,0 +1,20 @@
+Ali Khan,Same Computer,40
+
+Saad Afzaal,Same Computer,40
+
+Amjad Afzaal,Same Computer,40
+
+Amjad,Hard,30
+
+Amna Akbar,Hard,30
+
+Amjad,Hard,30
+
+Amjad,Hard,30
+
+AMjad,Easy,10
+
+Saad Afzaal,Easy,10
+
+Amna Akbar,Easy,10
+

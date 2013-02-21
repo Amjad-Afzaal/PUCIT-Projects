@@ -1,0 +1,8837 @@
+/*
+ * TicTacTaoView.java
+ */
+
+package tictactao;
+
+import java.awt.Font;
+import org.jdesktop.application.Action;
+import org.jdesktop.application.ResourceMap;
+import org.jdesktop.application.SingleFrameApplication;
+import org.jdesktop.application.FrameView;
+import org.jdesktop.application.TaskMonitor;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.Timer;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
+/**
+ * The application's main frame.
+ */
+public class TicTacTaoView extends FrameView {
+    private String turn;
+    private Client client;
+
+    public TicTacTaoView(SingleFrameApplication app) {
+        super(app);
+
+        initComponents();
+        //Panels
+
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.OverTheNetworkPanal.setVisible(false);
+        this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+        this.HostJoinPanal.setVisible(false);
+        
+        
+        this.board = new char [10];
+        this.initializeBoard();
+        this.records = new Records();
+        records.read();
+        this.server = new Server();
+        this.client = new Client();
+        // status bar initialization - message timeout, idle icon and busy animation, etc
+        ResourceMap resourceMap = getResourceMap();
+        int messageTimeout = resourceMap.getInteger("StatusBar.messageTimeout");
+        messageTimer = new Timer(messageTimeout, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                statusMessageLabel.setText("");
+            }
+        });
+        messageTimer.setRepeats(false);
+        int busyAnimationRate = resourceMap.getInteger("StatusBar.busyAnimationRate");
+        for (int i = 0; i < busyIcons.length; i++) {
+            busyIcons[i] = resourceMap.getIcon("StatusBar.busyIcons[" + i + "]");
+        }
+        busyIconTimer = new Timer(busyAnimationRate, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                busyIconIndex = (busyIconIndex + 1) % busyIcons.length;
+                statusAnimationLabel.setIcon(busyIcons[busyIconIndex]);
+            }
+        });
+        idleIcon = resourceMap.getIcon("StatusBar.idleIcon");
+        statusAnimationLabel.setIcon(idleIcon);
+        progressBar.setVisible(false);
+
+        // connecting action tasks to status bar via TaskMonitor
+        TaskMonitor taskMonitor = new TaskMonitor(getApplication().getContext());
+        taskMonitor.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                String propertyName = evt.getPropertyName();
+                if ("started".equals(propertyName)) {
+                    if (!busyIconTimer.isRunning()) {
+                        statusAnimationLabel.setIcon(busyIcons[0]);
+                        busyIconIndex = 0;
+                        busyIconTimer.start();
+                    }
+                    progressBar.setVisible(true);
+                    progressBar.setIndeterminate(true);
+                } else if ("done".equals(propertyName)) {
+                    busyIconTimer.stop();
+                    statusAnimationLabel.setIcon(idleIcon);
+                    progressBar.setVisible(false);
+                    progressBar.setValue(0);
+                } else if ("message".equals(propertyName)) {
+                    String text = (String)(evt.getNewValue());
+                    statusMessageLabel.setText((text == null) ? "" : text);
+                    messageTimer.restart();
+                } else if ("progress".equals(propertyName)) {
+                    int value = (Integer)(evt.getNewValue());
+                    progressBar.setVisible(true);
+                    progressBar.setIndeterminate(false);
+                    progressBar.setValue(value);
+                }
+            }
+        });
+    }
+
+    @Action
+    public void showAboutBox() {
+        if (aboutBox == null) {
+            JFrame mainFrame = TicTacTaoApp.getApplication().getMainFrame();
+            aboutBox = new TicTacTaoAboutBox(mainFrame);
+            aboutBox.setLocationRelativeTo(mainFrame);
+        }
+        TicTacTaoApp.getApplication().show(aboutBox);
+    }
+
+    /** This method is called from within the constructor to
+     * initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is
+     * always regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        mainPanel = new javax.swing.JPanel();
+        MainGamePanal = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        NewGame = new javax.swing.JButton();
+        Option = new javax.swing.JButton();
+        Help = new javax.swing.JButton();
+        HighScore = new javax.swing.JButton();
+        Quit = new javax.swing.JButton();
+        NewGamePanal = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        SinglePlayer = new javax.swing.JButton();
+        MultiPlayer = new javax.swing.JButton();
+        BackGameMenu = new javax.swing.JButton();
+        OptionPanal = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        Easy = new javax.swing.JRadioButton();
+        Medium = new javax.swing.JRadioButton();
+        Hard = new javax.swing.JRadioButton();
+        BackOptionMenu = new javax.swing.JButton();
+        check = new javax.swing.JRadioButton();
+        cross = new javax.swing.JRadioButton();
+        HelpPanal = new javax.swing.JPanel();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        jLabel11 = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        BackHelpMenu = new javax.swing.JButton();
+        HighScorePanal = new javax.swing.JPanel();
+        Name1 = new javax.swing.JLabel();
+        Name2 = new javax.swing.JLabel();
+        Name3 = new javax.swing.JLabel();
+        Name4 = new javax.swing.JLabel();
+        Name5 = new javax.swing.JLabel();
+        Name6 = new javax.swing.JLabel();
+        Name7 = new javax.swing.JLabel();
+        Name8 = new javax.swing.JLabel();
+        Name9 = new javax.swing.JLabel();
+        Name10 = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
+        jLabel14 = new javax.swing.JLabel();
+        jLabel15 = new javax.swing.JLabel();
+        jLabel16 = new javax.swing.JLabel();
+        jLabel17 = new javax.swing.JLabel();
+        jLabel18 = new javax.swing.JLabel();
+        jLabel19 = new javax.swing.JLabel();
+        jLabel20 = new javax.swing.JLabel();
+        jLabel21 = new javax.swing.JLabel();
+        jLabel22 = new javax.swing.JLabel();
+        jLabel23 = new javax.swing.JLabel();
+        jLabel24 = new javax.swing.JLabel();
+        jLabel25 = new javax.swing.JLabel();
+        jLabel26 = new javax.swing.JLabel();
+        jLabel27 = new javax.swing.JLabel();
+        Level1 = new javax.swing.JLabel();
+        Score1 = new javax.swing.JLabel();
+        Level2 = new javax.swing.JLabel();
+        Score2 = new javax.swing.JLabel();
+        Level3 = new javax.swing.JLabel();
+        Score3 = new javax.swing.JLabel();
+        Level4 = new javax.swing.JLabel();
+        Score4 = new javax.swing.JLabel();
+        Level5 = new javax.swing.JLabel();
+        Score5 = new javax.swing.JLabel();
+        Level6 = new javax.swing.JLabel();
+        Score6 = new javax.swing.JLabel();
+        Level7 = new javax.swing.JLabel();
+        Score7 = new javax.swing.JLabel();
+        Level8 = new javax.swing.JLabel();
+        Score8 = new javax.swing.JLabel();
+        Level9 = new javax.swing.JLabel();
+        Score9 = new javax.swing.JLabel();
+        Level10 = new javax.swing.JLabel();
+        Score10 = new javax.swing.JLabel();
+        BackHighScoreMenu = new javax.swing.JButton();
+        SinglePlayerPanal = new javax.swing.JPanel();
+        jLabel28 = new javax.swing.JLabel();
+        jLabel29 = new javax.swing.JLabel();
+        Name = new javax.swing.JTextField();
+        Play = new javax.swing.JButton();
+        BackSinglePlayer = new javax.swing.JButton();
+        MultiplayerPanal = new javax.swing.JPanel();
+        jLabel30 = new javax.swing.JLabel();
+        SameComputer = new javax.swing.JButton();
+        OverNetwork = new javax.swing.JButton();
+        BackMultiplayer = new javax.swing.JButton();
+        PlayPanal = new javax.swing.JPanel();
+        pName = new javax.swing.JLabel();
+        ActualPanal = new javax.swing.JPanel();
+        c7 = new javax.swing.JButton();
+        c8 = new javax.swing.JButton();
+        c9 = new javax.swing.JButton();
+        c4 = new javax.swing.JButton();
+        c5 = new javax.swing.JButton();
+        c6 = new javax.swing.JButton();
+        c1 = new javax.swing.JButton();
+        c2 = new javax.swing.JButton();
+        c3 = new javax.swing.JButton();
+        Level = new javax.swing.JLabel();
+        jLabel31 = new javax.swing.JLabel();
+        jLabel32 = new javax.swing.JLabel();
+        jLabel33 = new javax.swing.JLabel();
+        score = new javax.swing.JLabel();
+        pTurn = new javax.swing.JLabel();
+        PlayMultiplayerOnTheSameComputerPanal = new javax.swing.JPanel();
+        p1Name = new javax.swing.JLabel();
+        ActualPanal1 = new javax.swing.JPanel();
+        m1 = new javax.swing.JButton();
+        m2 = new javax.swing.JButton();
+        m3 = new javax.swing.JButton();
+        m4 = new javax.swing.JButton();
+        m5 = new javax.swing.JButton();
+        m6 = new javax.swing.JButton();
+        m7 = new javax.swing.JButton();
+        m8 = new javax.swing.JButton();
+        m9 = new javax.swing.JButton();
+        Level11 = new javax.swing.JLabel();
+        jLabel34 = new javax.swing.JLabel();
+        jLabel35 = new javax.swing.JLabel();
+        jLabel36 = new javax.swing.JLabel();
+        score1 = new javax.swing.JLabel();
+        p1Turn = new javax.swing.JLabel();
+        SameComputerPanal = new javax.swing.JPanel();
+        jLabel37 = new javax.swing.JLabel();
+        jLabel38 = new javax.swing.JLabel();
+        jLabel39 = new javax.swing.JLabel();
+        p1NameTextbox = new javax.swing.JTextField();
+        jLabel40 = new javax.swing.JLabel();
+        check1 = new javax.swing.JRadioButton();
+        cross1 = new javax.swing.JRadioButton();
+        jLabel41 = new javax.swing.JLabel();
+        jLabel42 = new javax.swing.JLabel();
+        p2NameTextbox = new javax.swing.JTextField();
+        BackOnTheSameComputerButton = new javax.swing.JButton();
+        PlayMutliplayerSameComputer = new javax.swing.JButton();
+        OverTheNetworkPanal = new javax.swing.JPanel();
+        jLabel43 = new javax.swing.JLabel();
+        jLabel44 = new javax.swing.JLabel();
+        poName = new javax.swing.JTextField();
+        PlayOverTheNetworkButton = new javax.swing.JButton();
+        BackOverTheNetworkButton = new javax.swing.JButton();
+        jLabel48 = new javax.swing.JLabel();
+        ocheck = new javax.swing.JRadioButton();
+        ocross = new javax.swing.JRadioButton();
+        PlayMultiplayerOverTheNetworkPanal = new javax.swing.JPanel();
+        pName1 = new javax.swing.JLabel();
+        ActualPanal2 = new javax.swing.JPanel();
+        o7 = new javax.swing.JButton();
+        o8 = new javax.swing.JButton();
+        o9 = new javax.swing.JButton();
+        o4 = new javax.swing.JButton();
+        o5 = new javax.swing.JButton();
+        o6 = new javax.swing.JButton();
+        o1 = new javax.swing.JButton();
+        o2 = new javax.swing.JButton();
+        o3 = new javax.swing.JButton();
+        Level12 = new javax.swing.JLabel();
+        jLabel45 = new javax.swing.JLabel();
+        jLabel46 = new javax.swing.JLabel();
+        jLabel47 = new javax.swing.JLabel();
+        score2 = new javax.swing.JLabel();
+        pTurn1 = new javax.swing.JLabel();
+        HostJoinPanal = new javax.swing.JPanel();
+        jLabel49 = new javax.swing.JLabel();
+        HostGame = new javax.swing.JButton();
+        JoinGame = new javax.swing.JButton();
+        BackHostJoinbutton = new javax.swing.JButton();
+        menuBar = new javax.swing.JMenuBar();
+        javax.swing.JMenu fileMenu = new javax.swing.JMenu();
+        javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenu helpMenu = new javax.swing.JMenu();
+        javax.swing.JMenuItem aboutMenuItem = new javax.swing.JMenuItem();
+        statusPanel = new javax.swing.JPanel();
+        javax.swing.JSeparator statusPanelSeparator = new javax.swing.JSeparator();
+        statusMessageLabel = new javax.swing.JLabel();
+        statusAnimationLabel = new javax.swing.JLabel();
+        progressBar = new javax.swing.JProgressBar();
+        DifficultyLevel = new javax.swing.ButtonGroup();
+        MarkerButtonGroup = new javax.swing.ButtonGroup();
+        twoPlayerMarkerButtonGroup = new javax.swing.ButtonGroup();
+        TwoPlayerOverTheNetworkButtonGroup = new javax.swing.ButtonGroup();
+        jTextField1 = new javax.swing.JTextField();
+
+        mainPanel.setName("mainPanel"); // NOI18N
+        mainPanel.setPreferredSize(new java.awt.Dimension(418, 435));
+        mainPanel.setVerifyInputWhenFocusTarget(false);
+
+        MainGamePanal.setName("MainGamePanal"); // NOI18N
+        MainGamePanal.setPreferredSize(new java.awt.Dimension(418, 435));
+
+        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(tictactao.TicTacTaoApp.class).getContext().getResourceMap(TicTacTaoView.class);
+        jLabel1.setFont(resourceMap.getFont("jLabel1.font")); // NOI18N
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText(resourceMap.getString("jLabel1.text")); // NOI18N
+        jLabel1.setName("jLabel1"); // NOI18N
+
+        NewGame.setText(resourceMap.getString("NewGame.text")); // NOI18N
+        NewGame.setName("NewGame"); // NOI18N
+        NewGame.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                NewGameActionPerformed(evt);
+            }
+        });
+
+        Option.setText(resourceMap.getString("Option.text")); // NOI18N
+        Option.setName("Option"); // NOI18N
+        Option.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                OptionActionPerformed(evt);
+            }
+        });
+
+        Help.setText(resourceMap.getString("Help.text")); // NOI18N
+        Help.setName("Help"); // NOI18N
+        Help.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                HelpActionPerformed(evt);
+            }
+        });
+
+        HighScore.setText(resourceMap.getString("HighScore.text")); // NOI18N
+        HighScore.setName("HighScore"); // NOI18N
+        HighScore.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                HighScoreActionPerformed(evt);
+            }
+        });
+
+        Quit.setText(resourceMap.getString("Quit.text")); // NOI18N
+        Quit.setName("Quit"); // NOI18N
+        Quit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                QuitActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout MainGamePanalLayout = new javax.swing.GroupLayout(MainGamePanal);
+        MainGamePanal.setLayout(MainGamePanalLayout);
+        MainGamePanalLayout.setHorizontalGroup(
+            MainGamePanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(MainGamePanalLayout.createSequentialGroup()
+                .addGap(162, 162, 162)
+                .addGroup(MainGamePanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(Quit, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 83, Short.MAX_VALUE)
+                    .addComponent(HighScore, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(Help, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 83, Short.MAX_VALUE)
+                    .addComponent(Option, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 83, Short.MAX_VALUE)
+                    .addComponent(NewGame, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(174, 174, 174))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, MainGamePanalLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addGap(102, 102, 102))
+        );
+        MainGamePanalLayout.setVerticalGroup(
+            MainGamePanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(MainGamePanalLayout.createSequentialGroup()
+                .addGap(40, 40, 40)
+                .addComponent(jLabel1)
+                .addGap(48, 48, 48)
+                .addComponent(NewGame)
+                .addGap(18, 18, 18)
+                .addComponent(Option)
+                .addGap(18, 18, 18)
+                .addComponent(Help)
+                .addGap(18, 18, 18)
+                .addComponent(HighScore)
+                .addGap(18, 18, 18)
+                .addComponent(Quit)
+                .addContainerGap(81, Short.MAX_VALUE))
+        );
+
+        NewGamePanal.setEnabled(true
+        );
+        NewGamePanal.setName("NewGamePanal"); // NOI18N
+        NewGamePanal.setPreferredSize(new java.awt.Dimension(418, 435));
+
+        jLabel2.setFont(resourceMap.getFont("jLabel2.font")); // NOI18N
+        jLabel2.setText(resourceMap.getString("jLabel2.text")); // NOI18N
+        jLabel2.setName("jLabel2"); // NOI18N
+
+        SinglePlayer.setText(resourceMap.getString("SinglePlayer.text")); // NOI18N
+        SinglePlayer.setName("SinglePlayer"); // NOI18N
+        SinglePlayer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SinglePlayerActionPerformed(evt);
+            }
+        });
+
+        MultiPlayer.setText(resourceMap.getString("MultiPlayer.text")); // NOI18N
+        MultiPlayer.setName("MultiPlayer"); // NOI18N
+        MultiPlayer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MultiPlayerActionPerformed(evt);
+            }
+        });
+
+        BackGameMenu.setText(resourceMap.getString("BackGameMenu.text")); // NOI18N
+        BackGameMenu.setName("BackGameMenu"); // NOI18N
+        BackGameMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BackGameMenuActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout NewGamePanalLayout = new javax.swing.GroupLayout(NewGamePanal);
+        NewGamePanal.setLayout(NewGamePanalLayout);
+        NewGamePanalLayout.setHorizontalGroup(
+            NewGamePanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(NewGamePanalLayout.createSequentialGroup()
+                .addGap(151, 151, 151)
+                .addGroup(NewGamePanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(BackGameMenu, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 94, Short.MAX_VALUE)
+                    .addComponent(MultiPlayer, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 94, Short.MAX_VALUE)
+                    .addComponent(SinglePlayer, javax.swing.GroupLayout.DEFAULT_SIZE, 94, Short.MAX_VALUE))
+                .addGap(173, 173, 173))
+            .addGroup(NewGamePanalLayout.createSequentialGroup()
+                .addGap(115, 115, 115)
+                .addComponent(jLabel2)
+                .addContainerGap(159, Short.MAX_VALUE))
+        );
+        NewGamePanalLayout.setVerticalGroup(
+            NewGamePanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(NewGamePanalLayout.createSequentialGroup()
+                .addGap(49, 49, 49)
+                .addComponent(jLabel2)
+                .addGap(63, 63, 63)
+                .addComponent(SinglePlayer)
+                .addGap(28, 28, 28)
+                .addComponent(MultiPlayer)
+                .addGap(26, 26, 26)
+                .addComponent(BackGameMenu)
+                .addContainerGap(165, Short.MAX_VALUE))
+        );
+
+        OptionPanal.setName("OptionPanal"); // NOI18N
+        OptionPanal.setPreferredSize(new java.awt.Dimension(418, 435));
+
+        jLabel3.setFont(resourceMap.getFont("jLabel3.font")); // NOI18N
+        jLabel3.setText(resourceMap.getString("jLabel3.text")); // NOI18N
+        jLabel3.setName("jLabel3"); // NOI18N
+
+        jLabel4.setFont(resourceMap.getFont("jLabel4.font")); // NOI18N
+        jLabel4.setText(resourceMap.getString("jLabel4.text")); // NOI18N
+        jLabel4.setName("jLabel4"); // NOI18N
+
+        jLabel5.setFont(resourceMap.getFont("jLabel5.font")); // NOI18N
+        jLabel5.setText(resourceMap.getString("jLabel5.text")); // NOI18N
+        jLabel5.setName("jLabel5"); // NOI18N
+
+        DifficultyLevel.add(Easy);
+        Easy.setSelected(true);
+        Easy.setText(resourceMap.getString("Easy.text")); // NOI18N
+        Easy.setName("Easy"); // NOI18N
+
+        DifficultyLevel.add(Medium);
+        Medium.setText(resourceMap.getString("Medium.text")); // NOI18N
+        Medium.setName("Medium"); // NOI18N
+
+        DifficultyLevel.add(Hard);
+        Hard.setText(resourceMap.getString("Hard.text")); // NOI18N
+        Hard.setName("Hard"); // NOI18N
+
+        BackOptionMenu.setText(resourceMap.getString("BackOptionMenu.text")); // NOI18N
+        BackOptionMenu.setName("BackOptionMenu"); // NOI18N
+        BackOptionMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BackOptionMenuActionPerformed(evt);
+            }
+        });
+
+        MarkerButtonGroup.add(check);
+        check.setFont(resourceMap.getFont("check.font")); // NOI18N
+        check.setSelected(true);
+        check.setText(resourceMap.getString("check.text")); // NOI18N
+        check.setIcon(resourceMap.getIcon("check.icon")); // NOI18N
+        check.setName("check"); // NOI18N
+
+        MarkerButtonGroup.add(cross);
+        cross.setFont(resourceMap.getFont("cross.font")); // NOI18N
+        cross.setText(resourceMap.getString("cross.text")); // NOI18N
+        cross.setIcon(resourceMap.getIcon("cross.icon")); // NOI18N
+        cross.setName("cross"); // NOI18N
+
+        javax.swing.GroupLayout OptionPanalLayout = new javax.swing.GroupLayout(OptionPanal);
+        OptionPanal.setLayout(OptionPanalLayout);
+        OptionPanalLayout.setHorizontalGroup(
+            OptionPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(OptionPanalLayout.createSequentialGroup()
+                .addGroup(OptionPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(OptionPanalLayout.createSequentialGroup()
+                        .addGap(27, 27, 27)
+                        .addGroup(OptionPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(OptionPanalLayout.createSequentialGroup()
+                                .addGap(121, 121, 121)
+                                .addComponent(jLabel3))
+                            .addGroup(OptionPanalLayout.createSequentialGroup()
+                                .addGroup(OptionPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel5)
+                                    .addComponent(jLabel4))
+                                .addGap(18, 18, 18)
+                                .addGroup(OptionPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(OptionPanalLayout.createSequentialGroup()
+                                        .addComponent(check)
+                                        .addGap(36, 36, 36)
+                                        .addComponent(cross))
+                                    .addGroup(OptionPanalLayout.createSequentialGroup()
+                                        .addComponent(Easy)
+                                        .addGap(16, 16, 16)
+                                        .addComponent(Medium)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(Hard))))))
+                    .addGroup(OptionPanalLayout.createSequentialGroup()
+                        .addGap(172, 172, 172)
+                        .addComponent(BackOptionMenu, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(71, Short.MAX_VALUE))
+        );
+        OptionPanalLayout.setVerticalGroup(
+            OptionPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(OptionPanalLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(OptionPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(OptionPanalLayout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 63, Short.MAX_VALUE)
+                        .addGroup(OptionPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(check)
+                            .addComponent(cross))
+                        .addGap(91, 91, 91))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, OptionPanalLayout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addGap(102, 102, 102)))
+                .addGroup(OptionPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(Easy)
+                    .addComponent(Medium)
+                    .addComponent(Hard))
+                .addGap(71, 71, 71)
+                .addComponent(BackOptionMenu)
+                .addGap(72, 72, 72))
+        );
+
+        HelpPanal.setName("HelpPanal"); // NOI18N
+
+        jLabel6.setFont(resourceMap.getFont("jLabel6.font")); // NOI18N
+        jLabel6.setText(resourceMap.getString("jLabel6.text")); // NOI18N
+        jLabel6.setName("jLabel6"); // NOI18N
+
+        jLabel7.setText(resourceMap.getString("jLabel7.text")); // NOI18N
+        jLabel7.setName("jLabel7"); // NOI18N
+
+        jLabel8.setText(resourceMap.getString("jLabel8.text")); // NOI18N
+        jLabel8.setName("jLabel8"); // NOI18N
+
+        jLabel9.setText(resourceMap.getString("jLabel9.text")); // NOI18N
+        jLabel9.setName("jLabel9"); // NOI18N
+
+        jLabel10.setText(resourceMap.getString("jLabel10.text")); // NOI18N
+        jLabel10.setName("jLabel10"); // NOI18N
+
+        jLabel11.setText(resourceMap.getString("jLabel11.text")); // NOI18N
+        jLabel11.setName("jLabel11"); // NOI18N
+
+        jLabel12.setText(resourceMap.getString("jLabel12.text")); // NOI18N
+        jLabel12.setName("jLabel12"); // NOI18N
+
+        BackHelpMenu.setText(resourceMap.getString("BackHelpMenu.text")); // NOI18N
+        BackHelpMenu.setName("BackHelpMenu"); // NOI18N
+        BackHelpMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BackHelpMenuActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout HelpPanalLayout = new javax.swing.GroupLayout(HelpPanal);
+        HelpPanal.setLayout(HelpPanalLayout);
+        HelpPanalLayout.setHorizontalGroup(
+            HelpPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(HelpPanalLayout.createSequentialGroup()
+                .addGroup(HelpPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(HelpPanalLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel8))
+                    .addGroup(HelpPanalLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel9))
+                    .addGroup(HelpPanalLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel10))
+                    .addGroup(HelpPanalLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel11))
+                    .addGroup(HelpPanalLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel12))
+                    .addGroup(HelpPanalLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(HelpPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel6)
+                            .addComponent(jLabel7)))
+                    .addGroup(HelpPanalLayout.createSequentialGroup()
+                        .addGap(141, 141, 141)
+                        .addComponent(BackHelpMenu, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        HelpPanalLayout.setVerticalGroup(
+            HelpPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(HelpPanalLayout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addComponent(jLabel6)
+                .addGap(29, 29, 29)
+                .addComponent(jLabel7)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel8)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel9)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel10)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel11)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel12)
+                .addGap(31, 31, 31)
+                .addComponent(BackHelpMenu)
+                .addContainerGap(33, Short.MAX_VALUE))
+        );
+
+        HighScorePanal.setName("HighScorePanal"); // NOI18N
+
+        Name1.setText(resourceMap.getString("Name1.text")); // NOI18N
+        Name1.setName("Name1"); // NOI18N
+
+        Name2.setText(resourceMap.getString("Name2.text")); // NOI18N
+        Name2.setName("Name2"); // NOI18N
+
+        Name3.setText(resourceMap.getString("Name3.text")); // NOI18N
+        Name3.setName("Name3"); // NOI18N
+
+        Name4.setText(resourceMap.getString("Name4.text")); // NOI18N
+        Name4.setName("Name4"); // NOI18N
+
+        Name5.setText(resourceMap.getString("Name5.text")); // NOI18N
+        Name5.setName("Name5"); // NOI18N
+
+        Name6.setText(resourceMap.getString("Name6.text")); // NOI18N
+        Name6.setName("Name6"); // NOI18N
+
+        Name7.setText(resourceMap.getString("Name7.text")); // NOI18N
+        Name7.setName("Name7"); // NOI18N
+
+        Name8.setText(resourceMap.getString("Name8.text")); // NOI18N
+        Name8.setName("Name8"); // NOI18N
+
+        Name9.setText(resourceMap.getString("Name9.text")); // NOI18N
+        Name9.setName("Name9"); // NOI18N
+
+        Name10.setText(resourceMap.getString("Name10.text")); // NOI18N
+        Name10.setName("Name10"); // NOI18N
+
+        jLabel13.setFont(resourceMap.getFont("jLabel13.font")); // NOI18N
+        jLabel13.setText(resourceMap.getString("jLabel13.text")); // NOI18N
+        jLabel13.setName("jLabel13"); // NOI18N
+
+        jLabel14.setFont(resourceMap.getFont("jLabel17.font")); // NOI18N
+        jLabel14.setText(resourceMap.getString("jLabel14.text")); // NOI18N
+        jLabel14.setName("jLabel14"); // NOI18N
+
+        jLabel15.setFont(resourceMap.getFont("jLabel17.font")); // NOI18N
+        jLabel15.setText(resourceMap.getString("jLabel15.text")); // NOI18N
+        jLabel15.setName("jLabel15"); // NOI18N
+
+        jLabel16.setFont(resourceMap.getFont("jLabel17.font")); // NOI18N
+        jLabel16.setText(resourceMap.getString("jLabel16.text")); // NOI18N
+        jLabel16.setName("jLabel16"); // NOI18N
+
+        jLabel17.setFont(resourceMap.getFont("jLabel17.font")); // NOI18N
+        jLabel17.setText(resourceMap.getString("jLabel17.text")); // NOI18N
+        jLabel17.setName("jLabel17"); // NOI18N
+
+        jLabel18.setText(resourceMap.getString("jLabel18.text")); // NOI18N
+        jLabel18.setName("jLabel18"); // NOI18N
+
+        jLabel19.setText(resourceMap.getString("jLabel19.text")); // NOI18N
+        jLabel19.setName("jLabel19"); // NOI18N
+
+        jLabel20.setText(resourceMap.getString("jLabel20.text")); // NOI18N
+        jLabel20.setName("jLabel20"); // NOI18N
+
+        jLabel21.setText(resourceMap.getString("jLabel21.text")); // NOI18N
+        jLabel21.setName("jLabel21"); // NOI18N
+
+        jLabel22.setText(resourceMap.getString("jLabel22.text")); // NOI18N
+        jLabel22.setName("jLabel22"); // NOI18N
+
+        jLabel23.setText(resourceMap.getString("jLabel23.text")); // NOI18N
+        jLabel23.setName("jLabel23"); // NOI18N
+
+        jLabel24.setText(resourceMap.getString("jLabel24.text")); // NOI18N
+        jLabel24.setName("jLabel24"); // NOI18N
+
+        jLabel25.setText(resourceMap.getString("jLabel25.text")); // NOI18N
+        jLabel25.setName("jLabel25"); // NOI18N
+
+        jLabel26.setText(resourceMap.getString("jLabel26.text")); // NOI18N
+        jLabel26.setName("jLabel26"); // NOI18N
+
+        jLabel27.setText(resourceMap.getString("jLabel27.text")); // NOI18N
+        jLabel27.setName("jLabel27"); // NOI18N
+
+        Level1.setText(resourceMap.getString("Level1.text")); // NOI18N
+        Level1.setName("Level1"); // NOI18N
+
+        Score1.setText(resourceMap.getString("Score1.text")); // NOI18N
+        Score1.setName("Score1"); // NOI18N
+
+        Level2.setText(resourceMap.getString("Level2.text")); // NOI18N
+        Level2.setName("Level2"); // NOI18N
+
+        Score2.setText(resourceMap.getString("Score2.text")); // NOI18N
+        Score2.setName("Score2"); // NOI18N
+
+        Level3.setText(resourceMap.getString("Level3.text")); // NOI18N
+        Level3.setName("Level3"); // NOI18N
+
+        Score3.setText(resourceMap.getString("Score3.text")); // NOI18N
+        Score3.setName("Score3"); // NOI18N
+
+        Level4.setText(resourceMap.getString("Level4.text")); // NOI18N
+        Level4.setName("Level4"); // NOI18N
+
+        Score4.setText(resourceMap.getString("Score4.text")); // NOI18N
+        Score4.setName("Score4"); // NOI18N
+
+        Level5.setText(resourceMap.getString("Level5.text")); // NOI18N
+        Level5.setName("Level5"); // NOI18N
+
+        Score5.setText(resourceMap.getString("Score5.text")); // NOI18N
+        Score5.setName("Score5"); // NOI18N
+
+        Level6.setText(resourceMap.getString("Level6.text")); // NOI18N
+        Level6.setName("Level6"); // NOI18N
+
+        Score6.setText(resourceMap.getString("Score6.text")); // NOI18N
+        Score6.setName("Score6"); // NOI18N
+
+        Level7.setText(resourceMap.getString("Level7.text")); // NOI18N
+        Level7.setName("Level7"); // NOI18N
+
+        Score7.setText(resourceMap.getString("Score7.text")); // NOI18N
+        Score7.setName("Score7"); // NOI18N
+
+        Level8.setText(resourceMap.getString("Level8.text")); // NOI18N
+        Level8.setName("Level8"); // NOI18N
+
+        Score8.setText(resourceMap.getString("Score8.text")); // NOI18N
+        Score8.setName("Score8"); // NOI18N
+
+        Level9.setText(resourceMap.getString("Level9.text")); // NOI18N
+        Level9.setName("Level9"); // NOI18N
+
+        Score9.setText(resourceMap.getString("Score9.text")); // NOI18N
+        Score9.setName("Score9"); // NOI18N
+
+        Level10.setText(resourceMap.getString("Level10.text")); // NOI18N
+        Level10.setName("Level10"); // NOI18N
+
+        Score10.setText(resourceMap.getString("Score10.text")); // NOI18N
+        Score10.setName("Score10"); // NOI18N
+
+        BackHighScoreMenu.setText(resourceMap.getString("BackHighScoreMenu.text")); // NOI18N
+        BackHighScoreMenu.setName("BackHighScoreMenu"); // NOI18N
+        BackHighScoreMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BackHighScoreMenuActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout HighScorePanalLayout = new javax.swing.GroupLayout(HighScorePanal);
+        HighScorePanal.setLayout(HighScorePanalLayout);
+        HighScorePanalLayout.setHorizontalGroup(
+            HighScorePanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(HighScorePanalLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(HighScorePanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, HighScorePanalLayout.createSequentialGroup()
+                        .addComponent(jLabel13)
+                        .addGap(138, 138, 138))
+                    .addGroup(HighScorePanalLayout.createSequentialGroup()
+                        .addGroup(HighScorePanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel14)
+                            .addComponent(jLabel18)
+                            .addComponent(jLabel19)
+                            .addComponent(jLabel20)
+                            .addComponent(jLabel21)
+                            .addComponent(jLabel22)
+                            .addComponent(jLabel23)
+                            .addComponent(jLabel24)
+                            .addComponent(jLabel25)
+                            .addComponent(jLabel26)
+                            .addComponent(jLabel27))
+                        .addGroup(HighScorePanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(HighScorePanalLayout.createSequentialGroup()
+                                .addGap(34, 34, 34)
+                                .addGroup(HighScorePanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(Name1)
+                                    .addComponent(Name2)
+                                    .addComponent(Name3)
+                                    .addComponent(Name4)
+                                    .addComponent(Name5)
+                                    .addComponent(Name6)
+                                    .addComponent(Name7)
+                                    .addComponent(Name8)
+                                    .addComponent(Name9)
+                                    .addComponent(Name10)))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, HighScorePanalLayout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel15)
+                                .addGap(26, 26, 26)))
+                        .addGroup(HighScorePanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(HighScorePanalLayout.createSequentialGroup()
+                                .addGap(19, 19, 19)
+                                .addComponent(jLabel16))
+                            .addGroup(HighScorePanalLayout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addGroup(HighScorePanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(HighScorePanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(Level2)
+                                        .addComponent(Level1)
+                                        .addComponent(Level3)
+                                        .addComponent(Level4)
+                                        .addComponent(Level5)
+                                        .addComponent(Level6)
+                                        .addComponent(Level7)
+                                        .addComponent(Level8)
+                                        .addComponent(Level9)
+                                        .addComponent(Level10))
+                                    .addComponent(BackHighScoreMenu, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(32, 32, 32)
+                        .addGroup(HighScorePanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel17)
+                            .addGroup(HighScorePanalLayout.createSequentialGroup()
+                                .addGap(12, 12, 12)
+                                .addGroup(HighScorePanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(Score10)
+                                    .addComponent(Score9)
+                                    .addComponent(Score8)
+                                    .addComponent(Score7)
+                                    .addComponent(Score6)
+                                    .addComponent(Score5)
+                                    .addComponent(Score2)
+                                    .addComponent(Score1)
+                                    .addComponent(Score3)
+                                    .addComponent(Score4))))
+                        .addContainerGap(49, Short.MAX_VALUE))))
+        );
+        HighScorePanalLayout.setVerticalGroup(
+            HighScorePanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(HighScorePanalLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel13)
+                .addGap(33, 33, 33)
+                .addGroup(HighScorePanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel14)
+                    .addComponent(jLabel17)
+                    .addComponent(jLabel16)
+                    .addComponent(jLabel15))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(HighScorePanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(HighScorePanalLayout.createSequentialGroup()
+                        .addGroup(HighScorePanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(Name1)
+                            .addComponent(jLabel18))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(HighScorePanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel19)
+                            .addComponent(Name2))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(HighScorePanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(HighScorePanalLayout.createSequentialGroup()
+                                .addComponent(jLabel20)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel21)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel22)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel23)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel24)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel25)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel26)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel27))
+                            .addGroup(HighScorePanalLayout.createSequentialGroup()
+                                .addComponent(Name3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(Name4)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(Name5)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(Name6)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(Name7)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(Name8)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(Name9)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(Name10))))
+                    .addGroup(HighScorePanalLayout.createSequentialGroup()
+                        .addComponent(Score1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(Score2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(Score3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(Score4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(Score5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(Score6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(Score7)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(Score8)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(Score9)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(Score10))
+                    .addGroup(HighScorePanalLayout.createSequentialGroup()
+                        .addComponent(Level1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(Level2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(Level3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(Level4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(Level5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(Level6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(Level7)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(Level8)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(Level9)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(Level10)))
+                .addGap(44, 44, 44)
+                .addComponent(BackHighScoreMenu)
+                .addContainerGap(42, Short.MAX_VALUE))
+        );
+
+        SinglePlayerPanal.setName("SinglePlayerPanal"); // NOI18N
+
+        jLabel28.setFont(resourceMap.getFont("jLabel28.font")); // NOI18N
+        jLabel28.setText(resourceMap.getString("jLabel28.text")); // NOI18N
+        jLabel28.setName("jLabel28"); // NOI18N
+
+        jLabel29.setFont(resourceMap.getFont("jLabel29.font")); // NOI18N
+        jLabel29.setText(resourceMap.getString("jLabel29.text")); // NOI18N
+        jLabel29.setName("jLabel29"); // NOI18N
+
+        Name.setText(resourceMap.getString("Name.text")); // NOI18N
+        Name.setName("Name"); // NOI18N
+
+        Play.setText(resourceMap.getString("Play.text")); // NOI18N
+        Play.setMaximumSize(new java.awt.Dimension(43, 29));
+        Play.setMinimumSize(new java.awt.Dimension(43, 29));
+        Play.setName("Play"); // NOI18N
+        Play.setPreferredSize(new java.awt.Dimension(43, 29));
+        Play.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                PlayActionPerformed(evt);
+            }
+        });
+
+        BackSinglePlayer.setText(resourceMap.getString("BackSinglePlayer.text")); // NOI18N
+        BackSinglePlayer.setName("BackSinglePlayer"); // NOI18N
+        BackSinglePlayer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BackSinglePlayerActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout SinglePlayerPanalLayout = new javax.swing.GroupLayout(SinglePlayerPanal);
+        SinglePlayerPanal.setLayout(SinglePlayerPanalLayout);
+        SinglePlayerPanalLayout.setHorizontalGroup(
+            SinglePlayerPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(SinglePlayerPanalLayout.createSequentialGroup()
+                .addGap(38, 38, 38)
+                .addComponent(jLabel29)
+                .addGap(39, 39, 39)
+                .addGroup(SinglePlayerPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel28)
+                    .addGroup(SinglePlayerPanalLayout.createSequentialGroup()
+                        .addComponent(Play, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(BackSinglePlayer, javax.swing.GroupLayout.DEFAULT_SIZE, 63, Short.MAX_VALUE))
+                    .addComponent(Name, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(101, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+        SinglePlayerPanalLayout.setVerticalGroup(
+            SinglePlayerPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(SinglePlayerPanalLayout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addComponent(jLabel28)
+                .addGap(69, 69, 69)
+                .addGroup(SinglePlayerPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(Name, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel29))
+                .addGap(35, 35, 35)
+                .addGroup(SinglePlayerPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(Play, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(BackSinglePlayer, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(108, Short.MAX_VALUE))
+        );
+
+        MultiplayerPanal.setName("MultiplayerPanal"); // NOI18N
+        MultiplayerPanal.setPreferredSize(new java.awt.Dimension(418, 435));
+
+        jLabel30.setFont(resourceMap.getFont("jLabel30.font")); // NOI18N
+        jLabel30.setText(resourceMap.getString("jLabel30.text")); // NOI18N
+        jLabel30.setName("jLabel30"); // NOI18N
+
+        SameComputer.setText(resourceMap.getString("SameComputer.text")); // NOI18N
+        SameComputer.setName("SameComputer"); // NOI18N
+        SameComputer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SameComputerActionPerformed(evt);
+            }
+        });
+
+        OverNetwork.setText(resourceMap.getString("OverNetwork.text")); // NOI18N
+        OverNetwork.setName("OverNetwork"); // NOI18N
+        OverNetwork.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                OverNetworkActionPerformed(evt);
+            }
+        });
+
+        BackMultiplayer.setText(resourceMap.getString("BackMultiplayer.text")); // NOI18N
+        BackMultiplayer.setName("BackMultiplayer"); // NOI18N
+        BackMultiplayer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BackMultiplayerActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout MultiplayerPanalLayout = new javax.swing.GroupLayout(MultiplayerPanal);
+        MultiplayerPanal.setLayout(MultiplayerPanalLayout);
+        MultiplayerPanalLayout.setHorizontalGroup(
+            MultiplayerPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(MultiplayerPanalLayout.createSequentialGroup()
+                .addGap(146, 146, 146)
+                .addGroup(MultiplayerPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(SameComputer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel30)
+                    .addComponent(OverNetwork, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(BackMultiplayer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(144, Short.MAX_VALUE))
+        );
+        MultiplayerPanalLayout.setVerticalGroup(
+            MultiplayerPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(MultiplayerPanalLayout.createSequentialGroup()
+                .addGap(25, 25, 25)
+                .addComponent(jLabel30)
+                .addGap(40, 40, 40)
+                .addComponent(SameComputer)
+                .addGap(28, 28, 28)
+                .addComponent(OverNetwork)
+                .addGap(27, 27, 27)
+                .addComponent(BackMultiplayer)
+                .addContainerGap(85, Short.MAX_VALUE))
+        );
+
+        PlayPanal.setName("PlayPanal"); // NOI18N
+
+        pName.setFont(resourceMap.getFont("pName.font")); // NOI18N
+        pName.setText(resourceMap.getString("pName.text")); // NOI18N
+        pName.setName("pName"); // NOI18N
+
+        ActualPanal.setMinimumSize(new java.awt.Dimension(330, 284));
+        ActualPanal.setName("ActualPanal"); // NOI18N
+        ActualPanal.setPreferredSize(new java.awt.Dimension(330, 284));
+        ActualPanal.setLayout(new java.awt.GridLayout(3, 3));
+
+        c7.setText(resourceMap.getString("c7.text")); // NOI18N
+        c7.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        c7.setName("c7"); // NOI18N
+        c7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                c7ActionPerformed(evt);
+            }
+        });
+        ActualPanal.add(c7);
+
+        c8.setText(resourceMap.getString("c8.text")); // NOI18N
+        c8.setName("c8"); // NOI18N
+        c8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                c8ActionPerformed(evt);
+            }
+        });
+        ActualPanal.add(c8);
+
+        c9.setText(resourceMap.getString("c9.text")); // NOI18N
+        c9.setName("c9"); // NOI18N
+        c9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                c9ActionPerformed(evt);
+            }
+        });
+        ActualPanal.add(c9);
+
+        c4.setText(resourceMap.getString("c4.text")); // NOI18N
+        c4.setName("c4"); // NOI18N
+        c4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                c4ActionPerformed(evt);
+            }
+        });
+        ActualPanal.add(c4);
+
+        c5.setText(resourceMap.getString("c5.text")); // NOI18N
+        c5.setName("c5"); // NOI18N
+        c5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                c5ActionPerformed(evt);
+            }
+        });
+        ActualPanal.add(c5);
+
+        c6.setText(resourceMap.getString("c6.text")); // NOI18N
+        c6.setName("c6"); // NOI18N
+        c6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                c6ActionPerformed(evt);
+            }
+        });
+        ActualPanal.add(c6);
+
+        c1.setText(resourceMap.getString("c1.text")); // NOI18N
+        c1.setName("c1"); // NOI18N
+        c1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                c1ActionPerformed(evt);
+            }
+        });
+        ActualPanal.add(c1);
+
+        c2.setText(resourceMap.getString("c2.text")); // NOI18N
+        c2.setName("c2"); // NOI18N
+        c2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                c2ActionPerformed(evt);
+            }
+        });
+        ActualPanal.add(c2);
+
+        c3.setText(resourceMap.getString("c3.text")); // NOI18N
+        c3.setName("c3"); // NOI18N
+        c3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                c3ActionPerformed(evt);
+            }
+        });
+        ActualPanal.add(c3);
+
+        Level.setFont(resourceMap.getFont("Level.font")); // NOI18N
+        Level.setText(resourceMap.getString("Level.text")); // NOI18N
+        Level.setName("Level"); // NOI18N
+
+        jLabel31.setFont(resourceMap.getFont("jLabel31.font")); // NOI18N
+        jLabel31.setText(resourceMap.getString("jLabel31.text")); // NOI18N
+        jLabel31.setName("jLabel31"); // NOI18N
+
+        jLabel32.setFont(resourceMap.getFont("jLabel32.font")); // NOI18N
+        jLabel32.setText(resourceMap.getString("jLabel32.text")); // NOI18N
+        jLabel32.setName("jLabel32"); // NOI18N
+
+        jLabel33.setFont(resourceMap.getFont("jLabel33.font")); // NOI18N
+        jLabel33.setText(resourceMap.getString("jLabel33.text")); // NOI18N
+        jLabel33.setName("jLabel33"); // NOI18N
+
+        score.setText(resourceMap.getString("score.text")); // NOI18N
+        score.setName("score"); // NOI18N
+
+        pTurn.setFont(resourceMap.getFont("pTurn.font")); // NOI18N
+        pTurn.setText(resourceMap.getString("pTurn.text")); // NOI18N
+        pTurn.setName("pTurn"); // NOI18N
+
+        javax.swing.GroupLayout PlayPanalLayout = new javax.swing.GroupLayout(PlayPanal);
+        PlayPanal.setLayout(PlayPanalLayout);
+        PlayPanalLayout.setHorizontalGroup(
+            PlayPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PlayPanalLayout.createSequentialGroup()
+                .addGroup(PlayPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(PlayPanalLayout.createSequentialGroup()
+                        .addGap(24, 24, 24)
+                        .addGroup(PlayPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(ActualPanal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(PlayPanalLayout.createSequentialGroup()
+                                .addComponent(jLabel31)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(pName)
+                                .addGap(31, 31, 31)
+                                .addComponent(jLabel33)
+                                .addGap(2, 2, 2)
+                                .addComponent(score)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel32)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(Level))))
+                    .addGroup(PlayPanalLayout.createSequentialGroup()
+                        .addGap(123, 123, 123)
+                        .addComponent(pTurn)))
+                .addContainerGap(31, Short.MAX_VALUE))
+        );
+        PlayPanalLayout.setVerticalGroup(
+            PlayPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PlayPanalLayout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addGroup(PlayPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel31)
+                    .addComponent(pName)
+                    .addComponent(jLabel32)
+                    .addComponent(Level)
+                    .addComponent(jLabel33)
+                    .addComponent(score))
+                .addGap(26, 26, 26)
+                .addComponent(ActualPanal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(pTurn)
+                .addContainerGap(18, Short.MAX_VALUE))
+        );
+
+        PlayMultiplayerOnTheSameComputerPanal.setName("PlayMultiplayerOnTheSameComputerPanal"); // NOI18N
+
+        p1Name.setFont(resourceMap.getFont("p1Name.font")); // NOI18N
+        p1Name.setText(resourceMap.getString("p1Name.text")); // NOI18N
+        p1Name.setName("p1Name"); // NOI18N
+
+        ActualPanal1.setMinimumSize(new java.awt.Dimension(330, 284));
+        ActualPanal1.setName("ActualPanal1"); // NOI18N
+        ActualPanal1.setPreferredSize(new java.awt.Dimension(330, 284));
+        ActualPanal1.setLayout(new java.awt.GridLayout(3, 3));
+
+        m1.setName("m1"); // NOI18N
+        m1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                m1ActionPerformed(evt);
+            }
+        });
+        ActualPanal1.add(m1);
+
+        m2.setName("m2"); // NOI18N
+        m2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                m2ActionPerformed(evt);
+            }
+        });
+        ActualPanal1.add(m2);
+
+        m3.setName("m3"); // NOI18N
+        m3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                m3ActionPerformed(evt);
+            }
+        });
+        ActualPanal1.add(m3);
+
+        m4.setName("m4"); // NOI18N
+        m4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                m4ActionPerformed(evt);
+            }
+        });
+        ActualPanal1.add(m4);
+
+        m5.setName("m5"); // NOI18N
+        m5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                m5ActionPerformed(evt);
+            }
+        });
+        ActualPanal1.add(m5);
+
+        m6.setName("m6"); // NOI18N
+        m6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                m6ActionPerformed(evt);
+            }
+        });
+        ActualPanal1.add(m6);
+
+        m7.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        m7.setName("m7"); // NOI18N
+        m7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                m7ActionPerformed(evt);
+            }
+        });
+        ActualPanal1.add(m7);
+
+        m8.setName("m8"); // NOI18N
+        m8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                m8ActionPerformed(evt);
+            }
+        });
+        ActualPanal1.add(m8);
+
+        m9.setName("m9"); // NOI18N
+        m9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                m9ActionPerformed(evt);
+            }
+        });
+        ActualPanal1.add(m9);
+
+        Level11.setFont(resourceMap.getFont("Level11.font")); // NOI18N
+        Level11.setText(resourceMap.getString("Level11.text")); // NOI18N
+        Level11.setName("Level11"); // NOI18N
+
+        jLabel34.setFont(resourceMap.getFont("jLabel34.font")); // NOI18N
+        jLabel34.setText(resourceMap.getString("jLabel34.text")); // NOI18N
+        jLabel34.setName("jLabel34"); // NOI18N
+
+        jLabel35.setFont(resourceMap.getFont("jLabel35.font")); // NOI18N
+        jLabel35.setText(resourceMap.getString("jLabel35.text")); // NOI18N
+        jLabel35.setName("jLabel35"); // NOI18N
+
+        jLabel36.setFont(resourceMap.getFont("jLabel36.font")); // NOI18N
+        jLabel36.setText(resourceMap.getString("jLabel36.text")); // NOI18N
+        jLabel36.setName("jLabel36"); // NOI18N
+
+        score1.setText(resourceMap.getString("score1.text")); // NOI18N
+        score1.setName("score1"); // NOI18N
+
+        p1Turn.setFont(resourceMap.getFont("p1Turn.font")); // NOI18N
+        p1Turn.setText(resourceMap.getString("p1Turn.text")); // NOI18N
+        p1Turn.setName("p1Turn"); // NOI18N
+
+        javax.swing.GroupLayout PlayMultiplayerOnTheSameComputerPanalLayout = new javax.swing.GroupLayout(PlayMultiplayerOnTheSameComputerPanal);
+        PlayMultiplayerOnTheSameComputerPanal.setLayout(PlayMultiplayerOnTheSameComputerPanalLayout);
+        PlayMultiplayerOnTheSameComputerPanalLayout.setHorizontalGroup(
+            PlayMultiplayerOnTheSameComputerPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PlayMultiplayerOnTheSameComputerPanalLayout.createSequentialGroup()
+                .addGroup(PlayMultiplayerOnTheSameComputerPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(PlayMultiplayerOnTheSameComputerPanalLayout.createSequentialGroup()
+                        .addGap(24, 24, 24)
+                        .addGroup(PlayMultiplayerOnTheSameComputerPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(ActualPanal1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(PlayMultiplayerOnTheSameComputerPanalLayout.createSequentialGroup()
+                                .addComponent(jLabel34)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(p1Name)
+                                .addGap(31, 31, 31)
+                                .addComponent(jLabel36)
+                                .addGap(2, 2, 2)
+                                .addComponent(score1)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel35)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(Level11))))
+                    .addGroup(PlayMultiplayerOnTheSameComputerPanalLayout.createSequentialGroup()
+                        .addGap(123, 123, 123)
+                        .addComponent(p1Turn)))
+                .addContainerGap(31, Short.MAX_VALUE))
+        );
+        PlayMultiplayerOnTheSameComputerPanalLayout.setVerticalGroup(
+            PlayMultiplayerOnTheSameComputerPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PlayMultiplayerOnTheSameComputerPanalLayout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addGroup(PlayMultiplayerOnTheSameComputerPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel34)
+                    .addComponent(p1Name)
+                    .addComponent(jLabel35)
+                    .addComponent(Level11)
+                    .addComponent(jLabel36)
+                    .addComponent(score1))
+                .addGap(26, 26, 26)
+                .addComponent(ActualPanal1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(p1Turn)
+                .addContainerGap(18, Short.MAX_VALUE))
+        );
+
+        SameComputerPanal.setName("SameComputerPanal"); // NOI18N
+
+        jLabel37.setFont(resourceMap.getFont("jLabel37.font")); // NOI18N
+        jLabel37.setText(resourceMap.getString("jLabel37.text")); // NOI18N
+        jLabel37.setName("jLabel37"); // NOI18N
+
+        jLabel38.setFont(resourceMap.getFont("jLabel38.font")); // NOI18N
+        jLabel38.setText(resourceMap.getString("jLabel38.text")); // NOI18N
+        jLabel38.setName("jLabel38"); // NOI18N
+
+        jLabel39.setFont(resourceMap.getFont("jLabel39.font")); // NOI18N
+        jLabel39.setText(resourceMap.getString("jLabel39.text")); // NOI18N
+        jLabel39.setName("jLabel39"); // NOI18N
+
+        p1NameTextbox.setText(resourceMap.getString("p1NameTextbox.text")); // NOI18N
+        p1NameTextbox.setName("p1NameTextbox"); // NOI18N
+
+        jLabel40.setFont(resourceMap.getFont("jLabel40.font")); // NOI18N
+        jLabel40.setText(resourceMap.getString("jLabel40.text")); // NOI18N
+        jLabel40.setName("jLabel40"); // NOI18N
+
+        twoPlayerMarkerButtonGroup.add(check1);
+        check1.setSelected(true);
+        check1.setText(resourceMap.getString("check1.text")); // NOI18N
+        check1.setIcon(resourceMap.getIcon("check1.icon")); // NOI18N
+        check1.setName("check1"); // NOI18N
+
+        twoPlayerMarkerButtonGroup.add(cross1);
+        cross1.setText(resourceMap.getString("cross1.text")); // NOI18N
+        cross1.setIcon(resourceMap.getIcon("cross1.icon")); // NOI18N
+        cross1.setName("cross1"); // NOI18N
+
+        jLabel41.setFont(resourceMap.getFont("jLabel41.font")); // NOI18N
+        jLabel41.setText(resourceMap.getString("jLabel41.text")); // NOI18N
+        jLabel41.setName("jLabel41"); // NOI18N
+
+        jLabel42.setFont(resourceMap.getFont("jLabel42.font")); // NOI18N
+        jLabel42.setText(resourceMap.getString("jLabel42.text")); // NOI18N
+        jLabel42.setName("jLabel42"); // NOI18N
+
+        p2NameTextbox.setText(resourceMap.getString("p2NameTextbox.text")); // NOI18N
+        p2NameTextbox.setName("p2NameTextbox"); // NOI18N
+
+        BackOnTheSameComputerButton.setText(resourceMap.getString("BackOnTheSameComputerButton.text")); // NOI18N
+        BackOnTheSameComputerButton.setName("BackOnTheSameComputerButton"); // NOI18N
+        BackOnTheSameComputerButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BackOnTheSameComputerButtonActionPerformed(evt);
+            }
+        });
+
+        PlayMutliplayerSameComputer.setText(resourceMap.getString("PlayMutliplayerSameComputer.text")); // NOI18N
+        PlayMutliplayerSameComputer.setName("PlayMutliplayerSameComputer"); // NOI18N
+        PlayMutliplayerSameComputer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                PlayMutliplayerSameComputerActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout SameComputerPanalLayout = new javax.swing.GroupLayout(SameComputerPanal);
+        SameComputerPanal.setLayout(SameComputerPanalLayout);
+        SameComputerPanalLayout.setHorizontalGroup(
+            SameComputerPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(SameComputerPanalLayout.createSequentialGroup()
+                .addGroup(SameComputerPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(SameComputerPanalLayout.createSequentialGroup()
+                        .addGap(94, 94, 94)
+                        .addComponent(jLabel37, javax.swing.GroupLayout.PREFERRED_SIZE, 228, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(SameComputerPanalLayout.createSequentialGroup()
+                        .addGap(39, 39, 39)
+                        .addGroup(SameComputerPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel41, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel38, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(SameComputerPanalLayout.createSequentialGroup()
+                        .addGap(65, 65, 65)
+                        .addGroup(SameComputerPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(SameComputerPanalLayout.createSequentialGroup()
+                                .addComponent(jLabel39)
+                                .addGap(33, 33, 33)
+                                .addComponent(p1NameTextbox, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(SameComputerPanalLayout.createSequentialGroup()
+                                .addComponent(jLabel40)
+                                .addGap(24, 24, 24)
+                                .addComponent(check1)
+                                .addGap(18, 18, 18)
+                                .addComponent(cross1))
+                            .addGroup(SameComputerPanalLayout.createSequentialGroup()
+                                .addGap(64, 64, 64)
+                                .addGroup(SameComputerPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, SameComputerPanalLayout.createSequentialGroup()
+                                        .addComponent(PlayMutliplayerSameComputer, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 58, Short.MAX_VALUE)
+                                        .addComponent(BackOnTheSameComputerButton, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(p2NameTextbox, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)))))
+                    .addGroup(SameComputerPanalLayout.createSequentialGroup()
+                        .addGap(64, 64, 64)
+                        .addComponent(jLabel42)))
+                .addContainerGap(102, Short.MAX_VALUE))
+        );
+        SameComputerPanalLayout.setVerticalGroup(
+            SameComputerPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(SameComputerPanalLayout.createSequentialGroup()
+                .addGap(23, 23, 23)
+                .addComponent(jLabel37)
+                .addGap(40, 40, 40)
+                .addComponent(jLabel38)
+                .addGap(28, 28, 28)
+                .addGroup(SameComputerPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel39)
+                    .addComponent(p1NameTextbox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(SameComputerPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(SameComputerPanalLayout.createSequentialGroup()
+                        .addGap(25, 25, 25)
+                        .addComponent(jLabel40))
+                    .addGroup(SameComputerPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(check1)
+                        .addComponent(cross1)))
+                .addGap(30, 30, 30)
+                .addComponent(jLabel41)
+                .addGap(30, 30, 30)
+                .addGroup(SameComputerPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel42)
+                    .addComponent(p2NameTextbox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 47, Short.MAX_VALUE)
+                .addGroup(SameComputerPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(BackOnTheSameComputerButton)
+                    .addComponent(PlayMutliplayerSameComputer))
+                .addGap(32, 32, 32))
+        );
+
+        OverTheNetworkPanal.setName("OverTheNetworkPanal"); // NOI18N
+
+        jLabel43.setFont(resourceMap.getFont("jLabel43.font")); // NOI18N
+        jLabel43.setText(resourceMap.getString("jLabel43.text")); // NOI18N
+        jLabel43.setName("jLabel43"); // NOI18N
+
+        jLabel44.setFont(resourceMap.getFont("jLabel44.font")); // NOI18N
+        jLabel44.setText(resourceMap.getString("jLabel44.text")); // NOI18N
+        jLabel44.setName("jLabel44"); // NOI18N
+
+        poName.setText(resourceMap.getString("poName.text")); // NOI18N
+        poName.setName("poName"); // NOI18N
+
+        PlayOverTheNetworkButton.setText(resourceMap.getString("PlayOverTheNetworkButton.text")); // NOI18N
+        PlayOverTheNetworkButton.setName("PlayOverTheNetworkButton"); // NOI18N
+        PlayOverTheNetworkButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                PlayOverTheNetworkButtonActionPerformed(evt);
+            }
+        });
+
+        BackOverTheNetworkButton.setText(resourceMap.getString("BackOverTheNetworkButton.text")); // NOI18N
+        BackOverTheNetworkButton.setName("BackOverTheNetworkButton"); // NOI18N
+        BackOverTheNetworkButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BackOverTheNetworkButtonActionPerformed(evt);
+            }
+        });
+
+        jLabel48.setFont(resourceMap.getFont("jLabel48.font")); // NOI18N
+        jLabel48.setText(resourceMap.getString("jLabel48.text")); // NOI18N
+        jLabel48.setName("jLabel48"); // NOI18N
+
+        TwoPlayerOverTheNetworkButtonGroup.add(ocheck);
+        ocheck.setSelected(true);
+        ocheck.setText(resourceMap.getString("ocheck.text")); // NOI18N
+        ocheck.setIcon(resourceMap.getIcon("ocheck.icon")); // NOI18N
+        ocheck.setName("ocheck"); // NOI18N
+
+        TwoPlayerOverTheNetworkButtonGroup.add(ocross);
+        ocross.setText(resourceMap.getString("ocross.text")); // NOI18N
+        ocross.setIcon(resourceMap.getIcon("ocross.icon")); // NOI18N
+        ocross.setName("ocross"); // NOI18N
+
+        javax.swing.GroupLayout OverTheNetworkPanalLayout = new javax.swing.GroupLayout(OverTheNetworkPanal);
+        OverTheNetworkPanal.setLayout(OverTheNetworkPanalLayout);
+        OverTheNetworkPanalLayout.setHorizontalGroup(
+            OverTheNetworkPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, OverTheNetworkPanalLayout.createSequentialGroup()
+                .addGap(114, 114, 114)
+                .addComponent(jLabel43, javax.swing.GroupLayout.DEFAULT_SIZE, 206, Short.MAX_VALUE)
+                .addGap(107, 107, 107))
+            .addGroup(OverTheNetworkPanalLayout.createSequentialGroup()
+                .addGap(39, 39, 39)
+                .addGroup(OverTheNetworkPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(OverTheNetworkPanalLayout.createSequentialGroup()
+                        .addComponent(jLabel48)
+                        .addGap(18, 18, 18)
+                        .addComponent(ocheck)
+                        .addGap(33, 33, 33)
+                        .addComponent(ocross))
+                    .addGroup(OverTheNetworkPanalLayout.createSequentialGroup()
+                        .addComponent(jLabel44)
+                        .addGap(26, 26, 26)
+                        .addGroup(OverTheNetworkPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(OverTheNetworkPanalLayout.createSequentialGroup()
+                                .addComponent(PlayOverTheNetworkButton, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(31, 31, 31)
+                                .addComponent(BackOverTheNetworkButton, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(OverTheNetworkPanalLayout.createSequentialGroup()
+                                .addComponent(poName, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))))
+                .addGap(117, 117, 117))
+        );
+        OverTheNetworkPanalLayout.setVerticalGroup(
+            OverTheNetworkPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(OverTheNetworkPanalLayout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addComponent(jLabel43)
+                .addGap(65, 65, 65)
+                .addGroup(OverTheNetworkPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(poName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel44))
+                .addGap(29, 29, 29)
+                .addGroup(OverTheNetworkPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(ocross)
+                    .addComponent(jLabel48)
+                    .addComponent(ocheck))
+                .addGap(34, 34, 34)
+                .addGroup(OverTheNetworkPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(PlayOverTheNetworkButton)
+                    .addComponent(BackOverTheNetworkButton))
+                .addGap(61, 61, 61))
+        );
+
+        PlayMultiplayerOverTheNetworkPanal.setName("PlayMultiplayerOverTheNetworkPanal"); // NOI18N
+
+        pName1.setFont(resourceMap.getFont("pName1.font")); // NOI18N
+        pName1.setText(resourceMap.getString("pName1.text")); // NOI18N
+        pName1.setName("pName1"); // NOI18N
+
+        ActualPanal2.setMinimumSize(new java.awt.Dimension(330, 284));
+        ActualPanal2.setName("ActualPanal2"); // NOI18N
+        ActualPanal2.setPreferredSize(new java.awt.Dimension(330, 284));
+        ActualPanal2.setLayout(new java.awt.GridLayout(3, 3));
+
+        o7.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        o7.setName("o7"); // NOI18N
+        o7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                o7ActionPerformed(evt);
+            }
+        });
+        ActualPanal2.add(o7);
+
+        o8.setName("o8"); // NOI18N
+        o8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                o8ActionPerformed(evt);
+            }
+        });
+        ActualPanal2.add(o8);
+
+        o9.setName("o9"); // NOI18N
+        o9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                o9ActionPerformed(evt);
+            }
+        });
+        ActualPanal2.add(o9);
+
+        o4.setName("o4"); // NOI18N
+        o4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                o4ActionPerformed(evt);
+            }
+        });
+        ActualPanal2.add(o4);
+
+        o5.setName("o5"); // NOI18N
+        o5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                o5ActionPerformed(evt);
+            }
+        });
+        ActualPanal2.add(o5);
+
+        o6.setName("o6"); // NOI18N
+        o6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                o6ActionPerformed(evt);
+            }
+        });
+        ActualPanal2.add(o6);
+
+        o1.setName("o1"); // NOI18N
+        o1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                o1ActionPerformed(evt);
+            }
+        });
+        ActualPanal2.add(o1);
+
+        o2.setName("o2"); // NOI18N
+        o2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                o2ActionPerformed(evt);
+            }
+        });
+        ActualPanal2.add(o2);
+
+        o3.setName("o3"); // NOI18N
+        o3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                o3ActionPerformed(evt);
+            }
+        });
+        ActualPanal2.add(o3);
+
+        Level12.setFont(resourceMap.getFont("Level12.font")); // NOI18N
+        Level12.setText(resourceMap.getString("Level12.text")); // NOI18N
+        Level12.setName("Level12"); // NOI18N
+
+        jLabel45.setFont(resourceMap.getFont("jLabel45.font")); // NOI18N
+        jLabel45.setText(resourceMap.getString("jLabel45.text")); // NOI18N
+        jLabel45.setName("jLabel45"); // NOI18N
+
+        jLabel46.setFont(resourceMap.getFont("jLabel46.font")); // NOI18N
+        jLabel46.setText(resourceMap.getString("jLabel46.text")); // NOI18N
+        jLabel46.setName("jLabel46"); // NOI18N
+
+        jLabel47.setFont(resourceMap.getFont("jLabel47.font")); // NOI18N
+        jLabel47.setText(resourceMap.getString("jLabel47.text")); // NOI18N
+        jLabel47.setName("jLabel47"); // NOI18N
+
+        score2.setText(resourceMap.getString("score2.text")); // NOI18N
+        score2.setName("score2"); // NOI18N
+
+        pTurn1.setFont(resourceMap.getFont("pTurn1.font")); // NOI18N
+        pTurn1.setText(resourceMap.getString("pTurn1.text")); // NOI18N
+        pTurn1.setName("pTurn1"); // NOI18N
+
+        javax.swing.GroupLayout PlayMultiplayerOverTheNetworkPanalLayout = new javax.swing.GroupLayout(PlayMultiplayerOverTheNetworkPanal);
+        PlayMultiplayerOverTheNetworkPanal.setLayout(PlayMultiplayerOverTheNetworkPanalLayout);
+        PlayMultiplayerOverTheNetworkPanalLayout.setHorizontalGroup(
+            PlayMultiplayerOverTheNetworkPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PlayMultiplayerOverTheNetworkPanalLayout.createSequentialGroup()
+                .addGroup(PlayMultiplayerOverTheNetworkPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(PlayMultiplayerOverTheNetworkPanalLayout.createSequentialGroup()
+                        .addGap(24, 24, 24)
+                        .addGroup(PlayMultiplayerOverTheNetworkPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(ActualPanal2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(PlayMultiplayerOverTheNetworkPanalLayout.createSequentialGroup()
+                                .addComponent(jLabel45)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(pName1)
+                                .addGap(31, 31, 31)
+                                .addComponent(jLabel47)
+                                .addGap(2, 2, 2)
+                                .addComponent(score2)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel46)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(Level12))))
+                    .addGroup(PlayMultiplayerOverTheNetworkPanalLayout.createSequentialGroup()
+                        .addGap(123, 123, 123)
+                        .addComponent(pTurn1)))
+                .addContainerGap(31, Short.MAX_VALUE))
+        );
+        PlayMultiplayerOverTheNetworkPanalLayout.setVerticalGroup(
+            PlayMultiplayerOverTheNetworkPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PlayMultiplayerOverTheNetworkPanalLayout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addGroup(PlayMultiplayerOverTheNetworkPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel45)
+                    .addComponent(pName1)
+                    .addComponent(jLabel46)
+                    .addComponent(Level12)
+                    .addComponent(jLabel47)
+                    .addComponent(score2))
+                .addGap(26, 26, 26)
+                .addComponent(ActualPanal2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(pTurn1)
+                .addContainerGap(18, Short.MAX_VALUE))
+        );
+
+        HostJoinPanal.setName("HostJoinPanal"); // NOI18N
+
+        jLabel49.setFont(resourceMap.getFont("jLabel49.font")); // NOI18N
+        jLabel49.setText(resourceMap.getString("jLabel49.text")); // NOI18N
+        jLabel49.setName("jLabel49"); // NOI18N
+
+        HostGame.setText(resourceMap.getString("HostGame.text")); // NOI18N
+        HostGame.setName("HostGame"); // NOI18N
+        HostGame.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                HostGameActionPerformed(evt);
+            }
+        });
+
+        JoinGame.setText(resourceMap.getString("JoinGame.text")); // NOI18N
+        JoinGame.setName("JoinGame"); // NOI18N
+        JoinGame.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JoinGameActionPerformed(evt);
+            }
+        });
+
+        BackHostJoinbutton.setText(resourceMap.getString("BackHostJoinbutton.text")); // NOI18N
+        BackHostJoinbutton.setName("BackHostJoinbutton"); // NOI18N
+        BackHostJoinbutton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BackHostJoinbuttonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout HostJoinPanalLayout = new javax.swing.GroupLayout(HostJoinPanal);
+        HostJoinPanal.setLayout(HostJoinPanalLayout);
+        HostJoinPanalLayout.setHorizontalGroup(
+            HostJoinPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(HostJoinPanalLayout.createSequentialGroup()
+                .addGroup(HostJoinPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(HostJoinPanalLayout.createSequentialGroup()
+                        .addGap(95, 95, 95)
+                        .addComponent(jLabel49, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(HostJoinPanalLayout.createSequentialGroup()
+                        .addGap(123, 123, 123)
+                        .addGroup(HostJoinPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(HostGame, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(JoinGame, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(BackHostJoinbutton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addContainerGap(106, Short.MAX_VALUE))
+        );
+        HostJoinPanalLayout.setVerticalGroup(
+            HostJoinPanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(HostJoinPanalLayout.createSequentialGroup()
+                .addGap(24, 24, 24)
+                .addComponent(jLabel49)
+                .addGap(58, 58, 58)
+                .addComponent(HostGame)
+                .addGap(33, 33, 33)
+                .addComponent(JoinGame)
+                .addGap(33, 33, 33)
+                .addComponent(BackHostJoinbutton)
+                .addContainerGap(36, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
+        mainPanel.setLayout(mainPanelLayout);
+        mainPanelLayout.setHorizontalGroup(
+            mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mainPanelLayout.createSequentialGroup()
+                .addComponent(OptionPanal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(mainPanelLayout.createSequentialGroup()
+                    .addGap(0, 10, Short.MAX_VALUE)
+                    .addComponent(NewGamePanal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
+            .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(mainPanelLayout.createSequentialGroup()
+                    .addGap(0, 9, Short.MAX_VALUE)
+                    .addComponent(MainGamePanal, javax.swing.GroupLayout.PREFERRED_SIZE, 419, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
+            .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(mainPanelLayout.createSequentialGroup()
+                    .addGap(0, 43, Short.MAX_VALUE)
+                    .addComponent(HelpPanal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
+            .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(mainPanelLayout.createSequentialGroup()
+                    .addGap(0, 53, Short.MAX_VALUE)
+                    .addComponent(HighScorePanal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
+            .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(mainPanelLayout.createSequentialGroup()
+                    .addGap(0, 70, Short.MAX_VALUE)
+                    .addComponent(SinglePlayerPanal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
+            .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(mainPanelLayout.createSequentialGroup()
+                    .addGap(0, 9, Short.MAX_VALUE)
+                    .addComponent(MultiplayerPanal, javax.swing.GroupLayout.PREFERRED_SIZE, 399, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
+            .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(mainPanelLayout.createSequentialGroup()
+                    .addGap(0, 42, Short.MAX_VALUE)
+                    .addComponent(PlayPanal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
+            .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(mainPanelLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(PlayMultiplayerOnTheSameComputerPanal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+            .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(mainPanelLayout.createSequentialGroup()
+                    .addGap(0, 4, Short.MAX_VALUE)
+                    .addComponent(SameComputerPanal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
+            .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(mainPanelLayout.createSequentialGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(OverTheNetworkPanal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
+            .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainPanelLayout.createSequentialGroup()
+                    .addContainerGap(52, Short.MAX_VALUE)
+                    .addComponent(PlayMultiplayerOverTheNetworkPanal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap()))
+            .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(mainPanelLayout.createSequentialGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(HostJoinPanal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
+        );
+        mainPanelLayout.setVerticalGroup(
+            mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mainPanelLayout.createSequentialGroup()
+                .addComponent(OptionPanal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(mainPanelLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(NewGamePanal, javax.swing.GroupLayout.DEFAULT_SIZE, 424, Short.MAX_VALUE)
+                    .addContainerGap()))
+            .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(mainPanelLayout.createSequentialGroup()
+                    .addGap(0, 53, Short.MAX_VALUE)
+                    .addComponent(MainGamePanal, javax.swing.GroupLayout.PREFERRED_SIZE, 380, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 13, Short.MAX_VALUE)))
+            .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(mainPanelLayout.createSequentialGroup()
+                    .addGap(0, 105, Short.MAX_VALUE)
+                    .addComponent(HelpPanal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 67, Short.MAX_VALUE)))
+            .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(mainPanelLayout.createSequentialGroup()
+                    .addGap(0, 42, Short.MAX_VALUE)
+                    .addComponent(HighScorePanal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 3, Short.MAX_VALUE)))
+            .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(mainPanelLayout.createSequentialGroup()
+                    .addGap(0, 87, Short.MAX_VALUE)
+                    .addComponent(SinglePlayerPanal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 53, Short.MAX_VALUE)))
+            .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(mainPanelLayout.createSequentialGroup()
+                    .addGap(0, 11, Short.MAX_VALUE)
+                    .addComponent(MultiplayerPanal, javax.swing.GroupLayout.PREFERRED_SIZE, 298, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
+            .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(mainPanelLayout.createSequentialGroup()
+                    .addGap(0, 39, Short.MAX_VALUE)
+                    .addComponent(PlayPanal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 6, Short.MAX_VALUE)))
+            .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(mainPanelLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(PlayMultiplayerOnTheSameComputerPanal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(37, Short.MAX_VALUE)))
+            .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(mainPanelLayout.createSequentialGroup()
+                    .addGap(0, 11, Short.MAX_VALUE)
+                    .addComponent(SameComputerPanal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 11, Short.MAX_VALUE)))
+            .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(mainPanelLayout.createSequentialGroup()
+                    .addGap(0, 57, Short.MAX_VALUE)
+                    .addComponent(OverTheNetworkPanal, javax.swing.GroupLayout.PREFERRED_SIZE, 331, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 58, Short.MAX_VALUE)))
+            .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainPanelLayout.createSequentialGroup()
+                    .addContainerGap(49, Short.MAX_VALUE)
+                    .addComponent(PlayMultiplayerOverTheNetworkPanal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap()))
+            .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(mainPanelLayout.createSequentialGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(HostJoinPanal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
+        );
+
+        menuBar.setName("menuBar"); // NOI18N
+
+        fileMenu.setText(resourceMap.getString("fileMenu.text")); // NOI18N
+        fileMenu.setName("fileMenu"); // NOI18N
+
+        javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(tictactao.TicTacTaoApp.class).getContext().getActionMap(TicTacTaoView.class, this);
+        exitMenuItem.setAction(actionMap.get("quit")); // NOI18N
+        exitMenuItem.setName("exitMenuItem"); // NOI18N
+        fileMenu.add(exitMenuItem);
+
+        menuBar.add(fileMenu);
+
+        helpMenu.setText(resourceMap.getString("helpMenu.text")); // NOI18N
+        helpMenu.setName("helpMenu"); // NOI18N
+
+        aboutMenuItem.setAction(actionMap.get("showAboutBox")); // NOI18N
+        aboutMenuItem.setName("aboutMenuItem"); // NOI18N
+        helpMenu.add(aboutMenuItem);
+
+        menuBar.add(helpMenu);
+
+        statusPanel.setName("statusPanel"); // NOI18N
+
+        statusPanelSeparator.setName("statusPanelSeparator"); // NOI18N
+
+        statusMessageLabel.setName("statusMessageLabel"); // NOI18N
+
+        statusAnimationLabel.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        statusAnimationLabel.setName("statusAnimationLabel"); // NOI18N
+
+        progressBar.setName("progressBar"); // NOI18N
+
+        javax.swing.GroupLayout statusPanelLayout = new javax.swing.GroupLayout(statusPanel);
+        statusPanel.setLayout(statusPanelLayout);
+        statusPanelLayout.setHorizontalGroup(
+            statusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(statusPanelSeparator, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            .addGroup(statusPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(statusMessageLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 230, Short.MAX_VALUE)
+                .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(statusAnimationLabel)
+                .addContainerGap())
+        );
+        statusPanelLayout.setVerticalGroup(
+            statusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(statusPanelLayout.createSequentialGroup()
+                .addComponent(statusPanelSeparator, javax.swing.GroupLayout.PREFERRED_SIZE, 2, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(statusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(statusMessageLabel)
+                    .addComponent(statusAnimationLabel)
+                    .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(3, 3, 3))
+        );
+
+        jTextField1.setText(resourceMap.getString("jTextField1.text")); // NOI18N
+        jTextField1.setName("jTextField1"); // NOI18N
+
+        setComponent(mainPanel);
+        setMenuBar(menuBar);
+        setStatusBar(statusPanel);
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void NewGameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NewGameActionPerformed
+        // TODO add your handling code here:
+       // JOptionPane.showMessageDialog(null, "Welcome Sir!");
+        this.NewGamePanal.setVisible(true);
+        this.MainGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.OverTheNetworkPanal.setVisible(false);
+        this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+    }//GEN-LAST:event_NewGameActionPerformed
+
+    private void OptionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OptionActionPerformed
+        // TODO add your handling code here:
+        this.NewGamePanal.setVisible(false);
+        this.MainGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(true);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.OverTheNetworkPanal.setVisible(false);
+        this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+    }//GEN-LAST:event_OptionActionPerformed
+
+    private void HelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_HelpActionPerformed
+            // TODO add your handling code here:
+        this.NewGamePanal.setVisible(false);
+        this.MainGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(true);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.OverTheNetworkPanal.setVisible(false);
+        this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+    }//GEN-LAST:event_HelpActionPerformed
+
+    private void HighScoreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_HighScoreActionPerformed
+        // TODO add your handling code here:
+        this.NewGamePanal.setVisible(false);
+        this.MainGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(true);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.OverTheNetworkPanal.setVisible(false);
+        this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+        
+        this.records.sort();
+        
+        this.Name1.setText(this.records.returnPlayer(0).getName());
+        this.Name2.setText(this.records.returnPlayer(1).getName());
+        this.Name3.setText(this.records.returnPlayer(2).getName());
+        this.Name4.setText(this.records.returnPlayer(3).getName());
+        this.Name5.setText(this.records.returnPlayer(4).getName());
+        this.Name6.setText(this.records.returnPlayer(5).getName());
+        this.Name7.setText(this.records.returnPlayer(6).getName());
+        this.Name8.setText(this.records.returnPlayer(7).getName());
+        this.Name9.setText(this.records.returnPlayer(8).getName());
+        this.Name10.setText(this.records.returnPlayer(9).getName());
+
+        this.Level1.setText(this.records.returnPlayer(0).getLevel());
+        this.Level2.setText(this.records.returnPlayer(1).getLevel());
+        this.Level3.setText(this.records.returnPlayer(2).getLevel());
+        this.Level4.setText(this.records.returnPlayer(3).getLevel());
+        this.Level5.setText(this.records.returnPlayer(4).getLevel());
+        this.Level6.setText(this.records.returnPlayer(5).getLevel());
+        this.Level7.setText(this.records.returnPlayer(6).getLevel());
+        this.Level8.setText(this.records.returnPlayer(7).getLevel());
+        this.Level9.setText(this.records.returnPlayer(8).getLevel());
+        this.Level10.setText(this.records.returnPlayer(9).getLevel());
+
+        this.Score1.setText(this.records.returnPlayer(0).getScore() == 0 ? "" :
+                 Integer.toString(this.records.returnPlayer(0).getScore()));
+        this.Score2.setText(this.records.returnPlayer(1).getScore() == 0 ? "" :
+                 Integer.toString(this.records.returnPlayer(1).getScore()));
+        this.Score3.setText(this.records.returnPlayer(2).getScore() == 0 ? "" :
+                 Integer.toString(this.records.returnPlayer(2).getScore()));
+        this.Score4.setText(this.records.returnPlayer(3).getScore() == 0 ? "" :
+                 Integer.toString(this.records.returnPlayer(3).getScore()));
+        this.Score5.setText(this.records.returnPlayer(4).getScore() == 0 ? "" :
+                 Integer.toString(this.records.returnPlayer(4).getScore()));
+        this.Score6.setText(this.records.returnPlayer(5).getScore() == 0 ? "" :
+                 Integer.toString(this.records.returnPlayer(5).getScore()));
+        this.Score7.setText(this.records.returnPlayer(6).getScore() == 0 ? "" :
+                 Integer.toString(this.records.returnPlayer(6).getScore()));
+        this.Score8.setText(this.records.returnPlayer(7).getScore() == 0 ? "" :
+                 Integer.toString(this.records.returnPlayer(7).getScore()));
+        this.Score9.setText(this.records.returnPlayer(8).getScore() == 0 ? "" :
+                 Integer.toString(this.records.returnPlayer(8).getScore()));
+        this.Score10.setText(this.records.returnPlayer(9).getScore() == 0 ? "" :
+                 Integer.toString(this.records.returnPlayer(9).getScore()));
+
+
+
+    }//GEN-LAST:event_HighScoreActionPerformed
+
+    private void QuitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_QuitActionPerformed
+        // TODO add your handling code here:
+        this.records.write();
+        int rv = JOptionPane.showConfirmDialog(this.NewGamePanal, "Are you sure to want to quit?");
+        if(rv == 0)
+            System.exit(0);
+    }//GEN-LAST:event_QuitActionPerformed
+
+    private void BackGameMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BackGameMenuActionPerformed
+        // TODO add your handling code here:
+        this.NewGamePanal.setVisible(false);
+        this.MainGamePanal.setVisible(true);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.OverTheNetworkPanal.setVisible(false);
+        this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+    }//GEN-LAST:event_BackGameMenuActionPerformed
+
+    private void BackOptionMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BackOptionMenuActionPerformed
+        // TODO add your handling code here:
+        this.NewGamePanal.setVisible(false);
+        this.MainGamePanal.setVisible(true);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.OverTheNetworkPanal.setVisible(false);
+        this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+
+    }//GEN-LAST:event_BackOptionMenuActionPerformed
+
+    private void BackHelpMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BackHelpMenuActionPerformed
+        // TODO add your handling code here:
+        this.NewGamePanal.setVisible(false);
+        this.MainGamePanal.setVisible(true);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.OverTheNetworkPanal.setVisible(false);
+        this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+    }//GEN-LAST:event_BackHelpMenuActionPerformed
+
+    private void BackHighScoreMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BackHighScoreMenuActionPerformed
+        // TODO add your handling code here:
+        this.NewGamePanal.setVisible(false);
+        this.MainGamePanal.setVisible(true);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.OverTheNetworkPanal.setVisible(false);
+        this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+    }//GEN-LAST:event_BackHighScoreMenuActionPerformed
+
+    private void BackSinglePlayerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BackSinglePlayerActionPerformed
+        // TODO add your handling code here:
+        this.NewGamePanal.setVisible(true);
+        this.MainGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.OverTheNetworkPanal.setVisible(false);
+        this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+    }//GEN-LAST:event_BackSinglePlayerActionPerformed
+
+    private void SinglePlayerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SinglePlayerActionPerformed
+        // TODO add your handling code here:
+        this.NewGamePanal.setVisible(false);
+        this.MainGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(true);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.OverTheNetworkPanal.setVisible(false);
+        this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+    }//GEN-LAST:event_SinglePlayerActionPerformed
+
+    private void BackMultiplayerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BackMultiplayerActionPerformed
+        // TODO add your handling code here:
+        this.NewGamePanal.setVisible(true);
+        this.MainGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.OverTheNetworkPanal.setVisible(false);
+        this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+    }//GEN-LAST:event_BackMultiplayerActionPerformed
+
+    private void MultiPlayerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MultiPlayerActionPerformed
+        // TODO add your handling code here:
+        this.NewGamePanal.setVisible(false);
+        this.MainGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(true);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.OverTheNetworkPanal.setVisible(false);
+        this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+    }//GEN-LAST:event_MultiPlayerActionPerformed
+
+    private void PlayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PlayActionPerformed
+        // TODO add your handling code here:
+
+        String name = this.Name.getText();
+        if(name.equals(""))
+            JOptionPane.showMessageDialog(null, "Please Enter Your Name!");
+        else
+        {
+            this.initializeBoard();
+            this.NewGamePanal.setVisible(false);
+            this.MainGamePanal.setVisible(false);
+            this.OptionPanal.setVisible(false);
+            this.HelpPanal.setVisible(false);
+            this.HighScorePanal.setVisible(false);
+            this.SinglePlayerPanal.setVisible(false);
+            this.MultiplayerPanal.setVisible(false);
+            this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+            this.SameComputerPanal.setVisible(false);
+            this.OverTheNetworkPanal.setVisible(false);
+            this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+            this.PlayPanal.setVisible(true);
+            this.ActualPanal.setSize(330, 284);
+            this.pName.setText(name);
+            this.score.setText("0");
+            this.pTurn.setText("");
+            if(this.Easy.isSelected())
+            {
+                this.Level.setText(this.Easy.getText());
+                char marker;
+                if(this.check.isSelected())
+                    marker = 'O';
+                else
+                    marker = 'X';
+                this.p1 = new Player(name, "Easy", marker, 0);
+                this.p2 = new Player ("Computer", "Easy", marker == 'O' ? 'X' : 'O', 0);
+                this.diffLevel = "Easy";
+                value = JOptionPane.showInputDialog("Press 'y' or 'Y' to play first\n"
+                    + "Press 'n' or 'N' to play second");
+        
+                while(!"y".equals(value) && !"Y".equals(value) && !"n".equals(value) && !"N".equals(value))
+                value = JOptionPane.showInputDialog("Press 'y' or 'Y' to play first\n"
+                    + "Press 'n' or 'N' to play second");
+                if(value.equals("n") || value.equals("N"))
+                {
+                    this.easyLevel();
+                }
+                else
+                {
+                    this.pTurn.setText(this.p1.getName() + " Turn");
+                    this.pTurn.setFont(new Font("Tahoma", Font.BOLD, 14));
+                }
+            }
+            else if(this.Medium.isSelected())
+            {
+                char marker;
+                if(this.check.isSelected())
+                    marker = 'O';
+                else
+                    marker = 'X';
+                this.p1 = new Player(name, "Medium", marker, 0);
+                this.p2 = new Player ("Computer", "Medium", marker == 'O' ? 'X' : 'O', 0);
+                this.Level.setText(this.Medium.getText());
+                this.diffLevel = "Medium";
+                value = JOptionPane.showInputDialog("Press 'y' or 'Y' to play first\n"
+                    + "Press 'n' or 'N' to play second");
+        
+                while(!"y".equals(value) && !"Y".equals(value) && !"n".equals(value) && !"N".equals(value))
+                value = JOptionPane.showInputDialog("Press 'y' or 'Y' to play first\n"
+                    + "Press 'n' or 'N' to play second");
+                if(value.equals("n") || value.equals("N"))
+                {
+                    this.mediumLevel();
+                }
+                else
+                {
+                    this.pTurn.setText(this.p1.getName() + " Turn");
+                    this.pTurn.setFont(new Font("Tahoma", Font.BOLD, 14));
+                }
+            }
+            else
+            {
+                char marker;
+                if(this.check.isSelected())
+                    marker = 'O';
+                else
+                    marker = 'X';
+                this.p1 = new Player(name, "Hard", marker, 0);
+                this.p2 = new Player ("Computer", "Hard", marker == 'O' ? 'X' : 'O', 0);
+                this.Level.setText(this.Hard.getText());
+                this.diffLevel = "Hard";
+                value = JOptionPane.showInputDialog("Press 'y' or 'Y' to play first\n"
+                    + "Press 'n' or 'N' to play second");
+        
+                while(!"y".equals(value) && !"Y".equals(value) && !"n".equals(value) && !"N".equals(value))
+                value = JOptionPane.showInputDialog("Press 'y' or 'Y' to play first\n"
+                    + "Press 'n' or 'N' to play second");
+                if(value.equals("n") || value.equals("N"))
+                {
+                    this.hardLevel();
+                }
+                else
+                {
+                    this.pTurn.setText(this.p1.getName() + " Turn");
+                    this.pTurn.setFont(new Font("Tahoma", Font.BOLD, 14));
+                }
+            }
+            
+        }
+    }//GEN-LAST:event_PlayActionPerformed
+
+    private void c2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_c2ActionPerformed
+        // TODO add your handling code here:
+        
+        
+            //Player 1 turn
+            this.pTurn.setText(this.p1.getName() + " Turn");
+            this.pTurn.setFont(new Font("Tahoma", Font.BOLD, 14));
+            this.board[2] = p1.getMarker();
+            if(p1.getMarker() == 'O')
+            {
+                this.c2.setIcon(new ImageIcon("check.png"));
+                this.c2.setEnabled(false);
+                this.c2.setDisabledIcon(new ImageIcon("check.png"));
+            }
+            else
+            {
+                this.c2.setIcon(new ImageIcon("cross.png"));
+                this.c2.setEnabled(false);
+                this.c2.setDisabledIcon(new ImageIcon("cross.png"));
+            }
+            
+            if(this.check_for_win().equals("player 1"))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations "
+                       + this.p1.getName() + "!\nYou have won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                if(diffLevel.equals("Easy"))
+                    p1.setScore(10);
+                else if(diffLevel.equals("Medium"))
+                    p1.setScore(20);
+                else
+                    p1.setScore(30);
+                records.add(p1);
+                records.write();
+                return;
+            }
+                
+            if(this.check_for_win().equals("player 2"))
+            {
+                JOptionPane.showMessageDialog(null, "OHHHH "
+                         +  "Computer have won!!!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                return;
+            }
+                
+            if(this.check_for_draw())
+            {
+                JOptionPane.showMessageDialog(null, "Game has been drawn!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                return;
+            }
+            
+            //Computer turn
+            if(diffLevel.equals("Easy"))
+            {
+                this.easyLevel();
+            }
+                
+            else if(diffLevel.equals("Medium"))
+            {
+                this.mediumLevel();
+            }
+                
+            else
+            {
+                this.hardLevel();
+            }
+            
+            if(this.check_for_win().equals("player 1"))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations "
+                       + this.p1.getName() + "!\nYou have won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                if(diffLevel.equals("Easy"))
+                    p1.setScore(10);
+                else if(diffLevel.equals("Medium"))
+                    p1.setScore(20);
+                else
+                    p1.setScore(30);
+                records.add(p1);
+                records.write();
+                return;
+            }
+                
+            if(this.check_for_win().equals("player 2"))
+            {
+                JOptionPane.showMessageDialog(null, "OHHHH "
+                         +  "Computer have won!!!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                return;
+            }
+                
+            if(this.check_for_draw())
+            {
+                JOptionPane.showMessageDialog(null, "Game has been drawn!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                return;
+            }
+        
+    }//GEN-LAST:event_c2ActionPerformed
+
+    private void c1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_c1ActionPerformed
+        // TODO add your handling code here:
+      //Player 1 turn
+            this.pTurn.setText(this.p1.getName() + " Turn");
+            this.pTurn.setFont(new Font("Tahoma", Font.BOLD, 14));
+            this.board[1] = p1.getMarker();
+            if(p1.getMarker() == 'O')
+            {
+                this.c1.setIcon(new ImageIcon("check.png"));
+                this.c1.setEnabled(false);
+                this.c1.setDisabledIcon(new ImageIcon("check.png"));
+            }
+            else
+            {
+                this.c1.setIcon(new ImageIcon("cross.png"));
+                this.c1.setEnabled(false);
+                this.c1.setDisabledIcon(new ImageIcon("cross.png"));
+            }
+            
+            if(this.check_for_win().equals("player 1"))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations "
+                       + this.p1.getName() + "!\nYou have won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                if(diffLevel.equals("Easy"))
+                    p1.setScore(10);
+                else if(diffLevel.equals("Medium"))
+                    p1.setScore(20);
+                else
+                    p1.setScore(30);
+                records.add(p1);
+                records.write();
+                return;
+            }
+                
+            if(this.check_for_win().equals("player 2"))
+            {
+                JOptionPane.showMessageDialog(null, "OHHHH "
+                         +  "Computer have won!!!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                return;
+            }
+                
+            if(this.check_for_draw())
+            {
+                JOptionPane.showMessageDialog(null, "Game has been drawn!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                return;
+            }
+            
+            //Computer turn
+            if(diffLevel.equals("Easy"))
+            {
+                this.easyLevel();
+            }
+                
+            else if(diffLevel.equals("Medium"))
+            {
+                this.mediumLevel();
+            }
+                
+            else
+            {
+                this.hardLevel();
+            }
+            
+            if(this.check_for_win().equals("player 1"))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations "
+                       + this.p1.getName() + "!\nYou have won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                if(diffLevel.equals("Easy"))
+                    p1.setScore(10);
+                else if(diffLevel.equals("Medium"))
+                    p1.setScore(20);
+                else
+                    p1.setScore(30);
+                records.add(p1);
+                records.write();
+                return;
+            }
+                
+            if(this.check_for_win().equals("player 2"))
+            {
+                JOptionPane.showMessageDialog(null, "OHHHH "
+                         +  "Computer have won!!!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                return;
+            }
+                
+            if(this.check_for_draw())
+            {
+                JOptionPane.showMessageDialog(null, "Game has been drawn!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                return;
+            }
+    }//GEN-LAST:event_c1ActionPerformed
+
+    private void c3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_c3ActionPerformed
+        // TODO add your handling code here:
+        //Player 1 turn
+            this.pTurn.setText(this.p1.getName() + " Turn");
+            this.pTurn.setFont(new Font("Tahoma", Font.BOLD, 14));
+            this.board[3] = p1.getMarker();
+            if(p1.getMarker() == 'O')
+            {
+                this.c3.setIcon(new ImageIcon("check.png"));
+                this.c3.setEnabled(false);
+                this.c3.setDisabledIcon(new ImageIcon("check.png"));
+            }
+            else
+            {
+                this.c3.setIcon(new ImageIcon("cross.png"));
+                this.c3.setEnabled(false);
+                this.c3.setDisabledIcon(new ImageIcon("cross.png"));
+            }
+            
+            if(this.check_for_win().equals("player 1"))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations "
+                       + this.p1.getName() + "!\nYou have won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                if(diffLevel.equals("Easy"))
+                    p1.setScore(10);
+                else if(diffLevel.equals("Medium"))
+                    p1.setScore(20);
+                else
+                    p1.setScore(30);
+                records.add(p1);
+                records.write();
+                return;
+            }
+                
+            if(this.check_for_win().equals("player 2"))
+            {
+                JOptionPane.showMessageDialog(null, "OHHHH "
+                         +  "Computer have won!!!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                return;
+            }
+                
+            if(this.check_for_draw())
+            {
+                JOptionPane.showMessageDialog(null, "Game has been drawn!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+            }
+            
+            //Computer turn
+            if(diffLevel.equals("Easy"))
+            {
+                this.easyLevel();
+            }
+                
+            else if(diffLevel.equals("Medium"))
+            {
+                this.mediumLevel();
+            }
+                
+            else
+            {
+                this.hardLevel();
+            }
+            
+            if(this.check_for_win().equals("player 1"))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations "
+                       + this.p1.getName() + "!\nYou have won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                if(diffLevel.equals("Easy"))
+                    p1.setScore(10);
+                else if(diffLevel.equals("Medium"))
+                    p1.setScore(20);
+                else
+                    p1.setScore(30);
+                records.add(p1);
+                records.write();
+                return;
+            }
+                
+            if(this.check_for_win().equals("player 2"))
+            {
+                JOptionPane.showMessageDialog(null, "OHHHH "
+                         +  "Computer have won!!!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                return;
+            }
+                
+            if(this.check_for_draw())
+            {
+                JOptionPane.showMessageDialog(null, "Game has been drawn!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                return;
+            }
+       
+    }//GEN-LAST:event_c3ActionPerformed
+
+    private void c4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_c4ActionPerformed
+        // TODO add your handling code here:
+        //Player 1 turn
+            this.pTurn.setText(this.p1.getName() + " Turn");
+            this.pTurn.setFont(new Font("Tahoma", Font.BOLD, 14));
+            this.board[4] = p1.getMarker();
+            if(p1.getMarker() == 'O')
+            {
+                this.c4.setIcon(new ImageIcon("check.png"));
+                this.c4.setEnabled(false);
+                this.c4.setDisabledIcon(new ImageIcon("check.png"));
+            }
+            else
+            {
+                this.c4.setIcon(new ImageIcon("cross.png"));
+                this.c4.setEnabled(false);
+                this.c4.setDisabledIcon(new ImageIcon("cross.png"));
+            }
+            
+            if(this.check_for_win().equals("player 1"))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations "
+                       + this.p1.getName() + "!\nYou have won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                if(diffLevel.equals("Easy"))
+                    p1.setScore(10);
+                else if(diffLevel.equals("Medium"))
+                    p1.setScore(20);
+                else
+                    p1.setScore(30);
+                records.add(p1);
+                records.write();
+                return;
+            }
+                
+            if(this.check_for_win().equals("player 2"))
+            {
+                JOptionPane.showMessageDialog(null, "OHHHH "
+                         +  "Computer have won!!!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                return;
+            }
+                
+            if(this.check_for_draw())
+            {
+                JOptionPane.showMessageDialog(null, "Game has been drawn!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                return;
+            }
+            
+            //Computer turn
+            if(diffLevel.equals("Easy"))
+            {
+                this.easyLevel();
+            }
+                
+           else if(diffLevel.equals("Medium"))
+            {
+                this.mediumLevel();
+            }
+                
+            else
+            {
+                this.hardLevel();
+            }
+            
+            if(this.check_for_win().equals("player 1"))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations "
+                       + this.p1.getName() + "!\nYou have won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                if(diffLevel.equals("Easy"))
+                    p1.setScore(10);
+                else if(diffLevel.equals("Medium"))
+                    p1.setScore(20);
+                else
+                    p1.setScore(30);
+                records.add(p1);
+                records.write();
+                return;
+            }
+                
+            if(this.check_for_win().equals("player 2"))
+            {
+                JOptionPane.showMessageDialog(null, "OHHHH "
+                         +  "Computer have won!!!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                return;
+            }
+                
+            if(this.check_for_draw())
+            {
+                JOptionPane.showMessageDialog(null, "Game has been drawn!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                return;
+            }
+    }//GEN-LAST:event_c4ActionPerformed
+
+    private void c5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_c5ActionPerformed
+        // TODO add your handling code here:
+        //Player 1 turn
+            this.pTurn.setText(this.p1.getName() + " Turn");
+            this.pTurn.setFont(new Font("Tahoma", Font.BOLD, 14));
+            this.board[5] = p1.getMarker();
+            if(p1.getMarker() == 'O')
+            {
+                this.c5.setIcon(new ImageIcon("check.png"));
+                this.c5.setEnabled(false);
+                this.c5.setDisabledIcon(new ImageIcon("check.png"));
+            }
+            else
+            {
+                this.c5.setIcon(new ImageIcon("cross.png"));
+                this.c5.setEnabled(false);
+                this.c5.setDisabledIcon(new ImageIcon("cross.png"));
+            }
+            
+            if(this.check_for_win().equals("player 1"))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations "
+                       + this.p1.getName() + "!\nYou have won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                if(diffLevel.equals("Easy"))
+                    p1.setScore(10);
+                else if(diffLevel.equals("Medium"))
+                    p1.setScore(20);
+                else
+                    p1.setScore(30);
+                records.add(p1);
+                records.write();
+                return;
+            }
+                
+            if(this.check_for_win().equals("player 2"))
+            {
+                JOptionPane.showMessageDialog(null, "OHHHH "
+                         +  "Computer have won!!!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                return;
+            }
+                
+            if(this.check_for_draw())
+            {
+                JOptionPane.showMessageDialog(null, "Game has been drawn!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                return;
+            }
+            
+            //Computer turn
+            if(diffLevel.equals("Easy"))
+            {
+                this.easyLevel();
+            }
+                
+            else if(diffLevel.equals("Medium"))
+            {
+                this.mediumLevel();
+            }
+                
+            else
+            {
+                this.hardLevel();
+            }
+            
+            if(this.check_for_win().equals("player 1"))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations "
+                       + this.p1.getName() + "!\nYou have won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                if(diffLevel.equals("Easy"))
+                    p1.setScore(10);
+                else if(diffLevel.equals("Medium"))
+                    p1.setScore(20);
+                else
+                    p1.setScore(30);
+                records.add(p1);
+                records.write();
+                return;
+            }
+                
+            if(this.check_for_win().equals("player 2"))
+            {
+                JOptionPane.showMessageDialog(null, "OHHHH "
+                         +  "Computer have won!!!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                return;
+            }
+                
+            if(this.check_for_draw())
+            {
+                JOptionPane.showMessageDialog(null, "Game has been drawn!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                return;
+            }
+    }//GEN-LAST:event_c5ActionPerformed
+
+    private void c6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_c6ActionPerformed
+        // TODO add your handling code here:
+       //Player 1 turn
+            this.pTurn.setText(this.p1.getName() + " Turn");
+            this.pTurn.setFont(new Font("Tahoma", Font.BOLD, 14));
+            this.board[6] = p1.getMarker();
+            if(p1.getMarker() == 'O')
+            {
+                this.c6.setIcon(new ImageIcon("check.png"));
+                this.c6.setEnabled(false);
+                this.c6.setDisabledIcon(new ImageIcon("check.png"));
+            }
+            else
+            {
+                this.c6.setIcon(new ImageIcon("cross.png"));
+                this.c6.setEnabled(false);
+                this.c6.setDisabledIcon(new ImageIcon("cross.png"));
+            }
+            
+            if(this.check_for_win().equals("player 1"))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations "
+                       + this.p1.getName() + "!\nYou have won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                if(diffLevel.equals("Easy"))
+                    p1.setScore(10);
+                else if(diffLevel.equals("Medium"))
+                    p1.setScore(20);
+                else
+                    p1.setScore(30);
+                records.add(p1);
+                records.write();
+                return;
+            }
+                
+            if(this.check_for_win().equals("player 2"))
+            {
+                JOptionPane.showMessageDialog(null, "OHHHH "
+                         +  "Computer have won!!!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                return;
+            }
+                
+            if(this.check_for_draw())
+            {
+                JOptionPane.showMessageDialog(null, "Game has been drawn!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                return;
+            }
+            
+            //Computer turn
+            if(diffLevel.equals("Easy"))
+            {
+                this.easyLevel();
+            }
+                
+            else if(diffLevel.equals("Medium"))
+            {
+                this.mediumLevel();
+            }
+                
+            else
+            {
+                this.hardLevel();
+            }
+            
+            if(this.check_for_win().equals("player 1"))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations "
+                       + this.p1.getName() + "!\nYou have won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                if(diffLevel.equals("Easy"))
+                    p1.setScore(10);
+                else if(diffLevel.equals("Medium"))
+                    p1.setScore(20);
+                else
+                    p1.setScore(30);
+                records.add(p1);
+                records.write();
+                return;
+            }
+                
+            if(this.check_for_win().equals("player 2"))
+            {
+                JOptionPane.showMessageDialog(null, "OHHHH "
+                         +  "Computer have won!!!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                return;
+            }
+                
+            if(this.check_for_draw())
+            {
+                JOptionPane.showMessageDialog(null, "Game has been drawn!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                return;
+            } 
+    }//GEN-LAST:event_c6ActionPerformed
+
+    private void c7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_c7ActionPerformed
+        // TODO add your handling code here:
+        //Player 1 turn
+            this.pTurn.setText(this.p1.getName() + " Turn");
+            this.pTurn.setFont(new Font("Tahoma", Font.BOLD, 14));
+            this.board[7] = p1.getMarker();
+            if(p1.getMarker() == 'O')
+            {
+                this.c7.setIcon(new ImageIcon("check.png"));
+                this.c7.setEnabled(false);
+                this.c7.setDisabledIcon(new ImageIcon("check.png"));
+            }
+            else
+            {
+                this.c7.setIcon(new ImageIcon("cross.png"));
+                this.c7.setEnabled(false);
+                this.c7.setDisabledIcon(new ImageIcon("cross.png"));
+            }
+            
+            if(this.check_for_win().equals("player 1"))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations "
+                       + this.p1.getName() + "!\nYou have won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                if(diffLevel.equals("Easy"))
+                    p1.setScore(10);
+                else if(diffLevel.equals("Medium"))
+                    p1.setScore(20);
+                else
+                    p1.setScore(30);
+                records.add(p1);
+                records.write();
+                return;
+            }
+                
+            if(this.check_for_win().equals("player 2"))
+            {
+                JOptionPane.showMessageDialog(null, "OHHHH "
+                         +  "Computer have won!!!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                return;
+            }
+                
+            if(this.check_for_draw())
+            {
+                JOptionPane.showMessageDialog(null, "Game has been drawn!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                return;
+            }
+            
+            //Computer turn
+            if(diffLevel.equals("Easy"))
+            {
+                this.easyLevel();
+            }
+                
+            else if(diffLevel.equals("Medium"))
+            {
+                this.mediumLevel();
+            }
+                
+            else
+            {
+                this.hardLevel();
+            }
+            
+            if(this.check_for_win().equals("player 1"))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations "
+                       + this.p1.getName() + "!\nYou have won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                if(diffLevel.equals("Easy"))
+                    p1.setScore(10);
+                else if(diffLevel.equals("Medium"))
+                    p1.setScore(20);
+                else
+                    p1.setScore(30);
+                records.add(p1);
+                records.write();
+                return;
+            }
+                
+            if(this.check_for_win().equals("player 2"))
+            {
+                JOptionPane.showMessageDialog(null, "OHHHH "
+                         +  "Computer have won!!!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                return;
+            }
+                
+            if(this.check_for_draw())
+            {
+                JOptionPane.showMessageDialog(null, "Game has been drawn!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                return;
+            }
+    }//GEN-LAST:event_c7ActionPerformed
+
+    private void c8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_c8ActionPerformed
+        // TODO add your handling code here:
+        //Player 1 turn
+            this.pTurn.setText(this.p1.getName() + " Turn");
+            this.pTurn.setFont(new Font("Tahoma", Font.BOLD, 14));
+            this.board[8] = p1.getMarker();
+            if(p1.getMarker() == 'O')
+            {
+                this.c8.setIcon(new ImageIcon("check.png"));
+                this.c8.setEnabled(false);
+                this.c8.setDisabledIcon(new ImageIcon("check.png"));
+            }
+            else
+            {
+                this.c8.setIcon(new ImageIcon("cross.png"));
+                this.c8.setEnabled(false);
+                this.c8.setDisabledIcon(new ImageIcon("cross.png"));
+            }
+            
+            if(this.check_for_win().equals("player 1"))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations "
+                       + this.p1.getName() + "!\nYou have won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                if(diffLevel.equals("Easy"))
+                    p1.setScore(10);
+                else if(diffLevel.equals("Medium"))
+                    p1.setScore(20);
+                else
+                    p1.setScore(30);
+                records.add(p1);
+                records.write();
+                return;
+            }
+                
+            if(this.check_for_win().equals("player 2"))
+            {
+                JOptionPane.showMessageDialog(null, "OHHHH "
+                         +  "Computer have won!!!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                return;
+            }
+                
+            if(this.check_for_draw())
+            {
+                JOptionPane.showMessageDialog(null, "Game has been drawn!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                return;
+            }
+            
+            //Computer turn
+            if(diffLevel.equals("Easy"))
+            {
+                this.easyLevel();
+            }
+                
+            else if(diffLevel.equals("Medium"))
+            {
+                this.mediumLevel();
+            }
+                
+            else
+            {
+                this.hardLevel();
+            }
+            
+            if(this.check_for_win().equals("player 1"))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations "
+                       + this.p1.getName() + "!\nYou have won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                if(diffLevel.equals("Easy"))
+                    p1.setScore(10);
+                else if(diffLevel.equals("Medium"))
+                    p1.setScore(20);
+                else
+                    p1.setScore(30);
+                records.add(p1);
+                records.write();
+                return;
+            }
+                
+            if(this.check_for_win().equals("player 2"))
+            {
+                JOptionPane.showMessageDialog(null, "OHHHH "
+                         +  "Computer have won!!!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                return;
+            }
+                
+            if(this.check_for_draw())
+            {
+                JOptionPane.showMessageDialog(null, "Game has been drawn!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                return;
+            }
+    }//GEN-LAST:event_c8ActionPerformed
+
+    private void c9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_c9ActionPerformed
+        // TODO add your handling code here:
+        //Player 1 turn
+            this.pTurn.setText(this.p1.getName() + " Turn");
+            this.pTurn.setFont(new Font("Tahoma", Font.BOLD, 14));
+            this.board[9] = p1.getMarker();
+            if(p1.getMarker() == 'O')
+            {
+                this.c9.setIcon(new ImageIcon("check.png"));
+                this.c9.setEnabled(false);
+                this.c9.setDisabledIcon(new ImageIcon("check.png"));
+            }
+            else
+            {
+                this.c9.setIcon(new ImageIcon("cross.png"));
+                this.c9.setEnabled(false);
+                this.c9.setDisabledIcon(new ImageIcon("cross.png"));
+            }
+            
+            if(this.check_for_win().equals("player 1"))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations "
+                       + this.p1.getName() + "!\nYou have won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                if(diffLevel.equals("Easy"))
+                    p1.setScore(10);
+                else if(diffLevel.equals("Medium"))
+                    p1.setScore(20);
+                else
+                    p1.setScore(30);
+                records.add(p1);
+                records.write();
+                return;
+            }
+                
+            if(this.check_for_win().equals("player 2"))
+            {
+                JOptionPane.showMessageDialog(null, "OHHHH "
+                         +  "Computer have won!!!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                return;
+            }
+                
+            if(this.check_for_draw())
+            {
+                JOptionPane.showMessageDialog(null, "Game has been drawn!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                return;
+            }
+            
+            //Computer turn
+            if(diffLevel.equals("Easy"))
+            {
+                this.easyLevel();
+            }
+                
+            else if(diffLevel.equals("Medium"))
+            {
+                this.mediumLevel();
+            }
+                
+            else
+            {
+                this.hardLevel();
+            }
+            
+            if(this.check_for_win().equals("player 1"))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations "
+                       + this.p1.getName() + "!\nYou have won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                if(diffLevel.equals("Easy"))
+                    p1.setScore(10);
+                else if(diffLevel.equals("Medium"))
+                    p1.setScore(20);
+                else
+                    p1.setScore(30);
+                records.add(p1);
+                records.write();
+                return;
+            }
+                
+            if(this.check_for_win().equals("player 2"))
+            {
+                JOptionPane.showMessageDialog(null, "OHHHH "
+                         +  "Computer have won!!!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                return;
+            }
+                
+            if(this.check_for_draw())
+            {
+                JOptionPane.showMessageDialog(null, "Game has been drawn!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                return;
+            }
+    }//GEN-LAST:event_c9ActionPerformed
+
+private void m7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m7ActionPerformed
+// TODO add your handling code here:
+    if(this.turn.equals("p1"))
+    {
+    
+    this.board[7] = p1.getMarker();
+    if(p1.getMarker() == 'O')
+    {
+        this.m7.setIcon(new ImageIcon("check.png"));
+        this.m7.setEnabled(false);
+        this.m7.setDisabledIcon(new ImageIcon("check.png"));
+    }
+    else
+    {
+        this.m7.setIcon(new ImageIcon("cross.png"));
+        this.m7.setEnabled(false);
+        this.m7.setDisabledIcon(new ImageIcon("cross.png"));
+    }
+    
+    // Check for win
+    if(this.check_for_win().equals("player 1") )
+    {
+        JOptionPane.showMessageDialog(null, "Congratulations " + p1.getName()
+                + "!\nYou have Won!");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.p1.setScore(40);
+        this.records.add(p1);
+        return;
+    }
+    
+    if(this.check_for_win().equals("player 2") )
+    {
+        JOptionPane.showMessageDialog(null, "Congratulations " + p2.getName()
+                + "!\nYou have Won!");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.p2.setScore(40);
+        this.records.add(p2);
+        return;
+    }
+    
+    //Check for draw
+    if(this.check_for_draw())
+    {
+        JOptionPane.showMessageDialog(null, "Game has been Drawn! ");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        return;
+    }
+    this.turn = "p2";
+    this.p1Turn.setText(this.p2.getName() + " Turn");
+    this.p1Turn.setFont(new Font("Tahoma", Font.BOLD, 14));
+    this.p1Name.setText(p2.getName());
+    this.Level11.setText("Same Computer");
+    this.score1.setText("0");
+    }
+    
+    else
+    {
+    // Player 2 setting on multiplayer game panal
+        this.p1Turn.setText(this.p2.getName() + " Turn");
+        this.p1Turn.setFont(new Font("Tahoma", Font.BOLD, 14));
+        this.p1Name.setText(p2.getName());
+        this.Level11.setText("Same Computer");
+        this.score1.setText("0");
+        
+    this.board[7] = p2.getMarker();
+    if(p2.getMarker() == 'O')
+    {
+        this.m7.setIcon(new ImageIcon("C:\\Users\\Amjad Afzaal\\"
+                + "Desktop\\TicTacTao\\src\\tictactao\\check.png"));
+        this.m7.setEnabled(false);
+        this.m7.setDisabledIcon(new ImageIcon("C:\\Users\\Amjad Afzaal\\"
+                + "Desktop\\TicTacTao\\src\\tictactao\\check.png"));
+    }
+    else
+    {
+        this.m7.setIcon(new ImageIcon("C:\\Users\\Amjad Afzaal\\"
+                + "Desktop\\TicTacTao\\src\\tictactao\\cross.png"));
+        this.m7.setEnabled(false);
+        this.m7.setDisabledIcon(new ImageIcon("C:\\Users\\Amjad Afzaal\\"
+                + "Desktop\\TicTacTao\\src\\tictactao\\cross.png"));
+    }
+    
+    // Check for win
+    if(this.check_for_win().equals("player 1") )
+    {
+        JOptionPane.showMessageDialog(null, "Congratulations " + p1.getName()
+                + "!\nYou have Won!");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.p1.setScore(40);
+        this.records.add(p1);
+        return;
+    }
+    
+    if(this.check_for_win().equals("player 2") )
+    {
+        JOptionPane.showMessageDialog(null, "Congratulations " + p2.getName()
+                + "!\nYou have Won!");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.p2.setScore(40);
+        this.records.add(p2);
+        return;
+    }
+    
+    //Check for draw
+    if(this.check_for_draw())
+    {
+        JOptionPane.showMessageDialog(null, "Game has been Drawn! ");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        return;
+    }
+    
+    this.turn = "p1";
+    this.p1Turn.setText(this.p1.getName() + " Turn");
+    this.p1Turn.setFont(new Font("Tahoma", Font.BOLD, 14));
+    this.p1Name.setText(p1.getName());
+    this.Level11.setText("Same Computer");
+    this.score1.setText("0");
+    }
+}//GEN-LAST:event_m7ActionPerformed
+
+private void m8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m8ActionPerformed
+// TODO add your handling code here:
+    if(this.turn.equals("p1"))
+    {
+    this.p1Turn.setText(this.p1.getName() + " Turn");
+    this.p1Turn.setFont(new Font("Tahoma", Font.BOLD, 14));
+    this.p1Name.setText(p1.getName());
+    this.Level11.setText("Same Computer");
+    this.score1.setText("0");
+    this.board[8] = p1.getMarker();
+    if(p1.getMarker() == 'O')
+    {
+        this.m8.setIcon(new ImageIcon("check.png"));
+        this.m8.setEnabled(false);
+        this.m8.setDisabledIcon(new ImageIcon("check.png"));
+    }
+    else
+    {
+        this.m8.setIcon(new ImageIcon("cross.png"));
+        this.m8.setEnabled(false);
+        this.m8.setDisabledIcon(new ImageIcon("cross.png"));
+    }
+    
+    // Check for win
+    if(this.check_for_win().equals("player 1") )
+    {
+        JOptionPane.showMessageDialog(null, "Congratulations " + p1.getName()
+                + "!\nYou have Won!");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.p1.setScore(40);
+        this.records.add(p1);
+        return;
+    }
+    
+    if(this.check_for_win().equals("player 2") )
+    {
+        JOptionPane.showMessageDialog(null, "Congratulations " + p2.getName()
+                + "!\nYou have Won!");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.p2.setScore(40);
+        this.records.add(p2);
+        return;
+    }
+    
+    //Check for draw
+    if(this.check_for_draw())
+    {
+        JOptionPane.showMessageDialog(null, "Game has been Drawn! ");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        return;
+    }
+    
+    this.turn = "p2";
+    this.p1Turn.setText(this.p2.getName() + " Turn");
+    this.p1Turn.setFont(new Font("Tahoma", Font.BOLD, 14));
+    this.p1Name.setText(p2.getName());
+    this.Level11.setText("Same Computer");
+    this.score1.setText("0");
+    }
+    
+    else
+    {
+    // Player 2 setting on multiplayer game panal
+        this.p1Turn.setText(this.p2.getName() + " Turn");
+        this.p1Turn.setFont(new Font("Tahoma", Font.BOLD, 14));
+        this.p1Name.setText(p2.getName());
+        this.Level11.setText("Same Computer");
+        this.score1.setText("0");
+        
+    this.board[8] = p2.getMarker();
+    if(p2.getMarker() == 'O')
+    {
+        this.m8.setIcon(new ImageIcon("check.png"));
+        this.m8.setEnabled(false);
+        this.m8.setDisabledIcon(new ImageIcon("check.png"));
+    }
+    else
+    {
+        this.m8.setIcon(new ImageIcon("cross.png"));
+        this.m8.setEnabled(false);
+        this.m8.setDisabledIcon(new ImageIcon("cross.png"));
+    }
+    
+    // Check for win
+    if(this.check_for_win().equals("player 1") )
+    {
+        JOptionPane.showMessageDialog(null, "Congratulations " + p1.getName()
+                + "!\nYou have Won!");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.p1.setScore(40);
+        this.records.add(p1);
+        return;
+    }
+    
+    if(this.check_for_win().equals("player 2") )
+    {
+        JOptionPane.showMessageDialog(null, "Congratulations " + p2.getName()
+                + "!\nYou have Won!");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.p2.setScore(40);
+        this.records.add(p2);
+        return;
+    }
+    
+    //Check for draw
+    if(this.check_for_draw())
+    {
+        JOptionPane.showMessageDialog(null, "Game has been Drawn! ");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        return;
+    }
+    
+    this.turn = "p1";
+    this.p1Turn.setText(this.p1.getName() + " Turn");
+    this.p1Turn.setFont(new Font("Tahoma", Font.BOLD, 14));
+    this.p1Name.setText(p1.getName());
+    this.Level11.setText("Same Computer");
+    this.score1.setText("0");
+    }
+}//GEN-LAST:event_m8ActionPerformed
+
+private void m9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m9ActionPerformed
+// TODO add your handling code here:
+    if(this.turn.equals("p1"))
+    {
+    this.p1Turn.setText(this.p1.getName() + " Turn");
+    this.p1Turn.setFont(new Font("Tahoma", Font.BOLD, 14));
+    this.p1Name.setText(p1.getName());
+    this.Level11.setText("Same Computer");
+    this.score1.setText("0");
+    this.board[9] = p1.getMarker();
+    if(p1.getMarker() == 'O')
+    {
+        this.m9.setIcon(new ImageIcon("check.png"));
+        this.m9.setEnabled(false);
+        this.m9.setDisabledIcon(new ImageIcon("check.png"));
+    }
+    else
+    {
+        this.m9.setIcon(new ImageIcon("cross.png"));
+        this.m9.setEnabled(false);
+        this.m9.setDisabledIcon(new ImageIcon("cross.png"));
+    }
+    
+    // Check for win
+    if(this.check_for_win().equals("player 1") )
+    {
+        JOptionPane.showMessageDialog(null, "Congratulations " + p1.getName()
+                + "!\nYou have Won!");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.p1.setScore(40);
+        this.records.add(p1);
+        return;
+    }
+    
+    if(this.check_for_win().equals("player 2") )
+    {
+        JOptionPane.showMessageDialog(null, "Congratulations " + p2.getName()
+                + "!\nYou have Won!");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.p2.setScore(40);
+        this.records.add(p2);
+        return;
+    }
+    
+    
+    //Check for draw
+    if(this.check_for_draw())
+    {
+        JOptionPane.showMessageDialog(null, "Game has been Drawn! ");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        return;
+    }
+    
+    this.turn = "p2";
+    this.p1Turn.setText(this.p2.getName() + " Turn");
+    this.p1Turn.setFont(new Font("Tahoma", Font.BOLD, 14));
+    this.p1Name.setText(p2.getName());
+    this.Level11.setText("Same Computer");
+    this.score1.setText("0");
+    }
+    
+    else
+    {
+    // Player 2 setting on multiplayer game panal
+        this.p1Turn.setText(this.p2.getName() + " Turn");
+        this.p1Turn.setFont(new Font("Tahoma", Font.BOLD, 14));
+        this.p1Name.setText(p2.getName());
+        this.Level11.setText("Same Computer");
+        this.score1.setText("0");
+        
+    this.board[9] = p2.getMarker();
+    if(p2.getMarker() == 'O')
+    {
+        this.m9.setIcon(new ImageIcon("check.png"));
+        this.m9.setEnabled(false);
+        this.m9.setDisabledIcon(new ImageIcon("check.png"));
+    }
+    else
+    {
+        this.m9.setIcon(new ImageIcon("cross.png"));
+        this.m9.setEnabled(false);
+        this.m9.setDisabledIcon(new ImageIcon("cross.png"));
+    }
+    
+    // Check for win
+    if(this.check_for_win().equals("player 1") )
+    {
+        JOptionPane.showMessageDialog(null, "Congratulations " + p1.getName()
+                + "!\nYou have Won!");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.p1.setScore(40);
+        this.records.add(p1);
+        return;
+    }
+    
+    if(this.check_for_win().equals("player 2") )
+    {
+        JOptionPane.showMessageDialog(null, "Congratulations " + p2.getName()
+                + "!\nYou have Won!");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.p2.setScore(40);
+        this.records.add(p2);
+        return;
+    }
+    
+    //Check for draw
+    if(this.check_for_draw())
+    {
+        JOptionPane.showMessageDialog(null, "Game has been Drawn! ");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        return;
+    }
+    
+    this.turn = "p1";
+    this.p1Turn.setText(this.p1.getName() + " Turn");
+    this.p1Turn.setFont(new Font("Tahoma", Font.BOLD, 14));
+    this.p1Name.setText(p1.getName());
+    this.Level11.setText("Same Computer");
+    this.score1.setText("0");
+    }
+}//GEN-LAST:event_m9ActionPerformed
+
+private void m4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m4ActionPerformed
+// TODO add your handling code here:
+    if(this.turn.equals("p1"))
+    {
+    this.p1Turn.setText(this.p1.getName() + " Turn");
+    this.p1Turn.setFont(new Font("Tahoma", Font.BOLD, 14));
+    this.p1Name.setText(p1.getName());
+    this.Level11.setText("Same Computer");
+    this.score1.setText("0");
+    this.board[4] = p1.getMarker();
+    if(p1.getMarker() == 'O')
+    {
+        this.m4.setIcon(new ImageIcon("check.png"));
+        this.m4.setEnabled(false);
+        this.m4.setDisabledIcon(new ImageIcon("check.png"));
+    }
+    else
+    {
+        this.m4.setIcon(new ImageIcon("cross.png"));
+        this.m4.setEnabled(false);
+        this.m4.setDisabledIcon(new ImageIcon("cross.png"));
+    }
+    
+    // Check for win
+    if(this.check_for_win().equals("player 1") )
+    {
+        JOptionPane.showMessageDialog(null, "Congratulations " + p1.getName()
+                + "!\nYou have Won!");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.p1.setScore(40);
+        this.records.add(p1);
+        return;
+    }
+    
+    if(this.check_for_win().equals("player 2") )
+    {
+        JOptionPane.showMessageDialog(null, "Congratulations " + p2.getName()
+                + "!\nYou have Won!");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.p2.setScore(40);
+        this.records.add(p2);
+        return;
+    }
+    
+    //Check for draw
+    if(this.check_for_draw())
+    {
+        JOptionPane.showMessageDialog(null, "Game has been Drawn! ");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        return;
+    }
+    
+    this.turn = "p2";
+    this.p1Turn.setText(this.p2.getName() + " Turn");
+    this.p1Turn.setFont(new Font("Tahoma", Font.BOLD, 14));
+    this.p1Name.setText(p2.getName());
+    this.Level11.setText("Same Computer");
+    this.score1.setText("0");
+    }
+    
+    else
+    {
+    // Player 2 setting on multiplayer game panal
+        this.p1Turn.setText(this.p2.getName() + " Turn");
+        this.p1Turn.setFont(new Font("Tahoma", Font.BOLD, 14));
+        this.p1Name.setText(p2.getName());
+        this.Level11.setText("Same Computer");
+        this.score1.setText("0");
+        
+    this.board[4] = p2.getMarker();
+    if(p2.getMarker() == 'O')
+    {
+        this.m4.setIcon(new ImageIcon("check.png"));
+        this.m4.setEnabled(false);
+        this.m4.setDisabledIcon(new ImageIcon("check.png"));
+    }
+    else
+    {
+        this.m4.setIcon(new ImageIcon("cross.png"));
+        this.m4.setEnabled(false);
+        this.m4.setDisabledIcon(new ImageIcon("cross.png"));
+    }
+    
+    // Check for win
+    if(this.check_for_win().equals("player 1") )
+    {
+        JOptionPane.showMessageDialog(null, "Congratulations " + p1.getName()
+                + "!\nYou have Won!");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.p1.setScore(40);
+        this.records.add(p1);
+        return;
+    }
+    
+    if(this.check_for_win().equals("player 2") )
+    {
+        JOptionPane.showMessageDialog(null, "Congratulations " + p2.getName()
+                + "!\nYou have Won!");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.p2.setScore(40);
+        this.records.add(p2);
+        return;
+    }
+    
+    //Check for draw
+    if(this.check_for_draw())
+    {
+        JOptionPane.showMessageDialog(null, "Game has been Drawn! ");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        return;
+    }
+    this.turn = "p1";
+    this.p1Turn.setText(this.p1.getName() + " Turn");
+    this.p1Turn.setFont(new Font("Tahoma", Font.BOLD, 14));
+    this.p1Name.setText(p1.getName());
+    this.Level11.setText("Same Computer");
+    this.score1.setText("0");
+    }
+}//GEN-LAST:event_m4ActionPerformed
+
+private void m5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m5ActionPerformed
+// TODO add your handling code here:
+    if(this.turn.equals("p1"))
+    {
+    this.p1Turn.setText(this.p1.getName() + " Turn");
+    this.p1Turn.setFont(new Font("Tahoma", Font.BOLD, 14));
+    this.p1Name.setText(p1.getName());
+    this.Level11.setText("Same Computer");
+    this.score1.setText("0");
+    this.board[5] = p1.getMarker();
+    if(p1.getMarker() == 'O')
+    {
+        this.m5.setIcon(new ImageIcon("check.png"));
+        this.m5.setEnabled(false);
+        this.m5.setDisabledIcon(new ImageIcon("check.png"));
+    }
+    else
+    {
+        this.m5.setIcon(new ImageIcon("cross.png"));
+        this.m5.setEnabled(false);
+        this.m5.setDisabledIcon(new ImageIcon("cross.png"));
+    }
+    
+    // Check for win
+    if(this.check_for_win().equals("player 1") )
+    {
+        JOptionPane.showMessageDialog(null, "Congratulations " + p1.getName()
+                + "!\nYou have Won!");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.p1.setScore(40);
+        this.records.add(p1);
+        return;
+    }
+    
+    if(this.check_for_win().equals("player 2") )
+    {
+        JOptionPane.showMessageDialog(null, "Congratulations " + p2.getName()
+                + "!\nYou have Won!");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.p2.setScore(40);
+        this.records.add(p2);
+        return;
+    }
+    
+    //Check for draw
+    if(this.check_for_draw())
+    {
+        JOptionPane.showMessageDialog(null, "Game has been Drawn! ");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        return;
+    }
+    this.turn = "p2";
+    this.p1Turn.setText(this.p2.getName() + " Turn");
+    this.p1Turn.setFont(new Font("Tahoma", Font.BOLD, 14));
+    this.p1Name.setText(p2.getName());
+    this.Level11.setText("Same Computer");
+    this.score1.setText("0");
+    }
+    
+    else
+    {
+    // Player 2 setting on multiplayer game panal
+        this.p1Turn.setText(this.p2.getName() + " Turn");
+        this.p1Turn.setFont(new Font("Tahoma", Font.BOLD, 14));
+        this.p1Name.setText(p2.getName());
+        this.Level11.setText("Same Computer");
+        this.score1.setText("0");
+        
+    this.board[5] = p2.getMarker();
+    if(p2.getMarker() == 'O')
+    {
+        this.m5.setIcon(new ImageIcon("check.png"));
+        this.m5.setEnabled(false);
+        this.m5.setDisabledIcon(new ImageIcon("check.png"));
+    }
+    else
+    {
+        this.m5.setIcon(new ImageIcon("cross.png"));
+        this.m5.setEnabled(false);
+        this.m5.setDisabledIcon(new ImageIcon("cross.png"));
+    }
+    
+    // Check for win
+    if(this.check_for_win().equals("player 1") )
+    {
+        JOptionPane.showMessageDialog(null, "Congratulations " + p1.getName()
+                + "!\nYou have Won!");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.p1.setScore(40);
+        this.records.add(p1);
+        return;
+    }
+    
+    if(this.check_for_win().equals("player 2") )
+    {
+        JOptionPane.showMessageDialog(null, "Congratulations " + p2.getName()
+                + "!\nYou have Won!");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.p2.setScore(40);
+        this.records.add(p2);
+        return;
+    }
+    
+    //Check for draw
+    if(this.check_for_draw())
+    {
+        JOptionPane.showMessageDialog(null, "Game has been Drawn! ");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        return;
+    }
+    
+    this.turn = "p1";
+    this.p1Turn.setText(this.p1.getName() + " Turn");
+    this.p1Turn.setFont(new Font("Tahoma", Font.BOLD, 14));
+    this.p1Name.setText(p1.getName());
+    this.Level11.setText("Same Computer");
+    this.score1.setText("0");
+    }
+}//GEN-LAST:event_m5ActionPerformed
+
+private void m6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m6ActionPerformed
+// TODO add your handling code here:
+    if(this.turn.equals("p1"))
+    {
+    this.p1Turn.setText(this.p1.getName() + " Turn");
+    this.p1Turn.setFont(new Font("Tahoma", Font.BOLD, 14));
+    this.p1Name.setText(p1.getName());
+    this.Level11.setText("Same Computer");
+    this.score1.setText("0");
+    this.board[6] = p1.getMarker();
+    if(p1.getMarker() == 'O')
+    {
+        this.m6.setIcon(new ImageIcon("check.png"));
+        this.m6.setEnabled(false);
+        this.m6.setDisabledIcon(new ImageIcon("check.png"));
+    }
+    else
+    {
+        this.m6.setIcon(new ImageIcon("cross.png"));
+        this.m6.setEnabled(false);
+        this.m6.setDisabledIcon(new ImageIcon("cross.png"));
+    }
+    
+    // Check for win
+    if(this.check_for_win().equals("player 1") )
+    {
+        JOptionPane.showMessageDialog(null, "Congratulations " + p1.getName()
+                + "!\nYou have Won!");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.p1.setScore(40);
+        this.records.add(p1);
+        return;
+    }
+    
+    if(this.check_for_win().equals("player 2") )
+    {
+        JOptionPane.showMessageDialog(null, "Congratulations " + p2.getName()
+                + "!\nYou have Won!");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.p2.setScore(40);
+        this.records.add(p2);
+        return;
+    }
+    
+    //Check for draw
+    if(this.check_for_draw())
+    {
+        JOptionPane.showMessageDialog(null, "Game has been Drawn! ");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        return;
+    }
+    this.turn = "p2";
+    this.p1Turn.setText(this.p2.getName() + " Turn");
+    this.p1Turn.setFont(new Font("Tahoma", Font.BOLD, 14));
+    this.p1Name.setText(p2.getName());
+    this.Level1.setText("Same Computer");
+    this.score1.setText("0");
+    }
+    
+    else
+    {
+    // Player 2 setting on multiplayer game panal
+        this.p1Turn.setText(this.p2.getName() + " Turn");
+        this.p1Turn.setFont(new Font("Tahoma", Font.BOLD, 14));
+        this.p1Name.setText(p2.getName());
+        this.Level11.setText("Same Computer");
+        this.score1.setText("0");
+        
+    this.board[6] = p2.getMarker();
+    if(p2.getMarker() == 'O')
+    {
+        this.m6.setIcon(new ImageIcon("check.png"));
+        this.m6.setEnabled(false);
+        this.m6.setDisabledIcon(new ImageIcon("check.png"));
+    }
+    else
+    {
+        this.m6.setIcon(new ImageIcon("cross.png"));
+        this.m6.setEnabled(false);
+        this.m6.setDisabledIcon(new ImageIcon("cross.png"));
+    }
+    
+    // Check for win
+    if(this.check_for_win().equals("player 1") )
+    {
+        JOptionPane.showMessageDialog(null, "Congratulations " + p1.getName()
+                + "!\nYou have Won!");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.p1.setScore(40);
+        this.records.add(p1);
+        return;
+    }
+    
+    if(this.check_for_win().equals("player 2") )
+    {
+        JOptionPane.showMessageDialog(null, "Congratulations " + p2.getName()
+                + "!\nYou have Won!");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.p2.setScore(40);
+        this.records.add(p2);
+        return;
+    }
+    
+    //Check for draw
+    if(this.check_for_draw())
+    {
+        JOptionPane.showMessageDialog(null, "Game has been Drawn! ");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        return;
+    }
+    
+    this.turn = "p1";
+    this.p1Turn.setText(this.p1.getName() + " Turn");
+    this.p1Turn.setFont(new Font("Tahoma", Font.BOLD, 14));
+    this.p1Name.setText(p1.getName());
+    this.Level11.setText("Same Computer");
+    this.score1.setText("0");
+    }
+}//GEN-LAST:event_m6ActionPerformed
+
+private void m1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m1ActionPerformed
+// TODO add your handling code here:
+    if(this.turn.equals("p1"))
+    {
+    this.p1Turn.setText(this.p1.getName() + " Turn");
+    this.p1Turn.setFont(new Font("Tahoma", Font.BOLD, 14));
+    this.p1Name.setText(p1.getName());
+    this.Level11.setText("Same Computer");
+    this.score1.setText("0");
+    this.board[1] = p1.getMarker();
+    if(p1.getMarker() == 'O')
+    {
+        this.m1.setIcon(new ImageIcon("check.png"));
+        this.m1.setEnabled(false);
+        this.m1.setDisabledIcon(new ImageIcon("check.png"));
+    }
+    else
+    {
+        this.m1.setIcon(new ImageIcon("cross.png"));
+        this.m1.setEnabled(false);
+        this.m1.setDisabledIcon(new ImageIcon("cross.png"));
+    }
+    
+    // Check for win
+    if(this.check_for_win().equals("player 1") )
+    {
+        JOptionPane.showMessageDialog(null, "Congratulations " + p1.getName()
+                + "!\nYou have Won!");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.p1.setScore(40);
+        this.records.add(p1);
+        return;
+    }
+    
+    if(this.check_for_win().equals("player 2") )
+    {
+        JOptionPane.showMessageDialog(null, "Congratulations " + p2.getName()
+                + "!\nYou have Won!");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.p2.setScore(40);
+        this.records.add(p2);
+        return;
+    }
+    
+    //Check for draw
+    if(this.check_for_draw())
+    {
+        JOptionPane.showMessageDialog(null, "Game has been Drawn! ");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        return;
+    }
+    
+    this.turn = "p2";
+    this.p1Turn.setText(this.p2.getName() + " Turn");
+    this.p1Turn.setFont(new Font("Tahoma", Font.BOLD, 14));
+    this.p1Name.setText(p2.getName());
+    this.Level11.setText("Same Computer");
+    this.score1.setText("0");
+    }
+    
+    else
+    {
+    // Player 2 setting on multiplayer game panal
+        this.p1Turn.setText(this.p2.getName() + " Turn");
+        this.p1Turn.setFont(new Font("Tahoma", Font.BOLD, 14));
+        this.p1Name.setText(p2.getName());
+        this.Level1.setText("Same Computer");
+        this.score1.setText("0");
+        
+    this.board[1] = p2.getMarker();
+    if(p2.getMarker() == 'O')
+    {
+        this.m1.setIcon(new ImageIcon("check.png"));
+        this.m1.setEnabled(false);
+        this.m1.setDisabledIcon(new ImageIcon("check.png"));
+    }
+    else
+    {
+        this.m1.setIcon(new ImageIcon("cross.png"));
+        this.m1.setEnabled(false);
+        this.m1.setDisabledIcon(new ImageIcon("cross.png"));
+    }
+    
+    // Check for win
+    if(this.check_for_win().equals("player 1") )
+    {
+        JOptionPane.showMessageDialog(null, "Congratulations " + p1.getName()
+                + "!\nYou have Won!");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.p1.setScore(40);
+        this.records.add(p1);
+        return;
+    }
+    
+    if(this.check_for_win().equals("player 2") )
+    {
+        JOptionPane.showMessageDialog(null, "Congratulations " + p2.getName()
+                + "!\nYou have Won!");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.p2.setScore(40);
+        this.records.add(p2);
+        return;
+    }
+    
+    //Check for draw
+    if(this.check_for_draw())
+    {
+        JOptionPane.showMessageDialog(null, "Game has been Drawn! ");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        return;
+    }
+    this.turn = "p1";
+    this.p1Turn.setText(this.p1.getName() + " Turn");
+    this.p1Turn.setFont(new Font("Tahoma", Font.BOLD, 14));
+    this.p1Name.setText(p1.getName());
+    this.Level11.setText("Same Computer");
+    this.score1.setText("0");
+    }
+}//GEN-LAST:event_m1ActionPerformed
+
+private void m2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m2ActionPerformed
+// TODO add your handling code here:
+    if(this.turn.equals("p1"))
+    {
+    this.p1Turn.setText(this.p1.getName() + " Turn");
+    this.p1Turn.setFont(new Font("Tahoma", Font.BOLD, 14));
+    this.p1Name.setText(p1.getName());
+    this.Level11.setText("Same Computer");
+    this.score1.setText("0");
+    this.board[2] = p1.getMarker();
+    if(p1.getMarker() == 'O')
+    {
+        this.m2.setIcon(new ImageIcon("check.png"));
+        this.m2.setEnabled(false);
+        this.m2.setDisabledIcon(new ImageIcon("check.png"));
+    }
+    else
+    {
+        this.m2.setIcon(new ImageIcon("cross.png"));
+        this.m2.setEnabled(false);
+        this.m2.setDisabledIcon(new ImageIcon("cross.png"));
+    }
+    
+    // Check for win
+    if(this.check_for_win().equals("player 1") )
+    {
+        JOptionPane.showMessageDialog(null, "Congratulations " + p1.getName()
+                + "!\nYou have Won!");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.p1.setScore(40);
+        this.records.add(p1);
+        return;
+    }
+    
+    if(this.check_for_win().equals("player 2") )
+    {
+        JOptionPane.showMessageDialog(null, "Congratulations " + p2.getName()
+                + "!\nYou have Won!");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.p2.setScore(40);
+        this.records.add(p2);
+        return;
+    }
+    
+    //Check for draw
+    if(this.check_for_draw())
+    {
+        JOptionPane.showMessageDialog(null, "Game has been Drawn! ");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        return;
+    }
+    this.turn = "p2";
+    this.p1Turn.setText(this.p2.getName() + " Turn");
+    this.p1Turn.setFont(new Font("Tahoma", Font.BOLD, 14));
+    this.p1Name.setText(p2.getName());
+    this.Level11.setText("Same Computer");
+    this.score1.setText("0");
+    }
+    
+    else
+    {
+    // Player 2 setting on multiplayer game panal
+        this.p1Turn.setText(this.p2.getName() + " Turn");
+        this.p1Turn.setFont(new Font("Tahoma", Font.BOLD, 14));
+        this.p1Name.setText(p2.getName());
+        this.Level11.setText("Same Computer");
+        this.score1.setText("0");
+        
+    this.board[2] = p2.getMarker();
+    if(p2.getMarker() == 'O')
+    {
+        this.m2.setIcon(new ImageIcon("check.png"));
+        this.m2.setEnabled(false);
+        this.m2.setDisabledIcon(new ImageIcon("check.png"));
+    }
+    else
+    {
+        this.m2.setIcon(new ImageIcon("cross.png"));
+        this.m2.setEnabled(false);
+        this.m2.setDisabledIcon(new ImageIcon("cross.png"));
+    }
+    
+    // Check for win
+    if(this.check_for_win().equals("player 1") )
+    {
+        JOptionPane.showMessageDialog(null, "Congratulations " + p1.getName()
+                + "!\nYou have Won!");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.p1.setScore(40);
+        this.records.add(p1);
+        return;
+    }
+    
+    if(this.check_for_win().equals("player 2") )
+    {
+        JOptionPane.showMessageDialog(null, "Congratulations " + p2.getName()
+                + "!\nYou have Won!");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.p2.setScore(40);
+        this.records.add(p2);
+        return;
+    }
+    
+    //Check for draw
+    if(this.check_for_draw())
+    {
+        JOptionPane.showMessageDialog(null, "Game has been Drawn! ");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        return;
+    }
+    this.turn = "p1";
+    this.p1Turn.setText(this.p1.getName() + " Turn");
+    this.p1Turn.setFont(new Font("Tahoma", Font.BOLD, 14));
+    this.p1Name.setText(p1.getName());
+    this.Level11.setText("Same Computer");
+    this.score1.setText("0");
+    }
+}//GEN-LAST:event_m2ActionPerformed
+
+private void m3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m3ActionPerformed
+// TODO add your handling code here:
+    if(this.turn.equals("p1"))
+    {
+    this.p1Turn.setText(this.p1.getName() + " Turn");
+    this.p1Turn.setFont(new Font("Tahoma", Font.BOLD, 14));
+    this.p1Name.setText(p1.getName());
+    this.Level11.setText("Same Computer");
+    this.score1.setText("0");
+    this.board[3] = p1.getMarker();
+    if(p1.getMarker() == 'O')
+    {
+        this.m3.setIcon(new ImageIcon("check.png"));
+        this.m3.setEnabled(false);
+        this.m3.setDisabledIcon(new ImageIcon("check.png"));
+    }
+    else
+    {
+        this.m3.setIcon(new ImageIcon("cross.png"));
+        this.m3.setEnabled(false);
+        this.m3.setDisabledIcon(new ImageIcon("cross.png"));
+    }
+    
+    // Check for win
+    if(this.check_for_win().equals("player 1") )
+    {
+        JOptionPane.showMessageDialog(null, "Congratulations " + p1.getName()
+                + "!\nYou have Won!");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.p1.setScore(40);
+        this.records.add(p1);
+        return;
+    }
+    
+    if(this.check_for_win().equals("player 2") )
+    {
+        JOptionPane.showMessageDialog(null, "Congratulations " + p2.getName()
+                + "!\nYou have Won!");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.p2.setScore(40);
+        this.records.add(p2);
+        return;
+    }
+    
+    //Check for draw
+    if(this.check_for_draw())
+    {
+        JOptionPane.showMessageDialog(null, "Game has been Drawn! ");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        return;
+    }
+    this.turn = "p2";
+    this.p1Turn.setText(this.p2.getName() + " Turn");
+    this.p1Turn.setFont(new Font("Tahoma", Font.BOLD, 14));
+    this.p1Name.setText(p2.getName());
+    this.Level11.setText("Same Computer");
+    this.score1.setText("0");
+    }
+    
+    else
+    {
+    // Player 2 setting on multiplayer game panal
+        this.p1Turn.setText(this.p2.getName() + " Turn");
+        this.p1Turn.setFont(new Font("Tahoma", Font.BOLD, 14));
+        this.p1Name.setText(p2.getName());
+        this.Level1.setText("Same Computer");
+        this.score1.setText("0");
+        
+    this.board[3] = p2.getMarker();
+    if(p2.getMarker() == 'O')
+    {
+        this.m3.setIcon(new ImageIcon("check.png"));
+        this.m3.setEnabled(false);
+        this.m3.setDisabledIcon(new ImageIcon("check.png"));
+    }
+    else
+    {
+        this.m3.setIcon(new ImageIcon("cross.png"));
+        this.m3.setEnabled(false);
+        this.m3.setDisabledIcon(new ImageIcon("cross.png"));
+    }
+    
+    // Check for win
+    if(this.check_for_win().equals("player 1") )
+    {
+        JOptionPane.showMessageDialog(null, "Congratulations " + p1.getName()
+                + "!\nYou have Won!");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.p1.setScore(40);
+        this.records.add(p1);
+        return;
+    }
+    
+    if(this.check_for_win().equals("player 2") )
+    {
+        JOptionPane.showMessageDialog(null, "Congratulations " + p2.getName()
+                + "!\nYou have Won!");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.p2.setScore(40);
+        this.records.add(p2);
+        return;
+    }
+    
+    //Check for draw
+    if(this.check_for_draw())
+    {
+        JOptionPane.showMessageDialog(null, "Game has been Drawn! ");
+        this.MainGamePanal.setVisible(true);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        return;
+    }
+    this.turn = "p1";
+    this.p1Turn.setText(this.p1.getName() + " Turn");
+    this.p1Turn.setFont(new Font("Tahoma", Font.BOLD, 14));
+    this.p1Name.setText(p1.getName());
+    this.Level11.setText("Same Computer");
+    this.score1.setText("0");
+    }
+}//GEN-LAST:event_m3ActionPerformed
+
+private void SameComputerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SameComputerActionPerformed
+// TODO add your handling code here:
+        this.SameComputerPanal.setVisible(false);
+        this.MainGamePanal.setVisible(false);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(true);            
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+}//GEN-LAST:event_SameComputerActionPerformed
+
+private void BackOnTheSameComputerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BackOnTheSameComputerButtonActionPerformed
+// TODO add your handling code here:
+        this.SameComputerPanal.setVisible(false);
+        this.MainGamePanal.setVisible(false);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(true);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);            
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+}//GEN-LAST:event_BackOnTheSameComputerButtonActionPerformed
+
+private void PlayMutliplayerSameComputerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PlayMutliplayerSameComputerActionPerformed
+// TODO add your handling code here:
+        
+        this.initializeBoard();
+        String name1 = this.p1NameTextbox.getText();
+        String name2 = this.p2NameTextbox.getText();
+        if(name1.equals("") || name2.equals(""))
+        {
+            JOptionPane.showMessageDialog(null, "Please specify name!");
+        }
+        else
+        {
+        this.SameComputerPanal.setVisible(false);
+        this.MainGamePanal.setVisible(false);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);            
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(true);
+        
+        
+        
+        this.p1 = new Player(name1, "Same Computer", check1.isSelected() ? 'O' : 'X', 0);
+        this.p2 = new Player(name2, "Same Computer", p1.getMarker() == 'X' ? 'O' : 'X', 0);
+        
+        // Player 1 setting on multiplayer game panal
+        this.turn = "p1";
+        this.p1Turn.setText(this.p1.getName() + " Turn");
+        this.p1Turn.setFont(new Font("Tahoma", Font.BOLD, 14));
+        this.p1Name.setText(p1.getName());
+        this.Level11.setText("Same Computer");
+        this.score1.setText("0");
+        //JOptionPane.showMessageDialog(null, p1.getMarker() + "   " + p2.getMarker());
+        }
+}//GEN-LAST:event_PlayMutliplayerSameComputerActionPerformed
+
+private void OverNetworkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OverNetworkActionPerformed
+// TODO add your handling code here:
+        this.OverTheNetworkPanal.setVisible(true);
+        this.MainGamePanal.setVisible(false);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+        
+}//GEN-LAST:event_OverNetworkActionPerformed
+
+private void BackOverTheNetworkButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BackOverTheNetworkButtonActionPerformed
+// TODO add your handling code here:
+        
+        this.MainGamePanal.setVisible(false);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(true);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.OverTheNetworkPanal.setVisible(false);
+        this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+}//GEN-LAST:event_BackOverTheNetworkButtonActionPerformed
+
+private void o7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_o7ActionPerformed
+// TODO add your handling code here:
+    
+     //Server 
+    if(this.server.isOn())
+    {
+        //P1 Turn
+            this.board[7] = p1.getMarker();
+            if(p1.getMarker() == 'O')
+            {
+                this.o7.setIcon(new ImageIcon("check.png"));
+                this.o7.setEnabled(false);
+                this.o7.setDisabledIcon(new ImageIcon("check.png"));
+            }
+            else
+            {
+                this.o7.setIcon(new ImageIcon("cross.png"));
+                this.o7.setEnabled(false);
+                this.o7.setDisabledIcon(new ImageIcon("cross.png"));
+            }
+            this.server.send("7");
+        
+            if( "player 1".equals(this.check_for_win()))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations " + p1.getName()
+                    + "!\nYou have Won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.server.off();
+                this.p1.setScore(50);
+                this.records.add(p1);
+                return;
+            }
+        
+            if( "player 2".equals(this.check_for_win()))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations " + p2.getName()
+                    + "!\nYou have Won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.server.off();
+                this.p2.setScore(50);
+                this.records.add(p2);
+                return;
+            }
+        
+            if(this.check_for_draw())
+            {
+                JOptionPane.showMessageDialog(null, "Game has been Drawn!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.server.off();
+                return;
+            }
+            
+            this.turn = "p2";
+            this.pTurn1.setText(this.p2.getName() + " Turn");
+            this.pTurn1.setFont(new Font("Tahoma", Font.BOLD, 14));
+            this.pName1.setText(p2.getName());
+            this.Level12.setText("Over The Network");
+            this.score2.setText("0");
+            JOptionPane.showMessageDialog(null, "Done");
+            this.serverReceive();
+            
+    }
+    //Client
+    else if(this.client.isOn())
+    {
+        
+            //P2 turn
+            this.board[7] = p2.getMarker();
+            if(p2.getMarker() == 'O')
+            {
+                this.o7.setIcon(new ImageIcon("check.png"));
+                this.o7.setEnabled(false);
+                this.o7.setDisabledIcon(new ImageIcon("check.png"));
+            }
+            else
+            {
+                this.o7.setIcon(new ImageIcon("cross.png"));
+                this.o7.setEnabled(false);
+                this.o7.setDisabledIcon(new ImageIcon("cross.png"));
+            }
+            this.client.send("7");
+        
+            if( "player 1".equals(this.check_for_win()))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations " + p1.getName()
+                    + "!\nYou have Won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.client.off();
+                this.p1.setScore(50);
+                this.records.add(p1);
+                return;
+            }
+        
+            if( "player 2".equals(this.check_for_win()))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations " + p2.getName()
+                    + "!\nYou have Won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.client.off();
+                this.p2.setScore(50);
+                this.records.add(p2);
+                return;
+            }
+        
+            if(this.check_for_draw())
+            {
+                JOptionPane.showMessageDialog(null, "Game has been Drawn!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.client.off();
+                return;
+            }
+            
+            this.turn = "p1";
+            this.pTurn1.setText(this.p1.getName() + " Turn");
+            this.pTurn1.setFont(new Font("Tahoma", Font.BOLD, 14));
+            this.pName1.setText(p1.getName());
+            this.Level12.setText("Over The Network");
+            this.score2.setText("0");
+            JOptionPane.showMessageDialog(null, "Done");
+            this.clientReceive();
+    }
+    
+}//GEN-LAST:event_o7ActionPerformed
+
+private void o8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_o8ActionPerformed
+// TODO add your handling code here:
+     //Server 
+    if(this.server.isOn())
+    {
+        //P1 Turn
+            this.board[8] = p1.getMarker();
+            if(p1.getMarker() == 'O')
+            {
+                this.o8.setIcon(new ImageIcon("check.png"));
+                this.o8.setEnabled(false);
+                this.o8.setDisabledIcon(new ImageIcon("check.png"));
+            }
+            else
+            {
+                this.o8.setIcon(new ImageIcon("cross.png"));
+                this.o8.setEnabled(false);
+                this.o8.setDisabledIcon(new ImageIcon("cross.png"));
+            }
+            this.server.send("8");
+        
+            if( "player 1".equals(this.check_for_win()))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations " + p1.getName()
+                    + "!\nYou have Won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.server.off();
+                this.p1.setScore(50);
+                this.records.add(p1);
+                return;
+            }
+        
+            if( "player 2".equals(this.check_for_win()))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations " + p2.getName()
+                    + "!\nYou have Won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.server.off();
+                this.p2.setScore(50);
+                this.records.add(p2);
+                return;
+            }
+        
+            if(this.check_for_draw())
+            {
+                JOptionPane.showMessageDialog(null, "Game has been Drawn!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.server.off();
+                return;
+            }
+            
+            this.turn = "p2";
+            this.pTurn1.setText(this.p2.getName() + " Turn");
+            this.pTurn1.setFont(new Font("Tahoma", Font.BOLD, 14));
+            this.pName1.setText(p2.getName());
+            this.Level12.setText("Over The Network");
+            this.score2.setText("0");
+            JOptionPane.showMessageDialog(null, "Done");
+            this.serverReceive();
+            
+    }
+    //Client
+    else if(this.client.isOn())
+    {
+        
+            //P2 turn
+            this.board[8] = p2.getMarker();
+            if(p2.getMarker() == 'O')
+            {
+                this.o8.setIcon(new ImageIcon("check.png"));
+                this.o8.setEnabled(false);
+                this.o8.setDisabledIcon(new ImageIcon("check.png"));
+            }
+            else
+            {
+                this.o8.setIcon(new ImageIcon("cross.png"));
+                this.o8.setEnabled(false);
+                this.o8.setDisabledIcon(new ImageIcon("cross.png"));
+            }
+            this.client.send("8");
+        
+            if( "player 1".equals(this.check_for_win()))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations " + p1.getName()
+                    + "!\nYou have Won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.client.off();
+                this.p1.setScore(50);
+                this.records.add(p1);
+                return;
+            }
+        
+            if( "player 2".equals(this.check_for_win()))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations " + p2.getName()
+                    + "!\nYou have Won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.client.off();
+                this.p2.setScore(50);
+                this.records.add(p2);
+                return;
+            }
+        
+            if(this.check_for_draw())
+            {
+                JOptionPane.showMessageDialog(null, "Game has been Drawn!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.client.off();
+                return;
+            }
+            
+            this.turn = "p1";
+            this.pTurn1.setText(this.p1.getName() + " Turn");
+            this.pTurn1.setFont(new Font("Tahoma", Font.BOLD, 14));
+            this.pName1.setText(p1.getName());
+            this.Level12.setText("Over The Network");
+            this.score2.setText("0");
+            JOptionPane.showMessageDialog(null, "Done");
+            this.clientReceive();
+    }
+}//GEN-LAST:event_o8ActionPerformed
+
+private void o9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_o9ActionPerformed
+// TODO add your handling code here:
+     //Server 
+    if(this.server.isOn())
+    {
+        //P1 Turn
+            this.board[9] = p1.getMarker();
+            if(p1.getMarker() == 'O')
+            {
+                this.o9.setIcon(new ImageIcon("check.png"));
+                this.o9.setEnabled(false);
+                this.o9.setDisabledIcon(new ImageIcon("check.png"));
+            }
+            else
+            {
+                this.o9.setIcon(new ImageIcon("cross.png"));
+                this.o9.setEnabled(false);
+                this.o9.setDisabledIcon(new ImageIcon("cross.png"));
+            }
+            this.server.send("9");
+        
+            if( "player 1".equals(this.check_for_win()))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations " + p1.getName()
+                    + "!\nYou have Won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.server.off();
+                this.p1.setScore(50);
+                this.records.add(p1);
+                return;
+            }
+        
+            if( "player 2".equals(this.check_for_win()))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations " + p2.getName()
+                    + "!\nYou have Won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.server.off();
+                this.p2.setScore(50);
+                this.records.add(p2);
+                return;
+            }
+        
+            if(this.check_for_draw())
+            {
+                JOptionPane.showMessageDialog(null, "Game has been Drawn!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.server.off();
+                return;
+            }
+            
+            this.turn = "p2";
+            this.pTurn1.setText(this.p2.getName() + " Turn");
+            this.pTurn1.setFont(new Font("Tahoma", Font.BOLD, 14));
+            this.pName1.setText(p2.getName());
+            this.Level12.setText("Over The Network");
+            this.score2.setText("0");
+            JOptionPane.showMessageDialog(null, "Done");
+            this.serverReceive();
+            
+    }
+    //Client
+    else if(this.client.isOn())
+    {
+        
+            //P2 turn
+            this.board[9] = p2.getMarker();
+            if(p2.getMarker() == 'O')
+            {
+                this.o9.setIcon(new ImageIcon("check.png"));
+                this.o9.setEnabled(false);
+                this.o9.setDisabledIcon(new ImageIcon("check.png"));
+            }
+            else
+            {
+                this.o9.setIcon(new ImageIcon("cross.png"));
+                this.o9.setEnabled(false);
+                this.o9.setDisabledIcon(new ImageIcon("cross.png"));
+            }
+            this.client.send("9");
+        
+            if( "player 1".equals(this.check_for_win()))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations " + p1.getName()
+                    + "!\nYou have Won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.client.off();
+                this.p1.setScore(50);
+                this.records.add(p1);
+                return;
+            }
+        
+            if( "player 2".equals(this.check_for_win()))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations " + p2.getName()
+                    + "!\nYou have Won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.client.off();
+                this.p2.setScore(50);
+                this.records.add(p2);
+                return;
+            }
+        
+            if(this.check_for_draw())
+            {
+                JOptionPane.showMessageDialog(null, "Game has been Drawn!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.client.off();
+                return;
+            }
+            
+            this.turn = "p1";
+            this.pTurn1.setText(this.p1.getName() + " Turn");
+            this.pTurn1.setFont(new Font("Tahoma", Font.BOLD, 14));
+            this.pName1.setText(p1.getName());
+            this.Level12.setText("Over The Network");
+            this.score2.setText("0");
+            JOptionPane.showMessageDialog(null, "Done");
+            this.clientReceive();
+    }
+}//GEN-LAST:event_o9ActionPerformed
+
+private void o4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_o4ActionPerformed
+// TODO add your handling code here:
+     //Server 
+    if(this.server.isOn())
+    {
+        //P1 Turn
+            this.board[4] = p1.getMarker();
+            if(p1.getMarker() == 'O')
+            {
+                this.o4.setIcon(new ImageIcon("check.png"));
+                this.o4.setEnabled(false);
+                this.o4.setDisabledIcon(new ImageIcon("check.png"));
+            }
+            else
+            {
+                this.o4.setIcon(new ImageIcon("cross.png"));
+                this.o4.setEnabled(false);
+                this.o4.setDisabledIcon(new ImageIcon("cross.png"));
+            }
+            this.server.send("4");
+        
+            if( "player 1".equals(this.check_for_win()))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations " + p1.getName()
+                    + "!\nYou have Won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.server.off();
+                this.p1.setScore(50);
+                this.records.add(p1);
+                return;
+            }
+        
+            if( "player 2".equals(this.check_for_win()))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations " + p2.getName()
+                    + "!\nYou have Won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.server.off();
+                this.p2.setScore(50);
+                this.records.add(p2);
+                return;
+            }
+        
+            if(this.check_for_draw())
+            {
+                JOptionPane.showMessageDialog(null, "Game has been Drawn!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.server.off();
+                return;
+            }
+            
+            this.turn = "p2";
+            this.pTurn1.setText(this.p2.getName() + " Turn");
+            this.pTurn1.setFont(new Font("Tahoma", Font.BOLD, 14));
+            this.pName1.setText(p2.getName());
+            this.Level12.setText("Over The Network");
+            this.score2.setText("0");
+            JOptionPane.showMessageDialog(null, "Done");
+            this.serverReceive();
+            
+    }
+    //Client
+    else if(this.client.isOn())
+    {
+        
+            //P2 turn
+            this.board[4] = p2.getMarker();
+            if(p2.getMarker() == 'O')
+            {
+                this.o4.setIcon(new ImageIcon("check.png"));
+                this.o4.setEnabled(false);
+                this.o4.setDisabledIcon(new ImageIcon("check.png"));
+            }
+            else
+            {
+                this.o4.setIcon(new ImageIcon("cross.png"));
+                this.o4.setEnabled(false);
+                this.o4.setDisabledIcon(new ImageIcon("cross.png"));
+            }
+            this.client.send("4");
+        
+            if( "player 1".equals(this.check_for_win()))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations " + p1.getName()
+                    + "!\nYou have Won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.client.off();
+                this.p1.setScore(50);
+                this.records.add(p1);
+                return;
+            }
+        
+            if( "player 2".equals(this.check_for_win()))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations " + p2.getName()
+                    + "!\nYou have Won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.client.off();
+                this.p2.setScore(50);
+                this.records.add(p2);
+                return;
+            }
+        
+            if(this.check_for_draw())
+            {
+                JOptionPane.showMessageDialog(null, "Game has been Drawn!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.client.off();
+                return;
+            }
+            
+            this.turn = "p1";
+            this.pTurn1.setText(this.p1.getName() + " Turn");
+            this.pTurn1.setFont(new Font("Tahoma", Font.BOLD, 14));
+            this.pName1.setText(p1.getName());
+            this.Level12.setText("Over The Network");
+            this.score2.setText("0");
+            JOptionPane.showMessageDialog(null, "Done");
+            this.clientReceive();
+    }
+}//GEN-LAST:event_o4ActionPerformed
+
+private void o5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_o5ActionPerformed
+// TODO add your handling code here:
+     //Server 
+    if(this.server.isOn())
+    {
+        //P1 Turn
+            this.board[5] = p1.getMarker();
+            if(p1.getMarker() == 'O')
+            {
+                this.o5.setIcon(new ImageIcon("check.png"));
+                this.o5.setEnabled(false);
+                this.o5.setDisabledIcon(new ImageIcon("check.png"));
+            }
+            else
+            {
+                this.o5.setIcon(new ImageIcon("cross.png"));
+                this.o5.setEnabled(false);
+                this.o5.setDisabledIcon(new ImageIcon("cross.png"));
+            }
+            this.server.send("5");
+        
+            if( "player 1".equals(this.check_for_win()))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations " + p1.getName()
+                    + "!\nYou have Won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.server.off();
+                this.p1.setScore(50);
+                this.records.add(p1);
+                return;
+            }
+        
+            if( "player 2".equals(this.check_for_win()))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations " + p2.getName()
+                    + "!\nYou have Won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.server.off();
+                this.p2.setScore(50);
+                this.records.add(p2);
+                return;
+            }
+        
+            if(this.check_for_draw())
+            {
+                JOptionPane.showMessageDialog(null, "Game has been Drawn!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.server.off();
+                return;
+            }
+            
+            this.turn = "p2";
+            this.pTurn1.setText(this.p2.getName() + " Turn");
+            this.pTurn1.setFont(new Font("Tahoma", Font.BOLD, 14));
+            this.pName1.setText(p2.getName());
+            this.Level12.setText("Over The Network");
+            this.score2.setText("0");
+            
+            JOptionPane.showMessageDialog(null, "Done");
+            this.serverReceive();
+            
+    }
+    //Client
+    else if(this.client.isOn())
+    {
+        
+            //P2 turn
+            this.board[5] = p2.getMarker();
+            if(p2.getMarker() == 'O')
+            {
+                this.o5.setIcon(new ImageIcon("check.png"));
+                this.o5.setEnabled(false);
+                this.o5.setDisabledIcon(new ImageIcon("check.png"));
+            }
+            else
+            {
+                this.o5.setIcon(new ImageIcon("cross.png"));
+                this.o5.setEnabled(false);
+                this.o5.setDisabledIcon(new ImageIcon("cross.png"));
+            }
+            this.client.send("5");
+        
+            if( "player 1".equals(this.check_for_win()))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations " + p1.getName()
+                    + "!\nYou have Won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.client.off();
+                this.p1.setScore(50);
+                this.records.add(p1);
+                return;
+            }
+        
+            if( "player 2".equals(this.check_for_win()))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations " + p2.getName()
+                    + "!\nYou have Won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.client.off();
+                this.p2.setScore(50);
+                this.records.add(p2);
+                return;
+            }
+        
+            if(this.check_for_draw())
+            {
+                JOptionPane.showMessageDialog(null, "Game has been Drawn!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.client.off();
+                return;
+            }
+            
+            this.turn = "p1";
+            this.pTurn1.setText(this.p1.getName() + " Turn");
+            this.pTurn1.setFont(new Font("Tahoma", Font.BOLD, 14));
+            this.pName1.setText(p1.getName());
+            this.Level12.setText("Over The Network");
+            this.score2.setText("0");
+            JOptionPane.showMessageDialog(null, "Done");
+            this.clientReceive();
+    }
+}//GEN-LAST:event_o5ActionPerformed
+
+private void o6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_o6ActionPerformed
+// TODO add your handling code here:
+     //Server 
+    if(this.server.isOn())
+    {
+        //P1 Turn
+            this.board[6] = p1.getMarker();
+            if(p1.getMarker() == 'O')
+            {
+                this.o6.setIcon(new ImageIcon("check.png"));
+                this.o6.setEnabled(false);
+                this.o6.setDisabledIcon(new ImageIcon("check.png"));
+            }
+            else
+            {
+                this.o6.setIcon(new ImageIcon("cross.png"));
+                this.o6.setEnabled(false);
+                this.o6.setDisabledIcon(new ImageIcon("cross.png"));
+            }
+            this.server.send("6");
+        
+            if( "player 1".equals(this.check_for_win()))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations " + p1.getName()
+                    + "!\nYou have Won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.server.off();
+                this.p1.setScore(50);
+                this.records.add(p1);
+                return;
+            }
+        
+            if( "player 2".equals(this.check_for_win()))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations " + p2.getName()
+                    + "!\nYou have Won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.server.off();
+                this.p2.setScore(50);
+                this.records.add(p2);
+                return;
+            }
+        
+            if(this.check_for_draw())
+            {
+                JOptionPane.showMessageDialog(null, "Game has been Drawn!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.server.off();
+                return;
+            }
+            
+            this.turn = "p2";
+            this.pTurn1.setText(this.p2.getName() + " Turn");
+            this.pTurn1.setFont(new Font("Tahoma", Font.BOLD, 14));
+            this.pName1.setText(p2.getName());
+            this.Level12.setText("Over The Network");
+            this.score2.setText("0");
+            JOptionPane.showMessageDialog(null, "Done");
+            this.serverReceive();
+            
+    }
+    //Client
+    else if(this.client.isOn())
+    {
+        
+            //P2 turn
+            this.board[6] = p2.getMarker();
+            if(p2.getMarker() == 'O')
+            {
+                this.o6.setIcon(new ImageIcon("check.png"));
+                this.o6.setEnabled(false);
+                this.o6.setDisabledIcon(new ImageIcon("check.png"));
+            }
+            else
+            {
+                this.o6.setIcon(new ImageIcon("cross.png"));
+                this.o6.setEnabled(false);
+                this.o6.setDisabledIcon(new ImageIcon("cross.png"));
+            }
+            this.client.send("6");
+        
+            if( "player 1".equals(this.check_for_win()))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations " + p1.getName()
+                    + "!\nYou have Won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.client.off();
+                this.p1.setScore(50);
+                this.records.add(p1);
+                return;
+            }
+        
+            if( "player 2".equals(this.check_for_win()))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations " + p2.getName()
+                    + "!\nYou have Won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.client.off();
+                this.p2.setScore(50);
+                this.records.add(p2);
+                return;
+            }
+        
+            if(this.check_for_draw())
+            {
+                JOptionPane.showMessageDialog(null, "Game has been Drawn!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.client.off();
+                return;
+            }
+            
+            this.turn = "p1";
+            this.pTurn1.setText(this.p1.getName() + " Turn");
+            this.pTurn1.setFont(new Font("Tahoma", Font.BOLD, 14));
+            this.pName1.setText(p1.getName());
+            this.Level12.setText("Over The Network");
+            this.score2.setText("0");
+            JOptionPane.showMessageDialog(null, "Done");
+            this.clientReceive();
+    }
+}//GEN-LAST:event_o6ActionPerformed
+
+private void o1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_o1ActionPerformed
+// TODO add your handling code here:
+     //Server 
+    if(this.server.isOn())
+    {
+        //P1 Turn
+            this.board[1] = p1.getMarker();
+            if(p1.getMarker() == 'O')
+            {
+                this.o1.setIcon(new ImageIcon("check.png"));
+                this.o1.setEnabled(false);
+                this.o1.setDisabledIcon(new ImageIcon("check.png"));
+            }
+            else
+            {
+                this.o1.setIcon(new ImageIcon("cross.png"));
+                this.o1.setEnabled(false);
+                this.o1.setDisabledIcon(new ImageIcon("cross.png"));
+            }
+            this.server.send("1");
+        
+            if( "player 1".equals(this.check_for_win()))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations " + p1.getName()
+                    + "!\nYou have Won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.server.off();
+                this.p1.setScore(50);
+                this.records.add(p1);
+                return;
+            }
+        
+            if( "player 2".equals(this.check_for_win()))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations " + p2.getName()
+                    + "!\nYou have Won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.server.off();
+                this.p2.setScore(50);
+                this.records.add(p2);
+                return;
+            }
+        
+            if(this.check_for_draw())
+            {
+                JOptionPane.showMessageDialog(null, "Game has been Drawn!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.server.off();
+                return;
+            }
+            
+            this.turn = "p2";
+            this.pTurn1.setText(this.p2.getName() + " Turn");
+            this.pTurn1.setFont(new Font("Tahoma", Font.BOLD, 14));
+            this.pName1.setText(p2.getName());
+            this.Level12.setText("Over The Network");
+            this.score2.setText("0");
+            JOptionPane.showMessageDialog(null, "Done");
+            this.serverReceive();
+            
+    }
+    //Client
+    else if(this.client.isOn())
+    {
+        
+            //P2 turn
+            this.board[1] = p2.getMarker();
+            if(p2.getMarker() == 'O')
+            {
+                this.o1.setIcon(new ImageIcon("check.png"));
+                this.o1.setEnabled(false);
+                this.o1.setDisabledIcon(new ImageIcon("check.png"));
+            }
+            else
+            {
+                this.o1.setIcon(new ImageIcon("cross.png"));
+                this.o1.setEnabled(false);
+                this.o1.setDisabledIcon(new ImageIcon("cross.png"));
+            }
+            this.client.send("1");
+        
+            if( "player 1".equals(this.check_for_win()))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations " + p1.getName()
+                    + "!\nYou have Won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.client.off();
+                this.p1.setScore(50);
+                this.records.add(p1);
+                return;
+            }
+        
+            if( "player 2".equals(this.check_for_win()))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations " + p2.getName()
+                    + "!\nYou have Won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.client.off();
+                this.p2.setScore(50);
+                this.records.add(p2);
+                return;
+            }
+        
+            if(this.check_for_draw())
+            {
+                JOptionPane.showMessageDialog(null, "Game has been Drawn!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.client.off();
+                return;
+            }
+            
+            this.turn = "p1";
+            this.pTurn1.setText(this.p1.getName() + " Turn");
+            this.pTurn1.setFont(new Font("Tahoma", Font.BOLD, 14));
+            this.pName1.setText(p1.getName());
+            this.Level12.setText("Over The Network");
+            this.score2.setText("0");
+            JOptionPane.showMessageDialog(null, "Done");
+            this.clientReceive();
+    }
+}//GEN-LAST:event_o1ActionPerformed
+
+private void o2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_o2ActionPerformed
+// TODO add your handling code here:
+     //Server 
+    if(this.server.isOn())
+    {
+        //P1 Turn
+            this.board[2] = p1.getMarker();
+            if(p1.getMarker() == 'O')
+            {
+                this.o2.setIcon(new ImageIcon("check.png"));
+                this.o2.setEnabled(false);
+                this.o2.setDisabledIcon(new ImageIcon("check.png"));
+            }
+            else
+            {
+                this.o2.setIcon(new ImageIcon("cross.png"));
+                this.o2.setEnabled(false);
+                this.o2.setDisabledIcon(new ImageIcon("cross.png"));
+            }
+            this.server.send("2");
+        
+            if( "player 1".equals(this.check_for_win()))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations " + p1.getName()
+                    + "!\nYou have Won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.server.off();
+                this.p1.setScore(50);
+                this.records.add(p1);
+                return;
+            }
+        
+            if( "player 2".equals(this.check_for_win()))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations " + p2.getName()
+                    + "!\nYou have Won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.server.off();
+                this.p2.setScore(50);
+                this.records.add(p2);
+                return;
+            }
+        
+            if(this.check_for_draw())
+            {
+                JOptionPane.showMessageDialog(null, "Game has been Drawn!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.server.off();
+                return;
+            }
+            
+            this.turn = "p2";
+            this.pTurn1.setText(this.p2.getName() + " Turn");
+            this.pTurn1.setFont(new Font("Tahoma", Font.BOLD, 14));
+            this.pName1.setText(p2.getName());
+            this.Level12.setText("Over The Network");
+            this.score2.setText("0");
+            JOptionPane.showMessageDialog(null, "Done");
+            this.serverReceive();
+            
+    }
+    //Client
+    else if(this.client.isOn())
+    {
+        
+            //P2 turn
+            this.board[2] = p2.getMarker();
+            if(p2.getMarker() == 'O')
+            {
+                this.o2.setIcon(new ImageIcon("check.png"));
+                this.o2.setEnabled(false);
+                this.o2.setDisabledIcon(new ImageIcon("check.png"));
+            }
+            else
+            {
+                this.o2.setIcon(new ImageIcon("cross.png"));
+                this.o2.setEnabled(false);
+                this.o2.setDisabledIcon(new ImageIcon("cross.png"));
+            }
+            this.client.send("2");
+        
+            if( "player 1".equals(this.check_for_win()))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations " + p1.getName()
+                    + "!\nYou have Won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.client.off();
+                this.p1.setScore(50);
+                this.records.add(p1);
+                return;
+            }
+        
+            if( "player 2".equals(this.check_for_win()))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations " + p2.getName()
+                    + "!\nYou have Won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.client.off();
+                this.p2.setScore(50);
+                this.records.add(p2);
+                return;
+            }
+        
+            if(this.check_for_draw())
+            {
+                JOptionPane.showMessageDialog(null, "Game has been Drawn!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.client.off();
+                return;
+            }
+            
+            this.turn = "p1";
+            this.pTurn1.setText(this.p1.getName() + " Turn");
+            this.pTurn1.setFont(new Font("Tahoma", Font.BOLD, 14));
+            this.pName1.setText(p1.getName());
+            this.Level12.setText("Over The Network");
+            this.score2.setText("0");
+            JOptionPane.showMessageDialog(null, "Done");
+            this.clientReceive();
+    }
+}//GEN-LAST:event_o2ActionPerformed
+
+private void o3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_o3ActionPerformed
+// TODO add your handling code here:
+    //Server 
+    if(this.server.isOn())
+    {
+        //P1 Turn
+            this.board[3] = p1.getMarker();
+            if(p1.getMarker() == 'O')
+            {
+                this.o3.setIcon(new ImageIcon("check.png"));
+                this.o3.setEnabled(false);
+                this.o3.setDisabledIcon(new ImageIcon("check.png"));
+            }
+            else
+            {
+                this.o3.setIcon(new ImageIcon("cross.png"));
+                this.o3.setEnabled(false);
+                this.o3.setDisabledIcon(new ImageIcon("cross.png"));
+            }
+            this.server.send("3");
+        
+            if( "player 1".equals(this.check_for_win()))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations " + p1.getName()
+                    + "!\nYou have Won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.server.off();
+                this.p1.setScore(50);
+                this.records.add(p1);
+                return;
+            }
+        
+            if( "player 2".equals(this.check_for_win()))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations " + p2.getName()
+                    + "!\nYou have Won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.server.off();
+                this.p2.setScore(50);
+                this.records.add(p2);
+                return;
+            }
+        
+            if(this.check_for_draw())
+            {
+                JOptionPane.showMessageDialog(null, "Game has been Drawn!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.server.off();
+                return;
+            }
+            
+            this.turn = "p2";
+            this.pTurn1.setText(this.p2.getName() + " Turn");
+            this.pTurn1.setFont(new Font("Tahoma", Font.BOLD, 14));
+            this.pName1.setText(p2.getName());
+            this.Level12.setText("Over The Network");
+            this.score2.setText("0");
+            JOptionPane.showMessageDialog(null, "Done");
+            this.serverReceive();
+            
+    }
+    //Client
+    else if(this.client.isOn())
+    {
+        
+            //P2 turn
+            this.board[3] = p2.getMarker();
+            if(p2.getMarker() == 'O')
+            {
+                this.o3.setIcon(new ImageIcon("check.png"));
+                this.o3.setEnabled(false);
+                this.o3.setDisabledIcon(new ImageIcon("check.png"));
+            }
+            else
+            {
+                this.o3.setIcon(new ImageIcon("cross.png"));
+                this.o3.setEnabled(false);
+                this.o3.setDisabledIcon(new ImageIcon("cross.png"));
+            }
+            this.client.send("3");
+        
+            if( "player 1".equals(this.check_for_win()))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations " + p1.getName()
+                    + "!\nYou have Won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.client.off();
+                this.p1.setScore(50);
+                this.records.add(p1);
+                return;
+            }
+        
+            if( "player 2".equals(this.check_for_win()))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations " + p2.getName()
+                    + "!\nYou have Won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.client.off();
+                this.p2.setScore(50);
+                this.records.add(p2);
+                return;
+            }
+        
+            if(this.check_for_draw())
+            {
+                JOptionPane.showMessageDialog(null, "Game has been Drawn!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.client.off();
+                return;
+            }
+            
+            this.turn = "p1";
+            this.pTurn1.setText(this.p1.getName() + " Turn");
+            this.pTurn1.setFont(new Font("Tahoma", Font.BOLD, 14));
+            this.pName1.setText(p1.getName());
+            this.Level12.setText("Over The Network");
+            this.score2.setText("0");
+            JOptionPane.showMessageDialog(null, "Done");
+            this.clientReceive();
+    }
+}//GEN-LAST:event_o3ActionPerformed
+
+private void PlayOverTheNetworkButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PlayOverTheNetworkButtonActionPerformed
+// TODO add your handling code here:
+    String name1 = this.poName.getText();
+    if(name1.equals(""))
+        JOptionPane.showMessageDialog(null, "Please specify the name!");
+    else
+    {
+        this.HostJoinPanal.setVisible(true);
+        this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+        this.MainGamePanal.setVisible(false);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.OverTheNetworkPanal.setVisible(false);
+    }
+}//GEN-LAST:event_PlayOverTheNetworkButtonActionPerformed
+
+private void BackHostJoinbuttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BackHostJoinbuttonActionPerformed
+// TODO add your handling code here:
+        this.HostJoinPanal.setVisible(false);
+        this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+        this.MainGamePanal.setVisible(false);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.OverTheNetworkPanal.setVisible(true);
+}//GEN-LAST:event_BackHostJoinbuttonActionPerformed
+
+private void HostGameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_HostGameActionPerformed
+// TODO add your handling code here:
+        this.HostJoinPanal.setVisible(false);
+        this.PlayMultiplayerOverTheNetworkPanal.setVisible(true);
+        this.MainGamePanal.setVisible(false);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.OverTheNetworkPanal.setVisible(false);
+        
+        this.initializeBoard();
+        this.server.on();
+        
+        this.p1 = new Player (this.poName.getText(), "Over The Network", this.ocheck.isSelected() ? 
+                'O' : 'X', 0);
+        this.p2 = new Player(this.server.recv(), "Over The Network", this.ocheck.isSelected() ? 
+                'X' : 'O', 0);
+        this.server.send(p1.getName());
+        this.turn = "p1";
+        this.pTurn1.setText(this.p1.getName() + " Turn");
+        this.pTurn1.setFont(new Font("Tahoma", Font.BOLD, 14));
+        this.pName1.setText(p1.getName());
+        this.Level12.setText("Over The Network");
+        this.score2.setText("0");
+        //JOptionPane.showMessageDialog(null, "Server " + p1.getName() + " " + p1.getMarker()
+          //      +"\nClient " + p2.getName() + " " + p2.getMarker());
+        
+        
+}//GEN-LAST:event_HostGameActionPerformed
+
+private void JoinGameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JoinGameActionPerformed
+// TODO add your handling code here:
+        this.initializeBoard();    
+        this.HostJoinPanal.setVisible(false);
+        this.PlayMultiplayerOverTheNetworkPanal.setVisible(true);
+        this.MainGamePanal.setVisible(false);
+        this.NewGamePanal.setVisible(false);
+        this.OptionPanal.setVisible(false);
+        this.HelpPanal.setVisible(false);
+        this.HighScorePanal.setVisible(false);
+        this.SinglePlayerPanal.setVisible(false);
+        this.MultiplayerPanal.setVisible(false);
+        this.PlayPanal.setVisible(false);
+        this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+        this.SameComputerPanal.setVisible(false);
+        this.OverTheNetworkPanal.setVisible(false);
+        
+        this.client.on();
+        JOptionPane.showMessageDialog(null, "Successfully Joined!!!");
+        
+        this.p2 = new Player (this.poName.getText(), "Over The Network", this.ocheck.isSelected() ? 
+                'O' : 'X', 0);
+        this.client.send(this.poName.getText());
+        this.p1 = new Player(this.client.recv(), "Over The Network", this.ocheck.isSelected() ? 
+                'X' : 'O', 0);
+        
+        this.turn = "p1";
+        this.pTurn1.setText(this.p1.getName() + " Turn");
+        this.pTurn1.setFont(new Font("Tahoma", Font.BOLD, 14));
+        this.pName1.setText(p1.getName());
+        this.Level12.setText("Over The Network");
+        this.score2.setText("0");
+        //JOptionPane.showMessageDialog(null, "Server " + p1.getName() + " " + p1.getMarker()
+            //    +"\nClient " + p2.getName() + " " + p2.getMarker());
+        JOptionPane.showMessageDialog(null, "Game started");
+        this.clientReceive();
+}//GEN-LAST:event_JoinGameActionPerformed
+
+    
+
+    
+
+   
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel ActualPanal;
+    private javax.swing.JPanel ActualPanal1;
+    private javax.swing.JPanel ActualPanal2;
+    private javax.swing.JButton BackGameMenu;
+    private javax.swing.JButton BackHelpMenu;
+    private javax.swing.JButton BackHighScoreMenu;
+    private javax.swing.JButton BackHostJoinbutton;
+    private javax.swing.JButton BackMultiplayer;
+    private javax.swing.JButton BackOnTheSameComputerButton;
+    private javax.swing.JButton BackOptionMenu;
+    private javax.swing.JButton BackOverTheNetworkButton;
+    private javax.swing.JButton BackSinglePlayer;
+    private javax.swing.ButtonGroup DifficultyLevel;
+    private javax.swing.JRadioButton Easy;
+    private javax.swing.JRadioButton Hard;
+    private javax.swing.JButton Help;
+    private javax.swing.JPanel HelpPanal;
+    private javax.swing.JButton HighScore;
+    private javax.swing.JPanel HighScorePanal;
+    private javax.swing.JButton HostGame;
+    private javax.swing.JPanel HostJoinPanal;
+    private javax.swing.JButton JoinGame;
+    private javax.swing.JLabel Level;
+    private javax.swing.JLabel Level1;
+    private javax.swing.JLabel Level10;
+    private javax.swing.JLabel Level11;
+    private javax.swing.JLabel Level12;
+    private javax.swing.JLabel Level2;
+    private javax.swing.JLabel Level3;
+    private javax.swing.JLabel Level4;
+    private javax.swing.JLabel Level5;
+    private javax.swing.JLabel Level6;
+    private javax.swing.JLabel Level7;
+    private javax.swing.JLabel Level8;
+    private javax.swing.JLabel Level9;
+    private javax.swing.JPanel MainGamePanal;
+    private javax.swing.ButtonGroup MarkerButtonGroup;
+    private javax.swing.JRadioButton Medium;
+    private javax.swing.JButton MultiPlayer;
+    private javax.swing.JPanel MultiplayerPanal;
+    private javax.swing.JTextField Name;
+    private javax.swing.JLabel Name1;
+    private javax.swing.JLabel Name10;
+    private javax.swing.JLabel Name2;
+    private javax.swing.JLabel Name3;
+    private javax.swing.JLabel Name4;
+    private javax.swing.JLabel Name5;
+    private javax.swing.JLabel Name6;
+    private javax.swing.JLabel Name7;
+    private javax.swing.JLabel Name8;
+    private javax.swing.JLabel Name9;
+    private javax.swing.JButton NewGame;
+    private javax.swing.JPanel NewGamePanal;
+    private javax.swing.JButton Option;
+    private javax.swing.JPanel OptionPanal;
+    private javax.swing.JButton OverNetwork;
+    private javax.swing.JPanel OverTheNetworkPanal;
+    private javax.swing.JButton Play;
+    private javax.swing.JPanel PlayMultiplayerOnTheSameComputerPanal;
+    private javax.swing.JPanel PlayMultiplayerOverTheNetworkPanal;
+    private javax.swing.JButton PlayMutliplayerSameComputer;
+    private javax.swing.JButton PlayOverTheNetworkButton;
+    private javax.swing.JPanel PlayPanal;
+    private javax.swing.JButton Quit;
+    private javax.swing.JButton SameComputer;
+    private javax.swing.JPanel SameComputerPanal;
+    private javax.swing.JLabel Score1;
+    private javax.swing.JLabel Score10;
+    private javax.swing.JLabel Score2;
+    private javax.swing.JLabel Score3;
+    private javax.swing.JLabel Score4;
+    private javax.swing.JLabel Score5;
+    private javax.swing.JLabel Score6;
+    private javax.swing.JLabel Score7;
+    private javax.swing.JLabel Score8;
+    private javax.swing.JLabel Score9;
+    private javax.swing.JButton SinglePlayer;
+    private javax.swing.JPanel SinglePlayerPanal;
+    private javax.swing.ButtonGroup TwoPlayerOverTheNetworkButtonGroup;
+    private javax.swing.JButton c1;
+    private javax.swing.JButton c2;
+    private javax.swing.JButton c3;
+    private javax.swing.JButton c4;
+    private javax.swing.JButton c5;
+    private javax.swing.JButton c6;
+    private javax.swing.JButton c7;
+    private javax.swing.JButton c8;
+    private javax.swing.JButton c9;
+    private javax.swing.JRadioButton check;
+    private javax.swing.JRadioButton check1;
+    private javax.swing.JRadioButton cross;
+    private javax.swing.JRadioButton cross1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
+    private javax.swing.JLabel jLabel21;
+    private javax.swing.JLabel jLabel22;
+    private javax.swing.JLabel jLabel23;
+    private javax.swing.JLabel jLabel24;
+    private javax.swing.JLabel jLabel25;
+    private javax.swing.JLabel jLabel26;
+    private javax.swing.JLabel jLabel27;
+    private javax.swing.JLabel jLabel28;
+    private javax.swing.JLabel jLabel29;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel30;
+    private javax.swing.JLabel jLabel31;
+    private javax.swing.JLabel jLabel32;
+    private javax.swing.JLabel jLabel33;
+    private javax.swing.JLabel jLabel34;
+    private javax.swing.JLabel jLabel35;
+    private javax.swing.JLabel jLabel36;
+    private javax.swing.JLabel jLabel37;
+    private javax.swing.JLabel jLabel38;
+    private javax.swing.JLabel jLabel39;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel40;
+    private javax.swing.JLabel jLabel41;
+    private javax.swing.JLabel jLabel42;
+    private javax.swing.JLabel jLabel43;
+    private javax.swing.JLabel jLabel44;
+    private javax.swing.JLabel jLabel45;
+    private javax.swing.JLabel jLabel46;
+    private javax.swing.JLabel jLabel47;
+    private javax.swing.JLabel jLabel48;
+    private javax.swing.JLabel jLabel49;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JTextField jTextField1;
+    private javax.swing.JButton m1;
+    private javax.swing.JButton m2;
+    private javax.swing.JButton m3;
+    private javax.swing.JButton m4;
+    private javax.swing.JButton m5;
+    private javax.swing.JButton m6;
+    private javax.swing.JButton m7;
+    private javax.swing.JButton m8;
+    private javax.swing.JButton m9;
+    private javax.swing.JPanel mainPanel;
+    private javax.swing.JMenuBar menuBar;
+    private javax.swing.JButton o1;
+    private javax.swing.JButton o2;
+    private javax.swing.JButton o3;
+    private javax.swing.JButton o4;
+    private javax.swing.JButton o5;
+    private javax.swing.JButton o6;
+    private javax.swing.JButton o7;
+    private javax.swing.JButton o8;
+    private javax.swing.JButton o9;
+    private javax.swing.JRadioButton ocheck;
+    private javax.swing.JRadioButton ocross;
+    private javax.swing.JLabel p1Name;
+    private javax.swing.JTextField p1NameTextbox;
+    private javax.swing.JLabel p1Turn;
+    private javax.swing.JTextField p2NameTextbox;
+    private javax.swing.JLabel pName;
+    private javax.swing.JLabel pName1;
+    private javax.swing.JLabel pTurn;
+    private javax.swing.JLabel pTurn1;
+    private javax.swing.JTextField poName;
+    private javax.swing.JProgressBar progressBar;
+    private javax.swing.JLabel score;
+    private javax.swing.JLabel score1;
+    private javax.swing.JLabel score2;
+    private javax.swing.JLabel statusAnimationLabel;
+    private javax.swing.JLabel statusMessageLabel;
+    private javax.swing.JPanel statusPanel;
+    private javax.swing.ButtonGroup twoPlayerMarkerButtonGroup;
+    // End of variables declaration//GEN-END:variables
+
+    private final Timer messageTimer;
+    private final Timer busyIconTimer;
+    private final Icon idleIcon;
+    private final Icon[] busyIcons = new Icon[15];
+    private int busyIconIndex = 0;
+    
+    private String diffLevel;
+    private char [] board;
+    private Player p1, p2;
+    private JDialog aboutBox;
+    private String value;
+    private Records records;
+    private Server server;
+
+    private void initializeBoard() {
+        for(int i=1; i<10; i++)
+        {
+            this.board[i] = '-';
+        }
+        this.turn = "";
+        
+        this.c1.setEnabled(true);
+        this.c2.setEnabled(true);
+        this.c3.setEnabled(true);
+        this.c4.setEnabled(true);
+        this.c5.setEnabled(true);
+        this.c6.setEnabled(true);
+        this.c7.setEnabled(true);
+        this.c8.setEnabled(true);
+        this.c9.setEnabled(true);
+        
+        this.c1.setIcon(null);
+        this.c2.setIcon(null);
+        this.c3.setIcon(null);
+        this.c4.setIcon(null);
+        this.c5.setIcon(null);
+        this.c6.setIcon(null);
+        this.c7.setIcon(null);
+        this.c8.setIcon(null);
+        this.c9.setIcon(null);
+        
+        
+        this.m1.setEnabled(true);
+        this.m2.setEnabled(true);
+        this.m3.setEnabled(true);
+        this.m4.setEnabled(true);
+        this.m5.setEnabled(true);
+        this.m6.setEnabled(true);
+        this.m7.setEnabled(true);
+        this.m8.setEnabled(true);
+        this.m9.setEnabled(true);
+        
+        this.m1.setIcon(null);
+        this.m2.setIcon(null);
+        this.m3.setIcon(null);
+        this.m4.setIcon(null);
+        this.m5.setIcon(null);
+        this.m6.setIcon(null);
+        this.m7.setIcon(null);
+        this.m8.setIcon(null);
+        this.m9.setIcon(null);
+        
+        this.o1.setEnabled(true);
+        this.o2.setEnabled(true);
+        this.o3.setEnabled(true);
+        this.o4.setEnabled(true);
+        this.o5.setEnabled(true);
+        this.o6.setEnabled(true);
+        this.o7.setEnabled(true);
+        this.o8.setEnabled(true);
+        this.o9.setEnabled(true);
+        
+        this.o1.setIcon(null);
+        this.o2.setIcon(null);
+        this.o3.setIcon(null);
+        this.o4.setIcon(null);
+        this.o5.setIcon(null);
+        this.o6.setIcon(null);
+        this.o7.setIcon(null);
+        this.o8.setIcon(null);
+        this.o9.setIcon(null);
+    }
+
+    private String check_for_win()
+    {
+        // For p1
+        if(this.board[1] == p1.getMarker() && this.board[2] == p1.getMarker()
+                && this.board[3] == p1.getMarker())
+            return "player 1";
+        if(this.board[1] == p1.getMarker() && this.board[5] == p1.getMarker()
+                && this.board[9] == p1.getMarker())
+            return "player 1";
+        if(this.board[1] == p1.getMarker() && this.board[4] == p1.getMarker()
+                && this.board[7] == p1.getMarker())
+            return "player 1";
+        if(this.board[2] == p1.getMarker() && this.board[5] == p1.getMarker()
+                && this.board[8] == p1.getMarker())
+            return "player 1";
+        if(this.board[3] == p1.getMarker() && this.board[5] == p1.getMarker()
+                && this.board[7] == p1.getMarker())
+            return "player 1";
+        if(this.board[3] == p1.getMarker() && this.board[6] == p1.getMarker()
+                && this.board[9] == p1.getMarker())
+            return "player 1";
+        if(this.board[4] == p1.getMarker() && this.board[5] == p1.getMarker()
+                && this.board[6] == p1.getMarker())
+            return "player 1";
+        if(this.board[7] == p1.getMarker() && this.board[8] == p1.getMarker()
+                && this.board[9] == p1.getMarker())
+            return "player 1";
+        
+        
+        // For p2
+        if(this.board[1] == p2.getMarker() && this.board[2] == p2.getMarker()
+                && this.board[3] == p2.getMarker())
+            return "player 2";
+        if(this.board[1] == p2.getMarker() && this.board[5] == p2.getMarker()
+                && this.board[9] == p2.getMarker())
+            return "player 2";
+        if(this.board[1] == p2.getMarker() && this.board[4] == p2.getMarker()
+                && this.board[7] == p2.getMarker())
+            return "player 2";
+        if(this.board[2] == p2.getMarker() && this.board[5] == p2.getMarker()
+                && this.board[8] == p2.getMarker())
+            return "player 2";
+        if(this.board[3] == p2.getMarker() && this.board[5] == p2.getMarker()
+                && this.board[7] == p2.getMarker())
+            return "player 2";
+        if(this.board[3] == p2.getMarker() && this.board[6] == p2.getMarker()
+                && this.board[9] == p2.getMarker())
+            return "player 2";
+        if(this.board[4] == p2.getMarker() && this.board[5] == p2.getMarker()
+                && this.board[6] == p2.getMarker())
+            return "player 2";
+        if(this.board[7] == p2.getMarker() && this.board[8] == p2.getMarker()
+                && this.board[9] == p2.getMarker())
+            return "player 2";
+        
+        return "none";
+    }
+    
+    private boolean check_for_draw()
+    {
+        for(int i=1; i<10; i++)
+        {
+            if(this.board[i] == '-')
+                return false;
+        }
+        
+        return true;
+    }
+    
+   
+    private void easyLevel() 
+    {
+        for(int i=1; i<10; i++)
+        {
+            if(this.board[i] == '-')
+            {
+                this.board[i] = p2.getMarker();
+                this.disableithButton(i);
+                return;
+            }
+        }
+    }
+
+    private void mediumLevel() 
+    {
+        if(this.do_computer_win())
+            return;
+        else if(this.do_player_win())
+            return;
+        this.easyLevel();
+    }
+
+    private void hardLevel() 
+    {
+        if(this.is_board_empty())
+        {
+            this.board[3] = p2.getMarker();
+            this.disableithButton(3);
+            return;
+	}
+        else if(this.only_one_space_acquired_by_player())
+	{
+		//Player turn first
+            if(this.board[5] == '-')
+            {
+		this.board[5] = p2.getMarker();
+		this.disableithButton(5);
+                return;
+            }
+            if(this.board[1] == '-')
+            {
+		this.board[1] = p2.getMarker();
+                this.disableithButton(1);
+		return;
+            }
+            if(this.board[7] == '-')
+            {
+		this.board[7] = p2.getMarker();
+                this.disableithButton(7);
+		return;
+            }
+            if(this.board[3] == '-')
+            {
+		this.board[5] = p2.getMarker();
+                this.disableithButton(3);
+		return;
+            }
+            if(this.board[9] == '-')
+            {
+		this.board[9] = p2.getMarker();
+                this.disableithButton(9);
+		return;
+            }
+	}
+        
+        else
+        {
+            if(this.do_computer_win())
+                return;
+            if(this.do_player_win())
+                return;
+            if(this.board[1] == p2.getMarker() && this.board[5] == p1.getMarker() && this.board[9] == '-')
+		{
+			this.board[9] = p2.getMarker();
+                        this.disableithButton(9);
+			return;
+		}
+
+		if(this.board[3] == p2.getMarker() && this.board[5] == p1.getMarker() && this.board[7] == '-')
+		{
+			this.board[7] = p2.getMarker();
+                        this.disableithButton(7);
+			return;
+		}
+
+		if(this.board[7] == p2.getMarker() && this.board[5] == p1.getMarker() && this.board[3] == '-')
+		{
+			this.board[3] = p2.getMarker();
+                        this.disableithButton(3);
+			return;
+		}
+
+		if(this.board[9] == p2.getMarker() && this.board[5] == p1.getMarker() && this.board[1] == '-')
+		{
+			this.board[1] = p2.getMarker();
+			this.disableithButton(1);
+                        return;
+		}
+
+		// If player
+
+		if(this.board[1] == p1.getMarker() && this.board[5] == p2.getMarker() && this.board[9] == '-')
+		{
+			this.board[9] = p2.getMarker();
+                        this.disableithButton(9);
+			return;
+		}
+
+		if(this.board[3] == p1.getMarker() && this.board[5] == p2.getMarker() && this.board[7] == '-')
+		{
+			this.board[7] = p2.getMarker();
+                        this.disableithButton(7);
+			return;
+		}
+
+		if(this.board[7] == p1.getMarker() && this.board[5] == p2.getMarker() && this.board[3] == '-')
+		{
+			this.board[3] = p2.getMarker();
+                        this.disableithButton(3);
+			return;
+		}
+
+		if(this.board[9] == p1.getMarker() && this.board[5] == p2.getMarker() && this.board[1] == '-')
+		{
+			this.board[1] = p2.getMarker();
+                        this.disableithButton(1);
+			return;
+		}
+
+		// for win
+
+		if(this.board[1] == p1.getMarker() && this.board[5] == p2.getMarker() && this.board[9] == p2.getMarker()
+				&& this.board[6] == p1.getMarker() && this.board[7] == '-')
+		{
+			this.board[7] = p2.getMarker();
+                        this.disableithButton(7);
+			return;
+		}
+
+		if(this.board[1] == p1.getMarker() && this.board[5] == p2.getMarker() && this.board[9] == p2.getMarker()
+				&& this.board[8] == p1.getMarker() && this.board[3] == '-')
+		{
+			this.board[3] = p2.getMarker();
+                        this.disableithButton(3);
+			return;
+		}
+
+		if(this.board[3] == p1.getMarker() && this.board[4] == p1.getMarker() && this.board[5] == p2.getMarker()
+				&& this.board[7] == p2.getMarker() && this.board[9] == '-')
+		{
+			this.board[9] = p2.getMarker();
+                        this.disableithButton(9);
+			return;
+		}
+
+		if(this.board[3] == p1.getMarker() && this.board[8] == p1.getMarker() && this.board[5] == p2.getMarker()
+				&& this.board[7] == p2.getMarker() && this.board[1] == '-')
+		{
+			this.board[1] = p2.getMarker();
+                        this.disableithButton(1);
+			return;
+		}
+
+		if(this.board[7] == p1.getMarker() && this.board[6] == p1.getMarker() && this.board[5] == p2.getMarker()
+				&& this.board[3] == p2.getMarker() && this.board[1] == '-')
+		{
+			this.board[1] = p2.getMarker();
+                        this.disableithButton(1);
+			return;
+		}
+
+		if(this.board[7] == p1.getMarker() && this.board[2] == p1.getMarker() && this.board[5] == p2.getMarker()
+				&& this.board[3] == p2.getMarker() && this.board[9] == '-')
+		{
+			this.board[9] = p2.getMarker();
+                        this.disableithButton(9);
+			return;
+		}
+
+		if(this.board[9] == p1.getMarker() && this.board[4] == p1.getMarker() && this.board[5] == p2.getMarker()
+				&& this.board[1] == p2.getMarker() && this.board[3] == '-')
+		{
+			this.board[3] = p2.getMarker();
+                        this.disableithButton(3);
+			return;
+		}
+
+		if(this.board[9] == p1.getMarker() && this.board[2] == p1.getMarker() && this.board[5] == p2.getMarker()
+				&& this.board[1] == p2.getMarker() && this.board[7] == '-')
+		{
+			this.board[7] = p2.getMarker();
+                        this.disableithButton(7);
+			return;
+		}
+
+		// For defend
+
+		if(this.board[5] == p1.getMarker() && this.board[9] == p1.getMarker() && this.board[1] == p2.getMarker()
+				&& this.board[3] == '-')
+		{
+			this.board[3] = p2.getMarker();
+                        this.disableithButton(3);
+			return;
+		}
+
+		if(this.board[5] == p1.getMarker() && this.board[7] == p1.getMarker() && this.board[3] == p2.getMarker()
+				&& this.board[1] == '-')
+		{
+			this.board[1] = p2.getMarker();
+                        this.disableithButton(1);
+			return;
+		}
+
+		if(this.board[5] == p1.getMarker() && this.board[3] == p1.getMarker() && this.board[7] == p2.getMarker()
+				&& this.board[9] == '-')
+		{
+			this.board[9] = p2.getMarker();
+                        this.disableithButton(9);
+			return;
+		}
+
+		if(this.board[5] == p1.getMarker() && this.board[1] == p1.getMarker() && this.board[9] == p2.getMarker()
+				&& this.board[7] == '-')
+		{
+			this.board[7] = p2.getMarker();
+                        this.disableithButton(7);
+			return;
+		}
+
+		// error
+
+		if(this.board[1] == p1.getMarker() && this.board[9] == p1.getMarker() && this.board[5] == p2.getMarker()
+				&& this.board[8] == '-')
+		{
+			this.board[8] = p2.getMarker();
+                        this.disableithButton(8);
+			return;
+		}
+
+		if(this.board[3] == p1.getMarker() && this.board[7] == p1.getMarker() && this.board[5] == p2.getMarker()
+						&& this.board[2] == '-')
+		{
+			this.board[2] = p2.getMarker();
+                        this.disableithButton(2);
+			return;
+		}
+
+        }
+        
+        this.easyLevel();
+        
+    }
+
+    private  void  disableithButton(int i) 
+    {
+        if(i == 1)
+        {
+            if(p2.getMarker() == 'O')
+            {
+                this.c1.setIcon(new ImageIcon ("check.png"));
+                this.c1.setEnabled(false);
+                this.c1.setDisabledIcon(new ImageIcon ("check.png"));
+            }
+            
+            else
+            {
+                this.c1.setIcon(new ImageIcon ("cross.png"));
+                this.c1.setEnabled(false);
+                this.c1.setDisabledIcon(new ImageIcon ("cross.png"));
+            }
+        }
+        
+        else if(i == 2)
+        {
+            if(p2.getMarker() == 'O')
+            {
+                this.c2.setIcon(new ImageIcon ("check.png"));
+                this.c2.setEnabled(false);
+                this.c2.setDisabledIcon(new ImageIcon ("check.png"));
+            }
+            
+            else
+            {
+                this.c2.setIcon(new ImageIcon ("cross.png"));
+                this.c2.setEnabled(false);
+                this.c2.setDisabledIcon(new ImageIcon ("cross.png"));
+            }
+        }
+        
+        else if(i == 3)
+        {
+            if(p2.getMarker() == 'O')
+            {
+                this.c3.setIcon(new ImageIcon ("check.png"));
+                this.c3.setEnabled(false);
+                this.c3.setDisabledIcon(new ImageIcon ("check.png"));
+            }
+            
+            else
+            {
+                this.c3.setIcon(new ImageIcon ("cross.png"));
+                this.c3.setEnabled(false);
+                this.c3.setDisabledIcon(new ImageIcon ("cross.png"));
+            }
+        }
+        
+        else if(i == 4)
+        {
+            if(p2.getMarker() == 'O')
+            {
+                this.c4.setIcon(new ImageIcon ("check.png"));
+                this.c4.setEnabled(false);
+                this.c4.setDisabledIcon(new ImageIcon ("check.png"));
+            }
+            
+            else
+            {
+                this.c4.setIcon(new ImageIcon ("cross.png"));
+                this.c4.setEnabled(false);
+                this.c4.setDisabledIcon(new ImageIcon ("cross.png"));
+            }
+        }
+        
+        else if(i == 6)
+        {
+            if(p2.getMarker() == 'O')
+            {
+                this.c6.setIcon(new ImageIcon ("check.png"));
+                this.c6.setEnabled(false);
+                this.c6.setDisabledIcon(new ImageIcon ("check.png"));
+            }
+            
+            else
+            {
+                this.c6.setIcon(new ImageIcon ("cross.png"));
+                this.c6.setEnabled(false);
+                this.c6.setDisabledIcon(new ImageIcon ("cross.png"));
+            }
+        }
+        
+        else if(i == 7)
+        {
+            if(p2.getMarker() == 'O')
+            {
+                this.c7.setIcon(new ImageIcon ("check.png"));
+                this.c7.setEnabled(false);
+                this.c7.setDisabledIcon(new ImageIcon ("check.png"));
+            }
+            
+            else
+            {
+                this.c7.setIcon(new ImageIcon ("cross.png"));
+                this.c7.setEnabled(false);
+                this.c7.setDisabledIcon(new ImageIcon ("cross.png"));
+            }
+        }
+        
+        else if(i == 5)
+        {
+            if(p2.getMarker() == 'O')
+            {
+                this.c5.setIcon(new ImageIcon ("check.png"));
+                this.c5.setEnabled(false);
+                this.c5.setDisabledIcon(new ImageIcon ("check.png"));
+            }
+            
+            else
+            {
+                this.c5.setIcon(new ImageIcon ("cross.png"));
+                this.c5.setEnabled(false);
+                this.c5.setDisabledIcon(new ImageIcon ("cross.png"));
+            }
+        }
+        
+        else if(i == 8)
+        {
+            if(p2.getMarker() == 'O')
+            {
+                this.c8.setIcon(new ImageIcon ("check.png"));
+                this.c8.setEnabled(false);
+                this.c8.setDisabledIcon(new ImageIcon ("check.png"));
+            }
+            
+            else
+            {
+                this.c8.setIcon(new ImageIcon ("cross.png"));
+                this.c8.setEnabled(false);
+                this.c8.setDisabledIcon(new ImageIcon ("cross.png"));
+            }
+        }
+        
+        else
+        {
+            if(p2.getMarker() == 'O')
+            {
+                this.c9.setIcon(new ImageIcon ("check.png"));
+                this.c9.setEnabled(false);
+                this.c9.setDisabledIcon(new ImageIcon ("check.png"));
+            }
+            
+            else
+            {
+                this.c9.setIcon(new ImageIcon ("cross.png"));
+                this.c9.setEnabled(false);
+                this.c9.setDisabledIcon(new ImageIcon ("cross.png"));
+            }
+        }
+    }
+
+    private boolean do_computer_win() 
+    {
+        if(this.board[1] == p2.getMarker() && this.board[2] == p2.getMarker() && this.board[3] == '-')
+	{
+		this.board[3] = p2.getMarker();
+                this.disableithButton(3);
+		return true;
+	}
+
+	if(this.board[1] == p2.getMarker() && this.board[3] == p2.getMarker() && this.board[2] == '-')
+	{
+		this.board[2] = p2.getMarker();
+                this.disableithButton(2);
+		return true;
+	}
+
+	if(this.board[3] == p2.getMarker() && this.board[2] == p2.getMarker() && this.board[1] == '-')
+	{
+		this.board[1] = p2.getMarker();
+                this.disableithButton(1);
+		return true;
+	}
+
+	//for 147
+	if(this.board[1] == p2.getMarker() && this.board[4] == p2.getMarker() && this.board[7] == '-')
+	{
+		this.board[7] = p2.getMarker();
+		this.disableithButton(7);
+                return true;
+	}
+
+	if(this.board[1] == p2.getMarker() && this.board[7] == p2.getMarker() && this.board[4] == '-')
+	{
+		this.board[4] = p2.getMarker();
+		this.disableithButton(4);
+                return true;
+	}
+
+	if(this.board[7] == p2.getMarker() && this.board[4] == p2.getMarker() && this.board[1] == '-')
+	{
+		this.board[1] = p2.getMarker();
+                this.disableithButton(1);
+		return true;
+	}
+
+	//for 159
+	if(this.board[1] == p2.getMarker() && this.board[5] == p2.getMarker() && this.board[9] == '-')
+	{
+		this.board[9] = p2.getMarker();
+                this.disableithButton(9);
+		return true;
+	}
+
+	if(this.board[1] == p2.getMarker() && this.board[9] == p2.getMarker() && this.board[5] == '-')
+	{
+		this.board[5] = p2.getMarker();
+                this.disableithButton(5);
+		return true;
+	}
+
+	if(this.board[9] == p2.getMarker() && this.board[5] == p2.getMarker() && this.board[1] == '-')
+	{
+		this.board[1] = p2.getMarker();
+                this.disableithButton(1);
+		return true;
+	}
+
+	//for 258
+	if(this.board[2] == p2.getMarker() && this.board[5] == p2.getMarker() && this.board[8] == '-')
+	{
+		this.board[8] = p2.getMarker();
+                this.disableithButton(8);
+		return true;
+	}
+
+	if(this.board[2] == p2.getMarker() && this.board[8] == p2.getMarker() && this.board[5] == '-')
+	{
+		this.board[5] = p2.getMarker();
+                this.disableithButton(5);
+		return true;
+	}
+
+	if(this.board[8] == p2.getMarker() && this.board[5] == p2.getMarker() && this.board[2] == '-')
+	{
+		this.board[2] = p2.getMarker();
+                this.disableithButton(2);
+		return true;
+	}
+
+	//for 357
+	if(this.board[3] == p2.getMarker() && this.board[5] == p2.getMarker() && this.board[7] == '-')
+	{
+		this.board[7] = p2.getMarker();
+                this.disableithButton(7);
+		return true;
+	}
+
+	if(this.board[3] == p2.getMarker() && this.board[7] == p2.getMarker() && this.board[5] == '-')
+	{
+		this.board[5] = p2.getMarker();
+                this.disableithButton(5);
+		return true;
+	}
+
+	if(this.board[7] == p2.getMarker() && this.board[5] == p2.getMarker() && this.board[3] == '-')
+	{
+		this.board[3] = p2.getMarker();
+                this.disableithButton(3);
+		return true;
+	}
+
+	//for 369
+	if(this.board[3] == p2.getMarker() && this.board[6] == p2.getMarker() && this.board[9] == '-')
+	{
+		this.board[9] = p2.getMarker();
+                this.disableithButton(9);
+		return true;
+	}
+
+	if(this.board[3] == p2.getMarker() && this.board[9] == p2.getMarker() && this.board[6] == '-')
+	{
+		this.board[6] = p2.getMarker();
+                this.disableithButton(6);
+		return true;
+	}
+
+	if(this.board[9] == p2.getMarker() && this.board[6] == p2.getMarker() && this.board[3] == '-')
+	{
+		this.board[3] = p2.getMarker();
+                this.disableithButton(3);
+		return true;
+	}
+
+	//for 456
+	if(this.board[4] == p2.getMarker() && this.board[5] == p2.getMarker() && this.board[6] == '-')
+	{
+		this.board[6] = p2.getMarker();
+                this.disableithButton(6);
+		return true;
+	}
+
+	if(this.board[4] == p2.getMarker() && this.board[6] == p2.getMarker() && this.board[5] == '-')
+	{
+		this.board[5] = p2.getMarker();
+                this.disableithButton(5);
+		return true;
+	}
+
+	if(this.board[6] == p2.getMarker() && this.board[5] == p2.getMarker() && this.board[4] == '-')
+	{
+		this.board[4] = p2.getMarker();
+                this.disableithButton(4);
+		return true;
+	}
+
+	//for 789
+	if(this.board[7] == p2.getMarker() && this.board[8] == p2.getMarker() && this.board[9] == '-')
+	{
+		this.board[9] = p2.getMarker();
+                this.disableithButton(9);
+		return true;
+	}
+
+	if(this.board[7] == p2.getMarker() && this.board[9] == p2.getMarker() && this.board[8] == '-')
+	{
+		this.board[8] = p2.getMarker();
+                this.disableithButton(8);
+		return true;
+	}
+
+	if(this.board[9] == p2.getMarker() && this.board[8] == p2.getMarker() && this.board[7] == '-')
+	{
+		this.board[7] = p2.getMarker();
+                this.disableithButton(7);
+		return true;
+	}
+
+
+	return false;
+    }
+
+    private boolean do_player_win() 
+    {
+        if(this.board[1] == p1.getMarker() && this.board[2] == p1.getMarker() && this.board[3] == '-')
+	{
+		this.board[3] = p2.getMarker();
+                this.disableithButton(3);
+		return true;
+	}
+
+	if(this.board[1] == p1.getMarker() && this.board[3] == p1.getMarker() && this.board[2] == '-')
+	{
+		this.board[2] = p2.getMarker();
+                this.disableithButton(2);
+		return true;
+	}
+
+	if(this.board[3] == p1.getMarker() && this.board[2] == p1.getMarker() && this.board[1] == '-')
+	{
+		this.board[1] = p2.getMarker();
+                this.disableithButton(1);
+		return true;
+	}
+
+	//for 147
+	if(this.board[1] == p1.getMarker() && this.board[4] == p1.getMarker() && this.board[7] == '-')
+	{
+		this.board[7] = p2.getMarker();
+		this.disableithButton(7);
+                return true;
+	}
+
+	if(this.board[1] == p1.getMarker() && this.board[7] == p1.getMarker() && this.board[4] == '-')
+	{
+		this.board[4] = p2.getMarker();
+		this.disableithButton(4);
+                return true;
+	}
+
+	if(this.board[7] == p1.getMarker() && this.board[4] == p1.getMarker() && this.board[1] == '-')
+	{
+		this.board[1] = p2.getMarker();
+                this.disableithButton(1);
+		return true;
+	}
+
+	//for 159
+	if(this.board[1] == p1.getMarker() && this.board[5] == p1.getMarker() && this.board[9] == '-')
+	{
+		this.board[9] = p2.getMarker();
+                this.disableithButton(9);
+		return true;
+	}
+
+	if(this.board[1] == p1.getMarker() && this.board[9] == p1.getMarker() && this.board[5] == '-')
+	{
+		this.board[5] = p2.getMarker();
+                this.disableithButton(5);
+		return true;
+	}
+
+	if(this.board[9] == p1.getMarker() && this.board[5] == p1.getMarker() && this.board[1] == '-')
+	{
+		this.board[1] = p2.getMarker();
+                this.disableithButton(1);
+		return true;
+	}
+
+	//for 258
+	if(this.board[2] == p1.getMarker() && this.board[5] == p1.getMarker() && this.board[8] == '-')
+	{
+		this.board[8] = p2.getMarker();
+                this.disableithButton(8);
+		return true;
+	}
+
+	if(this.board[2] == p1.getMarker() && this.board[8] == p1.getMarker() && this.board[5] == '-')
+	{
+		this.board[5] = p2.getMarker();
+                this.disableithButton(5);
+		return true;
+	}
+
+	if(this.board[8] == p1.getMarker() && this.board[5] == p1.getMarker() && this.board[2] == '-')
+	{
+		this.board[2] = p2.getMarker();
+                this.disableithButton(2);
+		return true;
+	}
+
+	//for 357
+	if(this.board[3] == p1.getMarker() && this.board[5] == p1.getMarker() && this.board[7] == '-')
+	{
+		this.board[7] = p2.getMarker();
+                this.disableithButton(7);
+		return true;
+	}
+
+	if(this.board[3] == p1.getMarker() && this.board[7] == p1.getMarker() && this.board[5] == '-')
+	{
+		this.board[5] = p2.getMarker();
+                this.disableithButton(5);
+		return true;
+	}
+
+	if(this.board[7] == p1.getMarker() && this.board[5] == p1.getMarker() && this.board[3] == '-')
+	{
+		this.board[3] = p2.getMarker();
+                this.disableithButton(3);
+		return true;
+	}
+
+	//for 369
+	if(this.board[3] == p1.getMarker() && this.board[6] == p1.getMarker() && this.board[9] == '-')
+	{
+		this.board[9] = p2.getMarker();
+                this.disableithButton(9);
+		return true;
+	}
+
+	if(this.board[3] == p1.getMarker() && this.board[9] == p1.getMarker() && this.board[6] == '-')
+	{
+		this.board[6] = p2.getMarker();
+                this.disableithButton(6);
+		return true;
+	}
+
+	if(this.board[9] == p1.getMarker() && this.board[6] == p1.getMarker() && this.board[3] == '-')
+	{
+		this.board[3] = p2.getMarker();
+                this.disableithButton(3);
+		return true;
+	}
+
+	//for 456
+	if(this.board[4] == p1.getMarker() && this.board[5] == p1.getMarker() && this.board[6] == '-')
+	{
+		this.board[6] = p2.getMarker();
+                this.disableithButton(6);
+		return true;
+	}
+
+	if(this.board[4] == p1.getMarker() && this.board[6] == p1.getMarker() && this.board[5] == '-')
+	{
+		this.board[5] = p2.getMarker();
+                this.disableithButton(5);
+		return true;
+	}
+
+	if(this.board[6] == p1.getMarker() && this.board[5] == p1.getMarker() && this.board[4] == '-')
+	{
+		this.board[4] = p2.getMarker();
+                this.disableithButton(4);
+		return true;
+	}
+
+	//for 789
+	if(this.board[7] == p1.getMarker() && this.board[8] == p1.getMarker() && this.board[9] == '-')
+	{
+		this.board[9] = p2.getMarker();
+                this.disableithButton(9);
+		return true;
+	}
+
+	if(this.board[7] == p1.getMarker() && this.board[9] == p1.getMarker() && this.board[8] == '-')
+	{
+		this.board[8] = p2.getMarker();
+                this.disableithButton(8);
+		return true;
+	}
+
+	if(this.board[9] == p1.getMarker() && this.board[8] == p1.getMarker() && this.board[7] == '-')
+	{
+		this.board[7] = p2.getMarker();
+                this.disableithButton(7);
+		return true;
+	}
+
+
+	return false;
+    }
+
+    private boolean is_board_empty() 
+    {
+        for(int i=1; i<10; i++)
+	{
+            if(this.board[i] != '-')
+		return false;
+	}
+        
+        return true;
+    }
+
+    private boolean only_one_space_acquired_by_player() 
+    {
+        int flag = 0;
+        for(int i=1; i<10; i++)
+        {
+            if(this.board[i] == 'X' || this.board[i] == 'O')
+                flag += 1;
+        }
+        if(flag == 1)
+            return true;
+        return false;
+    }
+
+    private void disablejthButton(int i) 
+    {
+        this.board[i] = p1.getMarker();
+        if(i == 1)
+        {
+            
+            if(p1.getMarker() == 'O')
+            {
+                this.o1.setIcon(new ImageIcon ("check.png"));
+                this.o1.setEnabled(false);
+                this.o1.setDisabledIcon(new ImageIcon ("check.png"));
+            }
+            
+            else
+            {
+                this.o1.setIcon(new ImageIcon ("cross.png"));
+                this.o1.setEnabled(false);
+                this.o1.setDisabledIcon(new ImageIcon ("cross.png"));
+            }
+        }
+        
+        else if(i == 2)
+        {
+            if(p1.getMarker() == 'O')
+            {
+                this.o2.setIcon(new ImageIcon ("check.png"));
+                this.o2.setEnabled(false);
+                this.o2.setDisabledIcon(new ImageIcon ("check.png"));
+            }
+            
+            else
+            {
+                this.o2.setIcon(new ImageIcon ("cross.png"));
+                this.o2.setEnabled(false);
+                this.o2.setDisabledIcon(new ImageIcon ("cross.png"));
+            }
+        }
+        
+        else if(i == 3)
+        {
+            if(p1.getMarker() == 'O')
+            {
+                this.o3.setIcon(new ImageIcon ("check.png"));
+                this.o3.setEnabled(false);
+                this.o3.setDisabledIcon(new ImageIcon ("check.png"));
+            }
+            
+            else
+            {
+                this.o3.setIcon(new ImageIcon ("cross.png"));
+                this.o3.setEnabled(false);
+                this.o3.setDisabledIcon(new ImageIcon ("cross.png"));
+            }
+        }
+        
+        else if(i == 4)
+        {
+            if(p1.getMarker() == 'O')
+            {
+                this.o4.setIcon(new ImageIcon ("check.png"));
+                this.o4.setEnabled(false);
+                this.o4.setDisabledIcon(new ImageIcon ("check.png"));
+            }
+            
+            else
+            {
+                this.o4.setIcon(new ImageIcon ("cross.png"));
+                this.o4.setEnabled(false);
+                this.o4.setDisabledIcon(new ImageIcon ("cross.png"));
+            }
+        }
+        
+        else if(i == 6)
+        {
+            if(p1.getMarker() == 'O')
+            {
+                this.o6.setIcon(new ImageIcon ("check.png"));
+                this.o6.setEnabled(false);
+                this.o6.setDisabledIcon(new ImageIcon ("check.png"));
+            }
+            
+            else
+            {
+                this.o6.setIcon(new ImageIcon ("cross.png"));
+                this.o6.setEnabled(false);
+                this.o6.setDisabledIcon(new ImageIcon ("cross.png"));
+            }
+        }
+        
+        else if(i == 7)
+        {
+            if(p1.getMarker() == 'O')
+            {
+                this.o7.setIcon(new ImageIcon ("check.png"));
+                this.o7.setEnabled(false);
+                this.o7.setDisabledIcon(new ImageIcon ("check.png"));
+            }
+            
+            else
+            {
+                this.o7.setIcon(new ImageIcon ("cross.png"));
+                this.o7.setEnabled(false);
+                this.o7.setDisabledIcon(new ImageIcon ("cross.png"));
+            }
+        }
+        
+        else if(i == 5)
+        {
+            if(p1.getMarker() == 'O')
+            {
+                this.o5.setIcon(new ImageIcon ("check.png"));
+                this.o5.setEnabled(false);
+                this.o5.setDisabledIcon(new ImageIcon ("check.png"));
+            }
+            
+            else
+            {
+                this.o5.setIcon(new ImageIcon ("cross.png"));
+                this.o5.setEnabled(false);
+                this.o5.setDisabledIcon(new ImageIcon ("cross.png"));
+            }
+        }
+        
+        else if(i == 8)
+        {
+            if(p1.getMarker() == 'O')
+            {
+                this.o8.setIcon(new ImageIcon ("C:\\Users\\Amjad Afzaal\\"
+                    + "Desktop\\TicTacTao\\src\\tictactao\\check.png"));
+                this.o8.setEnabled(false);
+                this.o8.setDisabledIcon(new ImageIcon ("check.png"));
+            }
+            
+            else
+            {
+                this.o8.setIcon(new ImageIcon ("cross.png"));
+                this.o8.setEnabled(false);
+                this.o8.setDisabledIcon(new ImageIcon ("cross.png"));
+            }
+        }
+        
+        else
+        {
+            if(p1.getMarker() == 'O')
+            {
+                this.o9.setIcon(new ImageIcon ("check.png"));
+                this.o9.setEnabled(false);
+                this.o9.setDisabledIcon(new ImageIcon ("check.png"));
+            }
+            
+            else
+            {
+                this.o9.setIcon(new ImageIcon ("cross.png"));
+                this.o9.setEnabled(false);
+                this.o9.setDisabledIcon(new ImageIcon ("cross.png"));
+            }
+        }
+    }
+
+    private void disablekthButton(int i)
+    {
+        this.board[i] = p2.getMarker();
+        if(i == 1)
+        {
+            
+            if(p2.getMarker() == 'O')
+            {
+                this.o1.setIcon(new ImageIcon ("check.png"));
+                this.o1.setEnabled(false);
+                this.o1.setDisabledIcon(new ImageIcon ("check.png"));
+            }
+            
+            else
+            {
+                this.o1.setIcon(new ImageIcon ("cross.png"));
+                this.o1.setEnabled(false);
+                this.o1.setDisabledIcon(new ImageIcon ("cross.png"));
+            }
+        }
+        
+        else if(i == 2)
+        {
+            if(p2.getMarker() == 'O')
+            {
+                this.o2.setIcon(new ImageIcon ("check.png"));
+                this.o2.setEnabled(false);
+                this.o2.setDisabledIcon(new ImageIcon ("check.png"));
+            }
+            
+            else
+            {
+                this.o2.setIcon(new ImageIcon ("cross.png"));
+                this.o2.setEnabled(false);
+                this.o2.setDisabledIcon(new ImageIcon ("cross.png"));
+            }
+        }
+        
+        else if(i == 3)
+        {
+            if(p2.getMarker() == 'O')
+            {
+                this.o3.setIcon(new ImageIcon ("check.png"));
+                this.o3.setEnabled(false);
+                this.o3.setDisabledIcon(new ImageIcon ("check.png"));
+            }
+            
+            else
+            {
+                this.o3.setIcon(new ImageIcon ("cross.png"));
+                this.o3.setEnabled(false);
+                this.o3.setDisabledIcon(new ImageIcon ("cross.png"));
+            }
+        }
+        
+        else if(i == 4)
+        {
+            if(p2.getMarker() == 'O')
+            {
+                this.o4.setIcon(new ImageIcon ("check.png"));
+                this.o4.setEnabled(false);
+                this.o4.setDisabledIcon(new ImageIcon ("check.png"));
+            }
+            
+            else
+            {
+                this.o4.setIcon(new ImageIcon ("cross.png"));
+                this.o4.setEnabled(false);
+                this.o4.setDisabledIcon(new ImageIcon ("cross.png"));
+            }
+        }
+        
+        else if(i == 6)
+        {
+            if(p2.getMarker() == 'O')
+            {
+                this.o6.setIcon(new ImageIcon ("check.png"));
+                this.o6.setEnabled(false);
+                this.o6.setDisabledIcon(new ImageIcon ("check.png"));
+            }
+            
+            else
+            {
+                this.o6.setIcon(new ImageIcon ("cross.png"));
+                this.o6.setEnabled(false);
+                this.o6.setDisabledIcon(new ImageIcon ("cross.png"));
+            }
+        }
+        
+        else if(i == 7)
+        {
+            if(p2.getMarker() == 'O')
+            {
+                this.o7.setIcon(new ImageIcon ("check.png"));
+                this.o7.setEnabled(false);
+                this.o7.setDisabledIcon(new ImageIcon ("check.png"));
+            }
+            
+            else
+            {
+                this.o7.setIcon(new ImageIcon ("cross.png"));
+                this.o7.setEnabled(false);
+                this.o7.setDisabledIcon(new ImageIcon ("cross.png"));
+            }
+        }
+        
+        else if(i == 5)
+        {
+            if(p2.getMarker() == 'O')
+            {
+                this.o5.setIcon(new ImageIcon ("check.png"));
+                this.o5.setEnabled(false);
+                this.o5.setDisabledIcon(new ImageIcon ("check.png"));
+            }
+            
+            else
+            {
+                this.o5.setIcon(new ImageIcon ("cross.png"));
+                this.o5.setEnabled(false);
+                this.o5.setDisabledIcon(new ImageIcon ("cross.png"));
+            }
+        }
+        
+        else if(i == 8)
+        {
+            if(p2.getMarker() == 'O')
+            {
+                this.o8.setIcon(new ImageIcon ("C:\\Users\\Amjad Afzaal\\"
+                    + "Desktop\\TicTacTao\\src\\tictactao\\check.png"));
+                this.o8.setEnabled(false);
+                this.o8.setDisabledIcon(new ImageIcon ("check.png"));
+            }
+            
+            else
+            {
+                this.o8.setIcon(new ImageIcon ("cross.png"));
+                this.o8.setEnabled(false);
+                this.o8.setDisabledIcon(new ImageIcon ("cross.png"));
+            }
+        }
+        
+        else
+        {
+            if(p2.getMarker() == 'O')
+            {
+                this.o9.setIcon(new ImageIcon ("check.png"));
+                this.o9.setEnabled(false);
+                this.o9.setDisabledIcon(new ImageIcon ("check.png"));
+            }
+            
+            else
+            {
+                this.o9.setIcon(new ImageIcon ("cross.png"));
+                this.o9.setEnabled(false);
+                this.o9.setDisabledIcon(new ImageIcon ("cross.png"));
+            }
+        }
+    }
+
+    private void clientReceive() 
+    {
+        this.disablejthButton(Integer.parseInt(this.client.recv()));
+        if( "player 1".equals(this.check_for_win()))
+        {
+                JOptionPane.showMessageDialog(null, "Congratulations " + p1.getName()
+                    + "!\nYou have Won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.client.off();
+                this.p1.setScore(50);
+                this.records.add(p1);
+                return;
+            }
+        
+            if( "player 2".equals(this.check_for_win()))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations " + p2.getName()
+                    + "!\nYou have Won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.client.off();
+                this.p2.setScore(50);
+                this.records.add(p2);
+                return;
+            }
+        
+            if(this.check_for_draw())
+            {
+                JOptionPane.showMessageDialog(null, "Game has been Drawn!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.client.off();
+                return;
+            }
+            
+            this.turn = "p2";
+            this.pTurn1.setText(this.p2.getName() + " Turn");
+            this.pTurn1.setFont(new Font("Tahoma", Font.BOLD, 14));
+            this.pName1.setText(p2.getName());
+            this.Level12.setText("Over The Network");
+            this.score2.setText("0");
+           // this.serverReceive();
+    }
+
+    private void serverReceive()
+    {
+        this.disablekthButton(Integer.parseInt(this.server.recv()));
+        if( "player 1".equals(this.check_for_win()))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations " + p1.getName()
+                    + "!\nYou have Won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.server.off();
+                this.p1.setScore(50);
+                this.records.add(p1);
+                return;
+            }
+        
+            if( "player 2".equals(this.check_for_win()))
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations " + p2.getName()
+                    + "!\nYou have Won!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.server.off();
+                this.p2.setScore(50);
+                this.records.add(p2);
+                return;
+            }
+        
+            if(this.check_for_draw())
+            {
+                JOptionPane.showMessageDialog(null, "Game has been Drawn!");
+                this.MainGamePanal.setVisible(true);
+                this.NewGamePanal.setVisible(false);
+                this.OptionPanal.setVisible(false);
+                this.HelpPanal.setVisible(false);
+                this.HighScorePanal.setVisible(false);
+                this.SinglePlayerPanal.setVisible(false);
+                this.MultiplayerPanal.setVisible(false);
+                this.PlayPanal.setVisible(false);
+                this.PlayMultiplayerOnTheSameComputerPanal.setVisible(false);
+                this.SameComputerPanal.setVisible(false);
+                this.OverTheNetworkPanal.setVisible(false);
+                this.PlayMultiplayerOverTheNetworkPanal.setVisible(false);
+                this.HostJoinPanal.setVisible(false);
+                this.server.off();
+                return;
+            }
+            
+            this.turn = "p1";
+            this.pTurn1.setText(this.p1.getName() + " Turn");
+            this.pTurn1.setFont(new Font("Tahoma", Font.BOLD, 14));
+            this.pName1.setText(p1.getName());
+            this.Level12.setText("Over The Network");
+            this.score2.setText("0");
+            //this.clientReceive();
+    }
+
+}

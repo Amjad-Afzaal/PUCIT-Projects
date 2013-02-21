@@ -1,0 +1,83 @@
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/!svn/ver/79/trunk/src/takatuka/classreader/dataObjs
+END
+FieldInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/!svn/ver/79/trunk/src/takatuka/classreader/dataObjs/FieldInfo.java
+END
+MethodInfoController.java
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/!svn/ver/43/trunk/src/takatuka/classreader/dataObjs/MethodInfoController.java
+END
+BaseObject.java
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/43/trunk/src/takatuka/classreader/dataObjs/BaseObject.java
+END
+Un.java
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/!svn/ver/43/trunk/src/takatuka/classreader/dataObjs/Un.java
+END
+FieldInfoController.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/!svn/ver/43/trunk/src/takatuka/classreader/dataObjs/FieldInfoController.java
+END
+InterfaceController.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/!svn/ver/43/trunk/src/takatuka/classreader/dataObjs/InterfaceController.java
+END
+ClassFile.java
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/!svn/ver/68/trunk/src/takatuka/classreader/dataObjs/ClassFile.java
+END
+ClassFileController.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/!svn/ver/43/trunk/src/takatuka/classreader/dataObjs/ClassFileController.java
+END
+ValidateUn.java
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/43/trunk/src/takatuka/classreader/dataObjs/ValidateUn.java
+END
+MethodInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/66/trunk/src/takatuka/classreader/dataObjs/MethodInfo.java
+END
+MultiplePoolsFacade.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/!svn/ver/43/trunk/src/takatuka/classreader/dataObjs/MultiplePoolsFacade.java
+END
+ControllerBase.java
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/!svn/ver/43/trunk/src/takatuka/classreader/dataObjs/ControllerBase.java
+END
+AccessFlags.java
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/!svn/ver/43/trunk/src/takatuka/classreader/dataObjs/AccessFlags.java
+END

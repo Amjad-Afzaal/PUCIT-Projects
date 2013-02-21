@@ -88,7 +88,7 @@ public class GameMainThread extends Thread {
 					width = canvas.getWidth();
 					height = canvas.getHeight();
 					dominosKnight.setX(width - 100);
-					dominosKnight.setY(height - 70);
+					dominosKnight.setY(height - 115);
 					this.up.setX(10 + this.up.getWidth());
 					this.up.setY(this.height - 2 * this.up.getHeight());
 					this.down.setX(10 + this.up.getWidth());
@@ -560,7 +560,11 @@ public class GameMainThread extends Thread {
 					&& tmp.getY() + tmp.getHeight() >= dominosKnight.getY()
 					&& tmp.getX() + tmp.getWidth() <= dominosKnight.getX() + dominosKnight.getWidth()
 					&& tmp.getY() + tmp.getHeight() <= dominosKnight.getY() + dominosKnight.getHeight())
-					)	return true;
+					)	
+					{
+						this.life --;
+						return true;
+					}
 						
 			}
 			if(tmp.getName() == GameElements.FIRE)   
@@ -607,7 +611,7 @@ public class GameMainThread extends Thread {
 					&& tmp.getY() + tmp.getHeight() <= dominosKnight.getY() + dominosKnight.getHeight())
 					)	
 					{
-						this.life --;
+						this.life -= 2;
 						Log.i("Collided with ----->", "-------> FIRE");
 						return true;
 					}

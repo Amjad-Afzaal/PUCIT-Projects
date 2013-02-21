@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/!svn/ver/64/trunk/src/frameSizeCalc/logic
+END
+DataFlowAnalyzerFSC.java
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/!svn/ver/59/trunk/src/frameSizeCalc/logic/DataFlowAnalyzerFSC.java
+END
+StartMeFSC.java
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/!svn/ver/64/trunk/src/frameSizeCalc/logic/StartMeFSC.java
+END
+FrameFactoryFSC.java
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/!svn/ver/57/trunk/src/frameSizeCalc/logic/FrameFactoryFSC.java
+END
+ParameterSizeCalc.java
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/57/trunk/src/frameSizeCalc/logic/ParameterSizeCalc.java
+END

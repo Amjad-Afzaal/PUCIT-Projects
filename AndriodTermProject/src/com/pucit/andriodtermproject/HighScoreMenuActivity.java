@@ -18,6 +18,7 @@ public class HighScoreMenuActivity extends Activity {
         ArrayList<String> scores = new DataBaseHandler(this).getScores();
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_2, android.R.id.text2, scores);
 		scoreList.setAdapter(adapter);
+		
     }
 
     @Override

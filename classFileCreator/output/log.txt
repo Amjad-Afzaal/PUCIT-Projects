@@ -1,0 +1,11 @@
+(at=45)  Started reading file(s)... 
+Saving Branch information ..... 
+Done with reading! 
+(at=211)  Total class files read = 4
+(at=212)  Doing verification of class files (include pass 1,2,3, and 4).
+restoring branch information ...
+(at=400)  Doing verification of class files (include pass 1,2,3, and 4).
+writing class file =test/test4/Father
+writing class file =test/test4/Main
+writing class file =test/test4/Son
+(at=469)  PROGRAM ENDs SUCCESSFULLY: total time 0 min, 0.466 seconds (or 466 milliseconds)

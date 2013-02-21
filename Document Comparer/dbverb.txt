@@ -1,0 +1,7 @@
+run 0
+hit -1
+know 0
+win 1
+beat -1
+kill -2
+is 0

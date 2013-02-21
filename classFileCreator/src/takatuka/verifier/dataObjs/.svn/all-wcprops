@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/76/trunk/src/takatuka/verifier/dataObjs
+END
+Type.java
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/!svn/ver/76/trunk/src/takatuka/verifier/dataObjs/Type.java
+END
+VerifyMethodInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/!svn/ver/43/trunk/src/takatuka/verifier/dataObjs/VerifyMethodInfo.java
+END
+LocalVariables.java
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/!svn/ver/64/trunk/src/takatuka/verifier/dataObjs/LocalVariables.java
+END
+FrameElement.java
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/!svn/ver/64/trunk/src/takatuka/verifier/dataObjs/FrameElement.java
+END
+VerifyClassFile.java
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/!svn/ver/43/trunk/src/takatuka/verifier/dataObjs/VerifyClassFile.java
+END
+Frame.java
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/!svn/ver/64/trunk/src/takatuka/verifier/dataObjs/Frame.java
+END
+FrameMaxInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/!svn/ver/59/trunk/src/takatuka/verifier/dataObjs/FrameMaxInfo.java
+END
+OperandStack.java
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/!svn/ver/64/trunk/src/takatuka/verifier/dataObjs/OperandStack.java
+END

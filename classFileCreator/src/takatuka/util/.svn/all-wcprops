@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/svn/!svn/ver/68/trunk/src/takatuka/util
+END
+OpcodeMnemonicInUse.java
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/!svn/ver/59/trunk/src/takatuka/util/OpcodeMnemonicInUse.java
+END
+Oracle.java
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/68/trunk/src/takatuka/util/Oracle.java
+END
+KeyUtil.java
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/59/trunk/src/takatuka/util/KeyUtil.java
+END
+CodeAttCache.java
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/!svn/ver/59/trunk/src/takatuka/util/CodeAttCache.java
+END
+GlobalCPOracle.java
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/!svn/ver/66/trunk/src/takatuka/util/GlobalCPOracle.java
+END
+FieldMethodOracle.java
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/!svn/ver/59/trunk/src/takatuka/util/FieldMethodOracle.java
+END
+ClassFileOracle.java
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/68/trunk/src/takatuka/util/ClassFileOracle.java
+END
+ExceptionAttCache.java
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/!svn/ver/59/trunk/src/takatuka/util/ExceptionAttCache.java
+END

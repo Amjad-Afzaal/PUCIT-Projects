@@ -1,0 +1,2 @@
+Invalid symbol "." at line number 1
+Invalid symbol "." at line number 1

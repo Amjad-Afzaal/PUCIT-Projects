@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/!svn/ver/74/trunk/src/takatuka/verifier/logic/factory
+END
+VerificationClassFileFactory.java
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/!svn/ver/63/trunk/src/takatuka/verifier/logic/factory/VerificationClassFileFactory.java
+END
+VerificationAttribtuesFactory.java
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/!svn/ver/43/trunk/src/takatuka/verifier/logic/factory/VerificationAttribtuesFactory.java
+END
+VerificationFrameFactory.java
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/!svn/ver/74/trunk/src/takatuka/verifier/logic/factory/VerificationFrameFactory.java
+END
+FrameFactoryPlaceHolder.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/!svn/ver/64/trunk/src/takatuka/verifier/logic/factory/FrameFactoryPlaceHolder.java
+END
+VerificationFactoryFacade.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/!svn/ver/43/trunk/src/takatuka/verifier/logic/factory/VerificationFactoryFacade.java
+END

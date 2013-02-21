@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/!svn/ver/89/trunk/src/deadCodeRmv/logic
+END
+DataFlowAnalyzerDCR.java
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/85/trunk/src/deadCodeRmv/logic/DataFlowAnalyzerDCR.java
+END
+RemoveClassesMethodsAndBytecode.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/!svn/ver/84/trunk/src/deadCodeRmv/logic/RemoveClassesMethodsAndBytecode.java
+END
+LocalVariablesRemoval.java
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/!svn/ver/73/trunk/src/deadCodeRmv/logic/LocalVariablesRemoval.java
+END

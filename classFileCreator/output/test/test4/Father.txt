@@ -1,0 +1,68 @@
+
+ ---------------------- 
+ Magic Number = cafebabe
+ Minor Version=0000
+ Major version=0032
+ ----- Constant Pool ---- 
+size=001f
+
+(1)	MethodRefInfo=0a, Index=0007, nameAndTypeIndex=0010
+(2)	FieldRefInfo=09, Index=0011, nameAndTypeIndex=0012
+(3)	StringInfo=08, Index=0013
+(4)	MethodRefInfo=0a, Index=0014, nameAndTypeIndex=0015
+(5)	StringInfo=08, Index=0016
+(6)	ClassInfo=07, Index=0017
+(7)	ClassInfo=07, Index=0018
+(8)	UTF8Info=01, length =0006, bytes=3c696e69743e 	//<init>
+(9)	UTF8Info=01, length =0003, bytes=282956 	//()V
+(a)	UTF8Info=01, length =0004, bytes=436f6465 	//Code
+(b)	UTF8Info=01, length =000f, bytes=4c696e654e756d6265725461626c65 	//LineNumberTable
+(c)	UTF8Info=01, length =0003, bytes=666f6f 	//foo
+(d)	UTF8Info=01, length =000d, bytes=537461636b4d61705461626c65 	//StackMapTable
+(e)	UTF8Info=01, length =000a, bytes=536f7572636546696c65 	//SourceFile
+(f)	UTF8Info=01, length =000b, bytes=4661746865722e6a617661 	//Father.java
+(10)	NameAndTypeInfo=0c, Index=0008, descriptor_index=0009
+(11)	ClassInfo=07, Index=0019
+(12)	NameAndTypeInfo=0c, Index=001a, descriptor_index=001b
+(13)	UTF8Info=01, length =001f, bytes=746869732062797465636f64652073686f756c642062652072656d6f766564 	//this bytecode should be removed
+(14)	ClassInfo=07, Index=001c
+(15)	NameAndTypeInfo=0c, Index=001d, descriptor_index=001e
+(16)	UTF8Info=01, length =001a, bytes=746869732073686f756c64204e4f542062652072656d6f766564 	//this should NOT be removed
+(17)	UTF8Info=01, length =0011, bytes=746573742f74657374342f466174686572 	//test/test4/Father
+(18)	UTF8Info=01, length =0010, bytes=6a6176612f6c616e672f4f626a656374 	//java/lang/Object
+(19)	UTF8Info=01, length =0010, bytes=6a6176612f6c616e672f53797374656d 	//java/lang/System
+(1a)	UTF8Info=01, length =0003, bytes=6f7574 	//out
+(1b)	UTF8Info=01, length =0015, bytes=4c6a6176612f696f2f5072696e7453747265616d3b 	//Ljava/io/PrintStream;
+(1c)	UTF8Info=01, length =0013, bytes=6a6176612f696f2f5072696e7453747265616d 	//java/io/PrintStream
+(1d)	UTF8Info=01, length =0007, bytes=7072696e746c6e 	//println
+(1e)	UTF8Info=01, length =0015, bytes=284c6a6176612f6c616e672f537472696e673b2956 	//(Ljava/lang/String;)V
+ ---------------------- 
+
+ Access flags=0021
+ this class=0006
+ super class=0007
+ Interfaces Info=size=0000
+
+size=0000
+
+--------
+size=0002
+
+	MethodInfo=[name=<init>()V, 	 access_flag=0001, name_index= 0008, descriptor_index=0009, attributes=size=0001{ CodeAtt=attribute_name_index =000a, attribute_length =0000001d, max_stack =0001, max_locals =0001, code_length =00000005, code={
+		0x0:1   ALOAD_0 
+ 		0x1:2   INVOKESPECIAL 0x0001
+ 		0x4:3   RETURN }, exception_table_length =0000, exception_table={} , Attributes ={size=0001{ LineNumberAttribute=attribute_name_index =000b, attribute_length =00000006, line_number_table_length =0001{start_pc =0000, line_number =001f}}}
+
+
+	MethodInfo=[name=foo()V, 	 access_flag=0001, name_index= 000c, descriptor_index=0009, attributes=size=0001{ CodeAtt=attribute_name_index =000a, attribute_length =0000001b, max_stack =0004, max_locals =0002, code_length =0000000f, code={
+		0x0:4   ICONST_3 
+ 		0x1:5   ISTORE_1 
+ 		0x2:6   ILOAD_1 
+ 		0x3:7   IFNE 0x0003
+ 		0x6:15   GETSTATIC 0x0002
+ 		0x9:16   LDC 0x05
+ 		0xb:17   INVOKEVIRTUAL 0x0004
+ 		0xe:18   RETURN }, exception_table_length =0000, exception_table={} , Attributes ={size=0000}}
+
+
+size=0001{	SourceFileAtt=attribute_name_index =000e, attribute_length =00000002, sourcefile_index= 000f}

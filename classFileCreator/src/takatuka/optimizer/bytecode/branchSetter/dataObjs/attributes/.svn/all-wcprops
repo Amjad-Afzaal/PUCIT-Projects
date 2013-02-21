@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/!svn/ver/79/trunk/src/takatuka/optimizer/bytecode/branchSetter/dataObjs/attributes
+END
+BranchTarget.java
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/!svn/ver/43/trunk/src/takatuka/optimizer/bytecode/branchSetter/dataObjs/attributes/BranchTarget.java
+END
+BHInstruction.java
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/!svn/ver/79/trunk/src/takatuka/optimizer/bytecode/branchSetter/dataObjs/attributes/BHInstruction.java
+END
+MiniBytecodeProcessor.java
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/svn/!svn/ver/43/trunk/src/takatuka/optimizer/bytecode/branchSetter/dataObjs/attributes/MiniBytecodeProcessor.java
+END
+BHCodeAtt.java
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/!svn/ver/43/trunk/src/takatuka/optimizer/bytecode/branchSetter/dataObjs/attributes/BHCodeAtt.java
+END
+IdInstruction.java
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/!svn/ver/43/trunk/src/takatuka/optimizer/bytecode/branchSetter/dataObjs/attributes/IdInstruction.java
+END

@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/!svn/ver/43/trunk/src/takatuka/classreader/logic/exception
+END
+FieldAttributeException.java
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/!svn/ver/43/trunk/src/takatuka/classreader/logic/exception/FieldAttributeException.java
+END
+TagException.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/!svn/ver/43/trunk/src/takatuka/classreader/logic/exception/TagException.java
+END
+UnSizeException.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/!svn/ver/43/trunk/src/takatuka/classreader/logic/exception/UnSizeException.java
+END

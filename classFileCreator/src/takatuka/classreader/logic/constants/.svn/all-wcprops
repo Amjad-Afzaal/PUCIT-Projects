@@ -1,0 +1,59 @@
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/!svn/ver/66/trunk/src/takatuka/classreader/logic/constants
+END
+FieldAccessFlag.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/!svn/ver/43/trunk/src/takatuka/classreader/logic/constants/FieldAccessFlag.java
+END
+SectionSizes.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/!svn/ver/43/trunk/src/takatuka/classreader/logic/constants/SectionSizes.java
+END
+JavaInstructionsOpcodes.java
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/!svn/ver/43/trunk/src/takatuka/classreader/logic/constants/JavaInstructionsOpcodes.java
+END
+LocalVariableTypes.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/!svn/ver/43/trunk/src/takatuka/classreader/logic/constants/LocalVariableTypes.java
+END
+FieldTypes.java
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/!svn/ver/66/trunk/src/takatuka/classreader/logic/constants/FieldTypes.java
+END
+AccessFlagValues.java
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/!svn/ver/43/trunk/src/takatuka/classreader/logic/constants/AccessFlagValues.java
+END
+StatGroups.java
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/!svn/ver/43/trunk/src/takatuka/classreader/logic/constants/StatGroups.java
+END
+AttributeNameIndexValues.java
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/!svn/ver/43/trunk/src/takatuka/classreader/logic/constants/AttributeNameIndexValues.java
+END
+CPTagValues.java
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/!svn/ver/66/trunk/src/takatuka/classreader/logic/constants/CPTagValues.java
+END

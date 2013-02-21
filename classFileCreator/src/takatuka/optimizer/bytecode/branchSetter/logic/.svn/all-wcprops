@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/!svn/ver/59/trunk/src/takatuka/optimizer/bytecode/branchSetter/logic
+END
+BranchInstructionsHandler.java
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/!svn/ver/59/trunk/src/takatuka/optimizer/bytecode/branchSetter/logic/BranchInstructionsHandler.java
+END
+StartMeBranchHandler.java
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/!svn/ver/59/trunk/src/takatuka/optimizer/bytecode/branchSetter/logic/StartMeBranchHandler.java
+END

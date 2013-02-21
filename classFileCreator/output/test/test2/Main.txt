@@ -1,0 +1,84 @@
+
+ ---------------------- 
+ Magic Number = cafebabe
+ Minor Version=0000
+ Major version=0032
+ ----- Constant Pool ---- 
+size=002b
+
+(1)	MethodRefInfo=0a, Index=000c, nameAndTypeIndex=0018
+(2)	FieldRefInfo=09, Index=0019, nameAndTypeIndex=001a
+(3)	StringInfo=08, Index=001b
+(4)	MethodRefInfo=0a, Index=001c, nameAndTypeIndex=001d
+(5)	ClassInfo=07, Index=001e
+(6)	MethodRefInfo=0a, Index=0005, nameAndTypeIndex=0018
+(7)	StringInfo=08, Index=001f
+(8)	MethodRefInfo=0a, Index=0005, nameAndTypeIndex=0020
+(9)	StringInfo=08, Index=0021
+(a)	StringInfo=08, Index=0022
+(b)	ClassInfo=07, Index=0023
+(c)	ClassInfo=07, Index=0024
+(d)	UTF8Info=01, length =0006, bytes=3c696e69743e 	//<init>
+(e)	UTF8Info=01, length =0003, bytes=282956 	//()V
+(f)	UTF8Info=01, length =0004, bytes=436f6465 	//Code
+(10)	UTF8Info=01, length =000f, bytes=4c696e654e756d6265725461626c65 	//LineNumberTable
+(11)	UTF8Info=01, length =0004, bytes=6d61696e 	//main
+(12)	UTF8Info=01, length =0016, bytes=285b4c6a6176612f6c616e672f537472696e673b2956 	//([Ljava/lang/String;)V
+(13)	UTF8Info=01, length =000d, bytes=537461636b4d61705461626c65 	//StackMapTable
+(14)	UTF8Info=01, length =0006, bytes=666f6f626172 	//foobar
+(15)	UTF8Info=01, length =0003, bytes=666f6f 	//foo
+(16)	UTF8Info=01, length =000a, bytes=536f7572636546696c65 	//SourceFile
+(17)	UTF8Info=01, length =0009, bytes=4d61696e2e6a617661 	//Main.java
+(18)	NameAndTypeInfo=0c, Index=000d, descriptor_index=000e
+(19)	ClassInfo=07, Index=0025
+(1a)	NameAndTypeInfo=0c, Index=0026, descriptor_index=0027
+(1b)	UTF8Info=01, length =000d, bytes=497420697320776f726b696e67 	//It is working
+(1c)	ClassInfo=07, Index=0028
+(1d)	NameAndTypeInfo=0c, Index=0029, descriptor_index=002a
+(1e)	UTF8Info=01, length =0013, bytes=746573742f74657374322f436c61737354776f 	//test/test2/ClassTwo
+(1f)	UTF8Info=01, length =000f, bytes=497420697320776f726b696e672032 	//It is working 2
+(20)	NameAndTypeInfo=0c, Index=0015, descriptor_index=000e
+(21)	UTF8Info=01, length =0013, bytes=492073686f756c642062652064656c65746564 	//I should be deleted
+(22)	UTF8Info=01, length =0017, bytes=492073686f756c64204e4f542062652064656c65746564 	//I should NOT be deleted
+(23)	UTF8Info=01, length =000f, bytes=746573742f74657374322f4d61696e 	//test/test2/Main
+(24)	UTF8Info=01, length =0010, bytes=6a6176612f6c616e672f4f626a656374 	//java/lang/Object
+(25)	UTF8Info=01, length =0010, bytes=6a6176612f6c616e672f53797374656d 	//java/lang/System
+(26)	UTF8Info=01, length =0003, bytes=6f7574 	//out
+(27)	UTF8Info=01, length =0015, bytes=4c6a6176612f696f2f5072696e7453747265616d3b 	//Ljava/io/PrintStream;
+(28)	UTF8Info=01, length =0013, bytes=6a6176612f696f2f5072696e7453747265616d 	//java/io/PrintStream
+(29)	UTF8Info=01, length =0007, bytes=7072696e746c6e 	//println
+(2a)	UTF8Info=01, length =0015, bytes=284c6a6176612f6c616e672f537472696e673b2956 	//(Ljava/lang/String;)V
+ ---------------------- 
+
+ Access flags=0021
+ this class=000b
+ super class=000c
+ Interfaces Info=size=0000
+
+size=0000
+
+--------
+size=0002
+
+	MethodInfo=[name=<init>()V, 	 access_flag=0001, name_index= 000d, descriptor_index=000e, attributes=size=0001{ CodeAtt=attribute_name_index =000f, attribute_length =0000000c, max_stack =0001, max_locals =0001, code_length =00000000, code={
+}, exception_table_length =0000, exception_table={} , Attributes ={size=0000}}
+
+
+	MethodInfo=[name=main([Ljava/lang/String;)V, 	 access_flag=0009, name_index= 0011, descriptor_index=0012, attributes=size=0001{ CodeAtt=attribute_name_index =000f, attribute_length =00000021, max_stack =0002, max_locals =0004, code_length =00000015, code={
+		0x0:35   ICONST_1 
+ 		0x1:36   ISTORE_1 
+ 		0x2:37   ICONST_5 
+ 		0x3:38   ISTORE_2 
+ 		0x4:39   ILOAD_1 
+ 		0x5:40   ILOAD_2 
+ 		0x6:41   IADD 
+ 		0x7:42   ISTORE_1 
+ 		0x8:43   GETSTATIC 0x0002
+ 		0xb:44   LDC 0x03
+ 		0xd:45   INVOKEVIRTUAL 0x0004
+ 		0x10:46   ILOAD_1 
+ 		0x11:47   IFNE 0x0003
+ 		0x14:57   RETURN }, exception_table_length =0000, exception_table={} , Attributes ={size=0000}}
+
+
+size=0001{	SourceFileAtt=attribute_name_index =0016, attribute_length =00000002, sourcefile_index= 0017}

@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/!svn/ver/79/trunk/src/classgenerator/logic
+END
+FieldType.java
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/!svn/ver/66/trunk/src/classgenerator/logic/FieldType.java
+END
+Oracle.java
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/!svn/ver/79/trunk/src/classgenerator/logic/Oracle.java
+END
+OracleImpl.java
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/!svn/ver/79/trunk/src/classgenerator/logic/OracleImpl.java
+END
+Constants.java
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/!svn/ver/43/trunk/src/classgenerator/logic/Constants.java
+END
+OracleHighLevel.java
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/!svn/ver/43/trunk/src/classgenerator/logic/OracleHighLevel.java
+END

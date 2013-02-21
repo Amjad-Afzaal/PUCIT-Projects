@@ -1,0 +1,9 @@
+application.args=/home/aslam/classFileCreator/build/classes/test/test2 output test/test2/Main
+compile.on.save=true
+do.depend=false
+do.jar=true
+javac.debug=true
+javadoc.preview=true
+jaxbwiz.endorsed.dirs=/home/aslam/netbeans-6.8/ide12/modules/ext/jaxb/api
+user.properties.file=/home/aslam/.netbeans/7.0/build.properties
+work.dir=/home/aslam/classFileCreator

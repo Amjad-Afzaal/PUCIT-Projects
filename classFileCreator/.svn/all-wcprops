@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 22
+/svn/!svn/ver/91/trunk
+END
+types.properties
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/svn/!svn/ver/81/trunk/types.properties
+END
+runtimeExceptions.properties
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/55/trunk/runtimeExceptions.properties
+END
+opcode-parameters.properties
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/55/trunk/opcode-parameters.properties
+END
+opcode-mnemonic.properties
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/55/trunk/opcode-mnemonic.properties
+END
+build.xml
+K 25
+svn:wc:ra_dav:version-url
+V 32
+/svn/!svn/ver/56/trunk/build.xml
+END

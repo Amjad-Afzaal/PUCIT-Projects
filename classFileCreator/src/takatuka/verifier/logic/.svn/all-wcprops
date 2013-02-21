@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/!svn/ver/79/trunk/src/takatuka/verifier/logic
+END
+ConstantPoolStaticConstraints.java
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/!svn/ver/66/trunk/src/takatuka/verifier/logic/ConstantPoolStaticConstraints.java
+END
+Pass.java
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/!svn/ver/43/trunk/src/takatuka/verifier/logic/Pass.java
+END
+Pass1.java
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/43/trunk/src/takatuka/verifier/logic/Pass1.java
+END
+Messages.java
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/!svn/ver/43/trunk/src/takatuka/verifier/logic/Messages.java
+END
+Pass2.java
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/65/trunk/src/takatuka/verifier/logic/Pass2.java
+END
+Pass3.java
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/66/trunk/src/takatuka/verifier/logic/Pass3.java
+END
+Pass4.java
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/66/trunk/src/takatuka/verifier/logic/Pass4.java
+END
+StartMeVerifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/!svn/ver/59/trunk/src/takatuka/verifier/logic/StartMeVerifier.java
+END
+Pass5.java
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/43/trunk/src/takatuka/verifier/logic/Pass5.java
+END
+AccessVerifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/59/trunk/src/takatuka/verifier/logic/AccessVerifier.java
+END

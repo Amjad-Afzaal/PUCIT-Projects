@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/!svn/ver/81/trunk/src/deadCodeRmv/dataObjs
+END
+ShouldKeepInterface.java
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/70/trunk/src/deadCodeRmv/dataObjs/ShouldKeepInterface.java
+END
+MethodInfoDCR.java
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/!svn/ver/81/trunk/src/deadCodeRmv/dataObjs/MethodInfoDCR.java
+END
+OperandStackDCR.java
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/!svn/ver/63/trunk/src/deadCodeRmv/dataObjs/OperandStackDCR.java
+END
+InstructionDCR.java
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/!svn/ver/81/trunk/src/deadCodeRmv/dataObjs/InstructionDCR.java
+END
+TypeDCR.java
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/!svn/ver/77/trunk/src/deadCodeRmv/dataObjs/TypeDCR.java
+END
+LocalVariablesDCR.java
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/63/trunk/src/deadCodeRmv/dataObjs/LocalVariablesDCR.java
+END
+ClassFileDCR.java
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/!svn/ver/71/trunk/src/deadCodeRmv/dataObjs/ClassFileDCR.java
+END

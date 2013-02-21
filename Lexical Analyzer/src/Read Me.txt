@@ -1,0 +1,5 @@
+Kindly Read this file.
+This file contains some information about my program that is neccessary
+to know before execute my program.
+I have implemented my program myself and I didn't use any of your code Hence my implementation is totally different from your's.
+My program needs one input file called "transitiontbl.txt" and I place this file in along with my source code in "src" folder. Hence kindly ensure before running my program this file should be at appropriate location so that my program didn't show any exception.

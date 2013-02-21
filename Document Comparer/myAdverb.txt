@@ -1,0 +1,16 @@
+best 2
+well 1
+better 1
+well 1
+deeper 0
+deeply 0
+farther 0
+far 0
+further 0
+far 0
+harder 0
+hard 0
+hardest 0
+hard 0
+not -1
+n't -1
